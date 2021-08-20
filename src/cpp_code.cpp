@@ -49,7 +49,8 @@ List C_OLS(arma::mat X, arma::mat Y){
   arma::mat H = X * XtX_inv * Xt;
   arma::mat Yhat = H * Y;
   NumericVector B= Rcpp::as<Rcpp::NumericVector>(wrap(XtX_inv * (Xt * Y)));
-  List output = List::create(_["B"]=B, _["Yhat"]=Yhat);
+  NumericVector resid = Rcpp::as<Rcpp::NumericVector>(wrap(Yhat - Y));
+  List output = List::create(_["B"]=B, _["Yhat"]=Yhat, _["resid"] = resid);
   return output;
 }
 
@@ -83,6 +84,9 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
   NumericMatrix f = NumericMatrix(nr,nc);
   f.fill(NA_REAL);
   
+  NumericMatrix SD_resid = NumericMatrix(nr,nc);
+  SD_resid.fill(NA_REAL);
+  
   for(int i = min_row; i< max_row; ++i) {
     for(int j = min_col; j < max_col; ++j){
       IntegerVector idx = IntegerVector(2);
@@ -105,6 +109,7 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
         d(i,j) = NA_REAL;
         e(i,j) = NA_REAL;
         f(i,j) = NA_REAL;
+        SD_resid(i,j) = NA_REAL;
       } else {
         NumericVector Z_trim_vect = Z[!NA_idx];
         NumericMatrix Z_trim(n_obs,1, Z_trim_vect.begin());
@@ -112,6 +117,8 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
         
         List OLS_fit = C_OLS(as<arma::mat>(X_trim), as<arma::mat>(Z_trim));
         NumericVector params = OLS_fit["B"];
+        NumericVector resid =  OLS_fit["resid"];
+        SD_resid(i,j) = sd(resid);
         if (type==2){
           a(i,j) = params[1];
           b(i,j) = params[2];
@@ -126,6 +133,6 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
           f(i,j) = params[0];
           }
         }}}
-  List out= List::create(_["a"]=a, _["b"]=b, _["c"]=c, _["d"]=d, _["e"]=e, _["f"]=f);
+  List out= List::create(_["a"]=a, _["b"]=b, _["c"]=c, _["d"]=d, _["e"]=e, _["f"]=f, _["SD_resid"]=SD_resid);
   return(out);
 }

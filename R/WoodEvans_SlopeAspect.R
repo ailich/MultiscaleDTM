@@ -8,12 +8,11 @@
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
 #' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
-#' @param type Integer specifying whether to fit the surface with a linear (1) or quadratic (2) fit. Default is type 2.
 #' @return a RasterStack
 #' @import raster
 #' @export
 
-WoodEvans_SlopeAspect<- function(r, w, unit= "degrees", return_aspect= FALSE, na.rm=FALSE, pad=FALSE, return_params= FALSE, type=2){
+WoodEvans_SlopeAspect<- function(r, w, unit= "degrees", return_aspect= FALSE, na.rm=FALSE, pad=FALSE, return_params= FALSE){
   #Input checks
   if(length(w==1)){
     w<- rep(w,2)}
@@ -32,9 +31,9 @@ WoodEvans_SlopeAspect<- function(r, w, unit= "degrees", return_aspect= FALSE, na
   }
   
   #Process large rasters as smaller chunks
-  run_in_blocks<- !raster::canProcessInMemory(r, n = 6)
+  run_in_blocks<- !raster::canProcessInMemory(r, n = 7)
   if(run_in_blocks==FALSE){
-    params<- WoodEvansHelper(r=r, w=w, type= type, na.rm=na.rm)
+    params<- WoodEvansHelper(r=r, w=w, type= 2, na.rm=na.rm)
   } else{
     block_idx<- raster::blockSize(r, n = 6, minblocks = 2, minrows = w[1])
     out_blocks<- vector(mode = "list", length = block_idx$n)
@@ -44,15 +43,16 @@ WoodEvans_SlopeAspect<- function(r, w, unit= "degrees", return_aspect= FALSE, na
       max_row<- min(min_row + block_idx$nrows[[i]] - 1 + block_overlap, nrow(r))
       block_extent<- raster::extent(r, min_row, max_row, 1, ncol(r))
       curr_block<- raster::crop(r, block_extent)
-      out_blocks[[i]]<- WoodEvansHelper(r=curr_block, w=w, type=type, na.rm = na.rm)
+      out_blocks[[i]]<- WoodEvansHelper(r=curr_block, w=w, type=2, na.rm = na.rm)
     }
     params<- do.call(raster::merge, out_blocks)
-    names(params)<- c("a", "b", "c", "d", "e", "f")
+    names(params)<- c("a", "b", "c", "d", "e", "f", "SD_resid")
   }
   if(pad==TRUE){
     params<- raster::crop(params, og_extent)
   }
   
+  params<- raster::dropLayer(params, 7) #Drop SD_resid layer
   #Use regression parameters to calculate slope and aspect
   slp<- atan(sqrt(params$d^2 + params$e^2))
   names(slp)<- paste0("QuadSlope", "_", w[1], "x", w[2])
