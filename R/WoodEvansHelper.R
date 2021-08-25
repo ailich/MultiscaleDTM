@@ -40,7 +40,7 @@ WoodEvansHelper<- function(r, w, type, na.rm){
       
   
   #Run C++ code to calculate regression parameters based on a quadratic fit to elevation values and convert to raster stack
-  params<- raster::stack(lapply(C_multiscale(r = as.matrix(r), w = c(3,3), X = X, type=type, na_rm = na.rm), raster::raster, crs=my_crs, xmn=my_extent[1], xmx=my_extent[2], ymn=my_extent[3], ymx=my_extent[4]))
+  params<- raster::stack(lapply(C_multiscale(r = as.matrix(r), w = w, X = X, type=type, na_rm = na.rm), raster::raster, crs=my_crs, xmn=my_extent[1], xmx=my_extent[2], ymn=my_extent[3], ymx=my_extent[4]))
   return(params)
 }
 

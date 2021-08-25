@@ -5,11 +5,12 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
+#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @return a RasterLayer of adjusted rugosity
 #' @import raster
 #' @export
 
-Adjusted_Rugosity<- function(r, w, na.rm=FALSE, pad=FALSE){
+Adjusted_Rugosity<- function(r, w, na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   #Input checks
   if(length(w==1)){
     w<- rep(w,2)}
@@ -40,12 +41,14 @@ Adjusted_Rugosity<- function(r, w, na.rm=FALSE, pad=FALSE){
       out_blocks[[i]]<- WoodEvansHelper(r=curr_block, w=w, type=type, na.rm = na.rm)
     }
     params<- do.call(raster::merge, out_blocks)
-    names(params)<- c("a", "b", "c", "d", "e", "f", "adj_rugosity")
   }
   if(pad==TRUE){
     params<- raster::crop(params, og_extent)
   }
-  return(params)
+  names(params)<- c("a", "b", "c", "d", "e", "f", "adj_rugosity")
+  out<- params$adj_rugosity
+  if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
+  return(out)
   }
   
 
