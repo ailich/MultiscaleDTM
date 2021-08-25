@@ -2,7 +2,7 @@
 % Please edit documentation in R/WoodEvans.R
 \name{WoodEvans}
 \alias{WoodEvans}
-\title{Calculates multiscale slope and aspect}
+\title{Calculates multiscale slope, aspect, curvature, and morphometric features}
 \usage{
 WoodEvans(
   r,
@@ -10,9 +10,10 @@ WoodEvans(
   unit = "degrees",
   return_aspect = FALSE,
   slope_tolerance = 1,
-  curvature_tolerance = 1e-04,
+  curvature_tolerance = 0.01,
   na.rm = FALSE,
   pad = FALSE,
+  include_scale = FALSE,
   return_params = FALSE
 )
 }
@@ -27,11 +28,13 @@ WoodEvans(
 
 \item{slope_tolerance}{Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.}
 
-\item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.}
+\item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.}
 
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
 \item{pad}{logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.}
+
+\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
 \item{return_params}{logical indicating whether to return Wood/Evans regression parameters (default FALSE)}
 }
@@ -39,5 +42,5 @@ WoodEvans(
 a RasterStack
 }
 \description{
-Calculates Calculates multiscale slope and aspect of a DEM over a sliding rectangular window using a quadratic fit to the surface according to the Wood/Evans procedure. This is an R/C++ implementation of r.param.scale GRASS GIS function. For aspect 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.
+Calculates Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface usin the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
 }

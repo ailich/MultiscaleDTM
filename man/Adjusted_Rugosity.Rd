@@ -4,7 +4,7 @@
 \alias{Adjusted_Rugosity}
 \title{Calculates standard deviation of bathymetry (a measure of rugosity) adjusted for slope}
 \usage{
-Adjusted_Rugosity(r, w, na.rm = FALSE, pad = FALSE)
+Adjusted_Rugosity(r, w, na.rm = FALSE, pad = FALSE, include_scale = FALSE)
 }
 \arguments{
 \item{r}{DEM as a raster layer}
@@ -14,6 +14,8 @@ Adjusted_Rugosity(r, w, na.rm = FALSE, pad = FALSE)
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
 \item{pad}{logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.}
+
+\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 }
 \value{
 a RasterLayer of adjusted rugosity
