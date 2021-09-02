@@ -112,29 +112,11 @@ WoodEvans<- function(r, w, unit= "degrees", return_aspect= FALSE, slope_toleranc
   #Morphometric Features (Wood 1996, Page 120)
   features<- raster(r) #Initialize as empty raster (NA's) with same properties as r
   names(features)<- "Features"
-  #classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance)
-  #classify_features function is not vectorized so it does not work with overlay
-  #features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
   
-  features<- raster(r)
-  values(features)<- 1 #Planar
-  names(features)<- "Features"
-  
-  features[min_curv < -curvature_tolerance]<- 3 #Channel
-  features[(min_curv < -curvature_tolerance) & (max_curv < -curvature_tolerance)]<- 2 #Pit
-  
-  features[max_curv > curvature_tolerance]<- 5 #Ridge
-  features[(max_curv > curvature_tolerance) & (min_curv < -curvature_tolerance)]<- 4 #Pass
-  features[(max_curv > curvature_tolerance) & (min_curv > curvature_tolerance)]<- 6 #Peak
-  
-  features[slp > slope_tolerance]<- 1 #Planar
-  features[(slp > slope_tolerance) & (crosc < -curvature_tolerance)]<- 3 #Channel
-  features[(slp > slope_tolerance) & (crosc > curvature_tolerance)]<- 5 #Ridge
-  
-  features[is.na(slp)]<- NA
-  
+  classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
+  features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
   features<- as.factor(features)
-  levels(features)[[1]]<- suppressWarnings(data.frame(ID=1:6)) #Make sure all factor levels are present even if it wasn't in the original raster
+  levels(features)[[1]]<- suppressMessages(data.frame(ID=1:6)) #Make sure all factor levels are present even if it wasn't in the original raster
   levels(features)[[1]]$Feature<- c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak")
   
   out<- stack(slp, eastness, northness, profc, planc, profc_max, profc_min, mean_curv, max_curv, min_curv, longc, crosc, features)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/classify_features_ff.R
 \name{classify_features_ff}
 \alias{classify_features_ff}
-\title{IN DEVELOPMENT. Helper function factory to classify morphometric features}
+\title{Helper function factory to classify morphometric features}
 \usage{
 classify_features_ff(slope_tolerance, curvature_tolerance)
 }
@@ -11,6 +11,9 @@ classify_features_ff(slope_tolerance, curvature_tolerance)
 
 \item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.}
 }
+\value{
+A function that can be passed to raster::overlay to classify morphometric features
+}
 \description{
-IN DEVELOPMENT. Helper function factory to classify morphometric features according to Wood 1996. Function is not vectorized so it does not work with overlay as of now.
+Helper function factory to classify morphometric features according to Wood 1996 page 120
 }
