@@ -1,6 +1,6 @@
 #' Calculates multiscale slope, aspect, curvature, and morphometric features
 #'
-#' Calculates Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface usin the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
+#' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface usin the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
 #' @param r DEM as a raster layer
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
@@ -78,35 +78,45 @@ WoodEvans<- function(r, w, unit= "degrees", return_aspect= FALSE, slope_toleranc
   
   #Curvature
   #Note curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004)
-  profc<- (-200*(params$a*params$d^2 + params$b*params$e^2 + params$c*params$d*params$e))/((params$e^2+params$d^2)*(1+params$e^2+params$d^2)^1.5)
+  
+  #  Wood 1996 page 86 & Wilson 2007 page 9-10
+  profc<- raster::overlay(params, fun = function(a,b,c,d,e,f)(-200 * (a*d^2 + b*e^2 + c*d*e)) / ((e^2 + d^2)*(1 + e^2 + d^2)^1.5))
   names(profc)<- "ProfCurv"
   
-  planc<- (200 * (params$b*params$d^2 + params$a*params$e^2 - params$c*params$d*params$e))/((params$e^2 + params$d^2)^1.5)
+  planc<- raster::overlay(params, fun = function(a,b,c,d,e,f)(200 * (b*d^2 +a*e^2 - c*d*e)) / ((e^2+d^2)^1.5))
   names(planc)<- "PlanCurv"
   
-  profc_max<- 100 * (-params$a - params$b + sqrt((params$a-params$b)^2 + params$c^2))
+  profc_max<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100*(-a - b + sqrt((a-b)^2+c^2)))
   names(profc_max)<- "ProfCurvMax"
   
-  profc_min<- 100* (-params$a - params$b - sqrt((params$a-params$b)^2 + params$c^2))
+  profc_min<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100*(-a - b - sqrt((a-b)^2+c^2)))
   names(profc_min)<- "ProfCurvMin"
   
-  mean_curv<- 100* (-params$a - params$b)
+  mean_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100*(-a - b))
   names(mean_curv)<- "MeanCurv"
   
-  max_curv<- 100*(-params$a - params$b + sqrt((params$a-params$b)^2 + params$c^2))
-  names(max_curv)<- "MaxCurv"
-  
-  min_curv<- 100*(-params$a - params$b - sqrt((params$a-params$b)^2 + params$c^2))
-  names(min_curv)<- "MinCurv"
-  
   #Wood 1996 page 88
-  longc<- -200*((params$a*params$d^2 + params$b*params$e^2 + params$c*params$d*params$e)/(params$d^2+params$e^2)) 
+  longc<- raster::overlay(params, fun = function(a,b,c,d,e,f) -200 * ((a*d^2 + b*e^2 + c*d*e) / (d^2 + e^2)))
   names(longc)<- "LongCurv"
-  crosc<- -200*((params$b*params$d^2 + params$a*params$e^2 - params$c*params$d*params$e)/(params$d^2+params$e^2))
+  
+  crosc<- raster::overlay(params, fun = function(a,b,c,d,e,f) -200 * ((b*d^2 + a*e^2 - c*d*e) / (d^2 + e^2)))
   names(crosc)<- "CrossCurv"
   
+  #Wood 1996 page 115
+  max_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100 * (-a - b + sqrt((a-b)^2+c^2)))
+  names(max_curv)<- "MaxCurv"
+  
+  min_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100 * (-a - b - sqrt((a-b)^2+c^2)))
+  names(min_curv)<- "MinCurv"
+ 
   #Morphometric Features (Wood 1996, Page 120)
-  features<- r
+  features<- raster(r) #Initialize as empty raster (NA's) with same properties as r
+  names(features)<- "Features"
+  #classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance)
+  #classify_features function is not vectorized so it does not work with overlay
+  #features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
+  
+  features<- raster(r)
   values(features)<- 1 #Planar
   names(features)<- "Features"
   
@@ -124,8 +134,8 @@ WoodEvans<- function(r, w, unit= "degrees", return_aspect= FALSE, slope_toleranc
   features[is.na(slp)]<- NA
   
   features<- as.factor(features)
+  levels(features)[[1]]<- suppressWarnings(data.frame(ID=1:6)) #Make sure all factor levels are present even if it wasn't in the original raster
   levels(features)[[1]]$Feature<- c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak")
-  
   
   out<- stack(slp, eastness, northness, profc, planc, profc_max, profc_min, mean_curv, max_curv, min_curv, longc, crosc, features)
   if(return_aspect){out<- stack(out, asp)}

@@ -10,7 +10,7 @@
 #' @import raster
 #' @export
 
-Adjusted_Rugosity<- function(r, w, na.rm=FALSE, pad=FALSE, include_scale=FALSE){
+AdjSD<- function(r, w, na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   #Input checks
   if(length(w==1)){
     w<- rep(w,2)}
@@ -45,8 +45,8 @@ Adjusted_Rugosity<- function(r, w, na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   if(pad==TRUE){
     params<- raster::crop(params, og_extent)
   }
-  names(params)<- c("a", "b", "c", "d", "e", "f", "adj_rugosity")
-  out<- params$adj_rugosity
+  names(params)<- c("a", "b", "c", "d", "e", "f", "adjSD")
+  out<- params$adjSD
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
   return(out)
   }
