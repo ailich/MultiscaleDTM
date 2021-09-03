@@ -6,7 +6,7 @@
 \usage{
 WoodEvans(
   r,
-  w,
+  w = c(3, 3),
   unit = "degrees",
   return_aspect = FALSE,
   slope_tolerance = 1,
@@ -14,13 +14,14 @@ WoodEvans(
   na.rm = FALSE,
   pad = FALSE,
   include_scale = FALSE,
+  mask_aspect = TRUE,
   return_params = FALSE
 )
 }
 \arguments{
 \item{r}{DEM as a raster layer}
 
-\item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
+\item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
 \item{unit}{"degrees" or "radians"}
 
@@ -35,6 +36,8 @@ WoodEvans(
 \item{pad}{logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+
+\item{mask_aspect}{A logical. If slope evaluates to 0, aspect (and therefore northness/eastness) will be set to NA when mask_aspect is TRUE (the default). Theoretically, if FALSE this aspect would evaluate to -90 degrees or -pi/2 radians (atan2(0,0)-pi/2) however it can be sporadic due to numerical precision issues related to the matrix math used to derive the regression parameters. Additionally, slope (in radians) will be rounded to 16 digits before checking if it equals zero due to precision issues.}
 
 \item{return_params}{logical indicating whether to return Wood/Evans regression parameters (default FALSE)}
 }

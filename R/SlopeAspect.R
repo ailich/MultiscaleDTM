@@ -1,6 +1,6 @@
 #' Multiscale Slope and Aspect
 #'
-#' Calculates multiscale slope and aspect based on the slope algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows and to also return aspect.
+#' Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows.
 #' @param r DEM as a raster layer
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
@@ -13,7 +13,7 @@
 #' @import raster
 #' @export
 
-SlopeAspect <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect"), include_scale=FALSE, mask_aspect=TRUE){ 
+SlopeAspect <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "northness", "eastness"), include_scale=FALSE, mask_aspect=TRUE){ 
   if(any(w < 3)){
     stop("w must be >=3 and odd")
   }
@@ -28,8 +28,8 @@ SlopeAspect <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c(
     stop("method must be queen or rook")
   }
   
-  if(any(!(metrics %in% c("slope", "aspect")))){
-    stop("metrics must be 'slope' and/or 'aspect'")
+  if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
+    stop("metrics must be 'slope', 'aspect', 'northness', and/or 'eastness'")
     }
   
   #k is size of window in a given direction
@@ -112,28 +112,29 @@ SlopeAspect <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c(
     dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*res(r)[1])
     dz.dy <- (dz.dy.b-dz.dy.t)/(2*jy*res(r)[2])
   }
-  if (("slope" %in% metrics) | mask_aspect){
-    out <- (atan(sqrt((dz.dx^2)+(dz.dy^2))))
-    names(out)<- "slope"
+  slope.k<- (atan(sqrt((dz.dx^2)+(dz.dy^2))))
+  names(slope.k)<- "slope"
+  aspect.k<- atan2(dz.dy, -dz.dx)
+  aspect.k<- raster::calc(aspect.k, fun= convert_aspect)#convert aspect to clockwise distance from North
+  if(mask_aspect){
+    aspect.k[slope.k==0]<- NA_real_ #Set aspect to undefined where slope is zero
     }
-    
-  if("aspect" %in% metrics){
-    aspect.k<- atan2(dz.dy, -dz.dx)
-    aspect.k<- raster::overlay(aspect.k, fun= convert_aspect)#convert aspect to clockwise distance from North
-    if(mask_aspect){
-      aspect.k[out$slope==0]<- NA_real_ #Set aspect to undefined where slope is zero
-      }
-    names(aspect.k)<- "aspect"
-    if (("slope" %in% metrics) | mask_aspect){
-      out<- stack(out, aspect.k)
-      } else{
-        out<-aspect.k
-      }}
+  names(aspect.k)<- "aspect"
+
+  northness.k<- cos(aspect.k)
+  names(northness.k)<- "northness"
+
+  eastness.k<- sin(aspect.k)
+  names(eastness.k)<- "eastness"
+
+  
+  out<- stack(slope.k, aspect.k, northness.k, eastness.k)
+  if(unit=="degrees"){
+    out$slope<- out$slope * (180/pi)
+    out$aspect<- out$aspect * (180/pi)
+  }
   
   out<- raster::subset(out, metrics, drop=TRUE)
-  
-  if(unit=="degrees"){out<- out * (180/pi)}
-  
   if(include_scale){names(out)<- paste0(names(out), "_", w[1], "x", w[2])}
   return(out)
 }

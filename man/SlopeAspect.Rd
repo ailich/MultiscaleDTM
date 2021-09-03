@@ -9,7 +9,7 @@ SlopeAspect(
   w = c(3, 3),
   unit = "degrees",
   method = "queen",
-  metrics = c("slope", "aspect"),
+  metrics = c("slope", "aspect", "northness", "eastness"),
   include_scale = FALSE,
   mask_aspect = TRUE
 )
@@ -33,7 +33,7 @@ SlopeAspect(
 a RasterStack or RasterLayer of slope and/or aspect
 }
 \description{
-Calculates multiscale slope and aspect based on the slope algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows and to also return aspect.
+Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows.
 }
 \details{
 When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.

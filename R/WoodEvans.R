@@ -2,7 +2,7 @@
 #'
 #' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface usin the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
 #' @param r DEM as a raster layer
-#' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
+#' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians"
 #' @param return_aspect logical indicating whether or not to return aspect in addition to Northness and Eastness (default is FALSE)
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.
@@ -10,12 +10,13 @@
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
+#' @param mask_aspect A logical. If slope evaluates to 0, aspect (and therefore northness/eastness) will be set to NA when mask_aspect is TRUE (the default). Theoretically, if FALSE this aspect would evaluate to -90 degrees or -pi/2 radians (atan2(0,0)-pi/2) however it can be sporadic due to numerical precision issues related to the matrix math used to derive the regression parameters. Additionally, slope (in radians) will be rounded to 16 digits before checking if it equals zero due to precision issues.
 #' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
 #' @return a RasterStack
 #' @import raster
 #' @export
 
-WoodEvans<- function(r, w, unit= "degrees", return_aspect= FALSE, slope_tolerance=1, curvature_tolerance=0.01, na.rm=FALSE, pad=FALSE, include_scale=FALSE, return_params= FALSE){
+WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_tolerance=1, curvature_tolerance=0.01, na.rm=FALSE, pad=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE){
   #Input checks
   if(length(w==1)){
     w<- rep(w,2)}
@@ -64,11 +65,15 @@ WoodEvans<- function(r, w, unit= "degrees", return_aspect= FALSE, slope_toleranc
   
   asp[asp < 0]<- asp[asp < 0] + 2*pi
   asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
+  if (mask_aspect){
+    asp[round(slp,16)==0]<- NA #Mask out outspect values where slope is 0
+  }
   
   eastness<- sin(asp)
   names(eastness)<- "QuadEastness"
   northness<- cos(asp)
   names(northness)<- "QuadNorthness"
+  
   if(unit=="degrees"){
     slp<- slp*180/pi
     asp<- asp*180/pi
@@ -110,14 +115,13 @@ WoodEvans<- function(r, w, unit= "degrees", return_aspect= FALSE, slope_toleranc
   names(min_curv)<- "MinCurv"
  
   #Morphometric Features (Wood 1996, Page 120)
-  features<- raster(r) #Initialize as empty raster (NA's) with same properties as r
-  names(features)<- "Features"
   
   classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
   features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
   features<- as.factor(features)
-  levels(features)[[1]]<- suppressMessages(data.frame(ID=1:6)) #Make sure all factor levels are present even if it wasn't in the original raster
+  suppressWarnings(levels(features)[[1]]<- data.frame(ID=1:6)) #Make sure all factor levels are present even if it wasn't in the original raster
   levels(features)[[1]]$Feature<- c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak")
+  names(features)<- "Features"
   
   out<- stack(slp, eastness, northness, profc, planc, profc_max, profc_min, mean_curv, max_curv, min_curv, longc, crosc, features)
   if(return_aspect){out<- stack(out, asp)}

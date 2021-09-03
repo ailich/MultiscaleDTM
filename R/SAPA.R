@@ -33,13 +33,13 @@ SAPA<- function(r, w = 1, slope_layer= NULL, slope_correction=TRUE, include_scal
   } # Sum up surface area in focal window
   
   if(is.null(slope_layer)){
-    if (w==1){
+    if (all(w==1)){
       slope_layer<- terrain(r, opt="slope", unit="radians", neighbors=8)
       } else{
         slope_layer<- SlopeAspect(r, w=w, unit="radians", method="queen", metrics= "slope", include_scale=FALSE)
       }
     }
-  PA<- (x_res*w) * (y_res*w)
+  PA<- (x_res*w[1]) * (y_res*w[2])
   if(slope_correction){PA<- PA/cos(slope_layer)}#Planar area corrected for slope
   
   sapa<- SA/PA
