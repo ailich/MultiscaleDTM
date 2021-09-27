@@ -4,7 +4,7 @@
 \alias{AdjSD}
 \title{Calculates standard deviation of bathymetry (a measure of rugosity) adjusted for slope}
 \usage{
-AdjSD(r, w, na.rm = FALSE, pad = FALSE, include_scale = FALSE)
+AdjSD(r, w = c(3, 3), na.rm = FALSE, pad = FALSE, include_scale = FALSE)
 }
 \arguments{
 \item{r}{DEM as a raster layer}

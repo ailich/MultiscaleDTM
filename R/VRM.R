@@ -9,7 +9,7 @@
 #' @importFrom spatialEco vrm
 #' @export
 
-VRM<- function(r, w, include_scale){
+VRM<- function(r, w, include_scale=FALSE){
   if(length(w)==1){
     w<- rep(w,2)}
   out<- spatialEco::vrm(x=r, s=w)

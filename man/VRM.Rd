@@ -4,7 +4,7 @@
 \alias{VRM}
 \title{Implementation of the Sappington et al., (2007) vector ruggedness measure}
 \usage{
-VRM(r, w, include_scale)
+VRM(r, w, include_scale = FALSE)
 }
 \arguments{
 \item{r}{DEM as a raster layer}

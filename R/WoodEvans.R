@@ -66,7 +66,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   asp[asp < 0]<- asp[asp < 0] + 2*pi
   asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
   if (mask_aspect){
-    mask_raster<- raster::focal(r, w= w, fun=function(x){as.numeric(length(unique(na.omit(x))) == 1)}) #Maybe use this mask to also set values of slope and curvature to zero in these areas
+    mask_raster<- raster::focal(r, w= matrix(data = 1, nrow = w[1], ncol = w[2]), fun=function(x){as.numeric(length(unique(na.omit(x))) == 1)}) #Maybe use this mask to also set values of slope and curvature to zero in these areas
     asp[mask_raster==1]<- NA_real_
     }
   
