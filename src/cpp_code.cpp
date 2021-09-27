@@ -46,6 +46,7 @@ NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx) {
 List C_OLS(arma::mat X, arma::mat Y){
   arma::mat Xt = trans(X); 
   arma::mat XtX_inv= inv(Xt * X);
+  //arma::mat XtX_inv= pinv(Xt * X);
   arma::mat H = X * XtX_inv * Xt;
   arma::mat Yhat = H * Y;
   NumericVector B= Rcpp::as<Rcpp::NumericVector>(wrap(XtX_inv * (Xt * Y)));
