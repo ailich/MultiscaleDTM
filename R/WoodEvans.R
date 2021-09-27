@@ -10,7 +10,7 @@
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
-#' @param mask_aspect A logical. If slope evaluates to 0, aspect (and therefore northness/eastness) will be set to NA when mask_aspect is TRUE (the default). Theoretically, if FALSE this aspect would evaluate to -90 degrees or -pi/2 radians (atan2(0,0)-pi/2) however it can be sporadic due to numerical precision issues related to the matrix math used to derive the regression parameters. Additionally, slope (in radians) will be rounded to 16 digits before checking if it equals zero due to precision issues.
+#' @param mask_aspect A logical. If all values in the window are the same aspect (and therefore northness/eastness) will be set to NA when mask_aspect is TRUE (the default). This is more computationally expensive however. Theoretically, if FALSE this aspect would evaluate to -90 degrees or -pi/2 radians (atan2(0,0)-pi/2) however it can be sporadic due to numerical precision issues related to the matrix math used to derive the regression parameters.
 #' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
 #' @return a RasterStack
 #' @import raster
@@ -66,8 +66,9 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   asp[asp < 0]<- asp[asp < 0] + 2*pi
   asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
   if (mask_aspect){
-    asp[round(slp,16)==0]<- NA #Mask out outspect values where slope is 0
-  }
+    mask_raster<- raster::focal(r, w= w, fun=function(x){as.numeric(length(unique(na.omit(x))) == 1)}) #Maybe use this mask to also set values of slope and curvature to zero in these areas
+    asp[mask_raster==1]<- NA_real_
+    }
   
   eastness<- sin(asp)
   names(eastness)<- "QuadEastness"
