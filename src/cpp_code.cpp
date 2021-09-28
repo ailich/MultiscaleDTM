@@ -41,6 +41,25 @@ NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx) {
   return out_mat;
 }
 
+//Checks to see if values of predictor are unique (excluding intercept col of 1's). 
+//If any all have the same value, the matrix cannot be inverted to solve for OLS.
+// [[Rcpp::export]]
+bool C_Check_Xmat(NumericMatrix X){
+  int nc = X.ncol();
+  IntegerVector n_unique(nc-1);
+  for(int i = 1; i < nc; ++i){
+    NumericVector vals = X(_,i);
+    NumericVector uni_vals = unique(vals);
+    n_unique[i-1] = uni_vals.length();
+  }
+  int min_n = min(n_unique);
+  if(min_n < 2){
+    return FALSE;
+  } else{
+    return TRUE;
+  }
+  }
+
 //Ordinary Least Squares
 // [[Rcpp::export]]
 List C_OLS(arma::mat X, arma::mat Y){
@@ -88,6 +107,11 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
   NumericMatrix SD_resid = NumericMatrix(nr,nc);
   SD_resid.fill(NA_REAL);
   
+  //NEED AT LEAST 4/6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
+  int thresh = 6;
+  if(type==1){
+    thresh = thresh - 2;
+  }
   for(int i = min_row; i< max_row; ++i) {
     for(int j = min_col; j < max_col; ++j){
       IntegerVector idx = IntegerVector(2);
@@ -97,12 +121,7 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
       NumericVector Z = as<NumericVector>(curr_window);
       LogicalVector NA_idx = is_na(Z);
       int n_obs = sum(!NA_idx);
-      
-      //NEED AT LEAST 4/6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
-      int thresh = 6;
-      if(type==1){
-        thresh = thresh - 2;
-        }
+
       if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {
         a(i,j) = NA_REAL;
         b(i,j) = NA_REAL;
@@ -116,24 +135,36 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
         NumericMatrix Z_trim(n_obs,1, Z_trim_vect.begin());
         NumericMatrix X_trim = subset_mat_rows(X, !NA_idx);
         
-        List OLS_fit = C_OLS(as<arma::mat>(X_trim), as<arma::mat>(Z_trim));
-        NumericVector params = OLS_fit["B"];
-        NumericVector resid =  OLS_fit["resid"];
-        SD_resid(i,j) = sd(resid);
-        if (type==2){
-          a(i,j) = params[1];
-          b(i,j) = params[2];
-          c(i,j) = params[3];
-          d(i,j) = params[4];
-          e(i,j) = params[5];
-          f(i,j) = params[0];
+        bool can_be_inverted = C_Check_Xmat(X_trim);
+        if(!can_be_inverted){
+          a(i,j) = NA_REAL;
+          b(i,j) = NA_REAL;
+          c(i,j) = NA_REAL;
+          d(i,j) = NA_REAL;
+          e(i,j) = NA_REAL;
+          f(i,j) = NA_REAL;
+          SD_resid(i,j) = NA_REAL;
+        } else{
+          List OLS_fit = C_OLS(as<arma::mat>(X_trim), as<arma::mat>(Z_trim));
+          NumericVector params = OLS_fit["B"];
+          NumericVector resid =  OLS_fit["resid"];
+          SD_resid(i,j) = sd(resid);
+          if (type==2){
+            a(i,j) = params[1];
+            b(i,j) = params[2];
+            c(i,j) = params[3];
+            d(i,j) = params[4];
+            e(i,j) = params[5];
+            f(i,j) = params[0];
           } else {
-          c(i,j) = params[1];
-          d(i,j) = params[2];
-          e(i,j) = params[3];
-          f(i,j) = params[0];
-          }
-        }}}
+            c(i,j) = params[1];
+            d(i,j) = params[2];
+            e(i,j) = params[3];
+            f(i,j) = params[0];
+          }}}}
+        }
+        
+
   List out= List::create(_["a"]=a, _["b"]=b, _["c"]=c, _["d"]=d, _["e"]=e, _["f"]=f, _["SD_resid"]=SD_resid);
   return(out);
 }

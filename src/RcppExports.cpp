@@ -36,6 +36,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_Check_Xmat
+bool C_Check_Xmat(NumericMatrix X);
+RcppExport SEXP _MultiscaleDEM_C_Check_Xmat(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Check_Xmat(X));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_OLS
 List C_OLS(arma::mat X, arma::mat Y);
 RcppExport SEXP _MultiscaleDEM_C_OLS(SEXP XSEXP, SEXP YSEXP) {
@@ -67,6 +78,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDEM_C_extract_window", (DL_FUNC) &_MultiscaleDEM_C_extract_window, 3},
     {"_MultiscaleDEM_subset_mat_rows", (DL_FUNC) &_MultiscaleDEM_subset_mat_rows, 2},
+    {"_MultiscaleDEM_C_Check_Xmat", (DL_FUNC) &_MultiscaleDEM_C_Check_Xmat, 1},
     {"_MultiscaleDEM_C_OLS", (DL_FUNC) &_MultiscaleDEM_C_OLS, 2},
     {"_MultiscaleDEM_C_multiscale", (DL_FUNC) &_MultiscaleDEM_C_multiscale, 5},
     {NULL, NULL, 0}
