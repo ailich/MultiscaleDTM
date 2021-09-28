@@ -22,7 +22,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
       warning("if pad=TRUE, na.rm must also be TRUE. Changing na.rm to TRUE")
     }
     og_extent<- raster::extent(r)
-    r<- raster::extend(r, c(w[1], w[2]), value=NA)
+    r<- raster::extend(r, c((w[1]-1)/2, (w[2]-1)/2), value=NA)
   }
   
   #Process large rasters as smaller chunks
