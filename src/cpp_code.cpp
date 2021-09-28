@@ -122,29 +122,13 @@ List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, b
       LogicalVector NA_idx = is_na(Z);
       int n_obs = sum(!NA_idx);
 
-      if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {
-        a(i,j) = NA_REAL;
-        b(i,j) = NA_REAL;
-        c(i,j) = NA_REAL;
-        d(i,j) = NA_REAL;
-        e(i,j) = NA_REAL;
-        f(i,j) = NA_REAL;
-        SD_resid(i,j) = NA_REAL;
-      } else {
+      if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
         NumericVector Z_trim_vect = Z[!NA_idx];
         NumericMatrix Z_trim(n_obs,1, Z_trim_vect.begin());
         NumericMatrix X_trim = subset_mat_rows(X, !NA_idx);
         
         bool can_be_inverted = C_Check_Xmat(X_trim);
-        if(!can_be_inverted){
-          a(i,j) = NA_REAL;
-          b(i,j) = NA_REAL;
-          c(i,j) = NA_REAL;
-          d(i,j) = NA_REAL;
-          e(i,j) = NA_REAL;
-          f(i,j) = NA_REAL;
-          SD_resid(i,j) = NA_REAL;
-        } else{
+        if(!can_be_inverted){} else{
           List OLS_fit = C_OLS(as<arma::mat>(X_trim), as<arma::mat>(Z_trim));
           NumericVector params = OLS_fit["B"];
           NumericVector resid =  OLS_fit["resid"];
