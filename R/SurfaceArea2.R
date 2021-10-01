@@ -7,8 +7,8 @@
 #' @importFrom sp surfaceArea
 #' @export
 
-SurfaceArea<- function(r){
-  run_in_blocks<- !raster::canProcessInMemory(r, n = 2)
+SurfaceArea2<- function(r, run_in_blocks){
+  #run_in_blocks<- !raster::canProcessInMemory(r, n = 2)
   x_res<- res(r)[1]
   y_res<- res(r)[2]
   

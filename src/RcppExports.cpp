@@ -59,6 +59,30 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_OLS_params
+NumericVector C_OLS_params(arma::mat X, arma::mat Y);
+RcppExport SEXP _MultiscaleDEM_C_OLS_params(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_OLS_params(X, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_OLS_resid
+NumericVector C_OLS_resid(arma::mat X, arma::mat Y);
+RcppExport SEXP _MultiscaleDEM_C_OLS_resid(SEXP XSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_OLS_resid(X, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_multiscale
 List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, bool na_rm);
 RcppExport SEXP _MultiscaleDEM_C_multiscale(SEXP rSEXP, SEXP wSEXP, SEXP XSEXP, SEXP typeSEXP, SEXP na_rmSEXP) {
@@ -74,13 +98,45 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_multiscale2
+NumericMatrix C_multiscale2(NumericMatrix r, IntegerVector w, NumericMatrix X, bool na_rm);
+RcppExport SEXP _MultiscaleDEM_C_multiscale2(SEXP rSEXP, SEXP wSEXP, SEXP XSEXP, SEXP na_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_multiscale2(r, w, X, na_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_multiscale1
+NumericVector C_multiscale1(NumericMatrix r, IntegerVector w, NumericMatrix X, bool na_rm);
+RcppExport SEXP _MultiscaleDEM_C_multiscale1(SEXP rSEXP, SEXP wSEXP, SEXP XSEXP, SEXP na_rmSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_multiscale1(r, w, X, na_rm));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDEM_C_extract_window", (DL_FUNC) &_MultiscaleDEM_C_extract_window, 3},
     {"_MultiscaleDEM_subset_mat_rows", (DL_FUNC) &_MultiscaleDEM_subset_mat_rows, 2},
     {"_MultiscaleDEM_C_Check_Xmat", (DL_FUNC) &_MultiscaleDEM_C_Check_Xmat, 1},
     {"_MultiscaleDEM_C_OLS", (DL_FUNC) &_MultiscaleDEM_C_OLS, 2},
+    {"_MultiscaleDEM_C_OLS_params", (DL_FUNC) &_MultiscaleDEM_C_OLS_params, 2},
+    {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 2},
     {"_MultiscaleDEM_C_multiscale", (DL_FUNC) &_MultiscaleDEM_C_multiscale, 5},
+    {"_MultiscaleDEM_C_multiscale2", (DL_FUNC) &_MultiscaleDEM_C_multiscale2, 4},
+    {"_MultiscaleDEM_C_multiscale1", (DL_FUNC) &_MultiscaleDEM_C_multiscale1, 4},
     {NULL, NULL, 0}
 };
 

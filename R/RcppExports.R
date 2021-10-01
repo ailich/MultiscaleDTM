@@ -17,7 +17,23 @@ C_OLS <- function(X, Y) {
     .Call(`_MultiscaleDEM_C_OLS`, X, Y)
 }
 
+C_OLS_params <- function(X, Y) {
+    .Call(`_MultiscaleDEM_C_OLS_params`, X, Y)
+}
+
+C_OLS_resid <- function(X, Y) {
+    .Call(`_MultiscaleDEM_C_OLS_resid`, X, Y)
+}
+
 C_multiscale <- function(r, w, X, type, na_rm) {
     .Call(`_MultiscaleDEM_C_multiscale`, r, w, X, type, na_rm)
+}
+
+C_multiscale2 <- function(r, w, X, na_rm) {
+    .Call(`_MultiscaleDEM_C_multiscale2`, r, w, X, na_rm)
+}
+
+C_multiscale1 <- function(r, w, X, na_rm) {
+    .Call(`_MultiscaleDEM_C_multiscale1`, r, w, X, na_rm)
 }
 
