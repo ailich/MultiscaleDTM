@@ -60,19 +60,6 @@ bool C_Check_Xmat(NumericMatrix X){
   }
   }
 
-//Ordinary Least Squares (returns parameters and residuals)
-// [[Rcpp::export]]
-List C_OLS(arma::mat X, arma::mat Y){
-  arma::mat Xt = trans(X); 
-  arma::mat XtX_inv= inv(Xt * X);
-  arma::mat H = X * XtX_inv * Xt;
-  arma::mat Yhat = H * Y;
-  NumericVector B= Rcpp::as<Rcpp::NumericVector>(wrap(XtX_inv * (Xt * Y)));
-  NumericVector resid = Rcpp::as<Rcpp::NumericVector>(wrap(Yhat - Y));
-  List output = List::create(_["B"]=B, _["resid"] = resid);
-  return output;
-}
-
 //Ordinary Least Squares (only returns parameters)
 // [[Rcpp::export]]
 NumericVector C_OLS_params(arma::mat X, arma::mat Y){
@@ -92,85 +79,6 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
   arma::mat Yhat = H * Y;
   NumericVector resid = Rcpp::as<Rcpp::NumericVector>(wrap(Yhat - Y));
   return resid;
-}
-
-//Multiscale metrics across matrix using sliding window
-// [[Rcpp::export]]
-List C_multiscale(NumericMatrix r, IntegerVector w, NumericMatrix X, int type, bool na_rm){
-  int nr= r.nrow();
-  int nc= r.ncol();
-  int min_row = (w(0)-1)/2;
-  int max_row = nr - ((w(0)-1)/2);
-  int min_col = (w(1)-1)/2;
-  int max_col = nc - ((w(1)-1)/2);
-  //int center_idx = ((w[0]*w[1])-1)/2;
-  
-  //Z = aX2 + bY2 + cXY + dX + eY + f
-  NumericMatrix a = NumericMatrix(nr,nc);
-  a.fill(NA_REAL);
-    
-  NumericMatrix b = NumericMatrix(nr,nc);
-  b.fill(NA_REAL);
-  
-  NumericMatrix c = NumericMatrix(nr,nc);
-  c.fill(NA_REAL);
-  
-  NumericMatrix d = NumericMatrix(nr,nc);
-  d.fill(NA_REAL);
-  
-  NumericMatrix e = NumericMatrix(nr,nc);
-  e.fill(NA_REAL);
-  
-  NumericMatrix f = NumericMatrix(nr,nc);
-  f.fill(NA_REAL);
-  
-  NumericMatrix SD_resid = NumericMatrix(nr,nc);
-  SD_resid.fill(NA_REAL);
-  
-  //NEED AT LEAST 4/6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
-  int thresh = 6;
-  if(type==1){
-    thresh = thresh - 2;
-  }
-  for(int i = min_row; i< max_row; ++i) {
-    for(int j = min_col; j < max_col; ++j){
-      IntegerVector idx = IntegerVector(2);
-      idx(0)= i;
-      idx(1)=j;
-      NumericMatrix curr_window = C_extract_window(r, w, idx);
-      NumericVector Z = as<NumericVector>(curr_window);
-      LogicalVector NA_idx = is_na(Z);
-      int n_obs = sum(!NA_idx);
-
-      if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
-        NumericVector Z_trim_vect = Z[!NA_idx];
-        NumericMatrix Z_trim(n_obs,1, Z_trim_vect.begin());
-        NumericMatrix X_trim = subset_mat_rows(X, !NA_idx);
-        
-        bool can_be_inverted = C_Check_Xmat(X_trim);
-        if(!can_be_inverted){} else{
-          List OLS_fit = C_OLS(as<arma::mat>(X_trim), as<arma::mat>(Z_trim));
-          NumericVector params = OLS_fit["B"];
-          NumericVector resid =  OLS_fit["resid"];
-          SD_resid(i,j) = sd(resid);
-          if (type==2){
-            a(i,j) = params[1];
-            b(i,j) = params[2];
-            c(i,j) = params[3];
-            d(i,j) = params[4];
-            e(i,j) = params[5];
-            f(i,j) = params[0];
-          } else {
-            c(i,j) = params[1];
-            d(i,j) = params[2];
-            e(i,j) = params[3];
-            f(i,j) = params[0];
-          }}}}
-        }
-        
-
-  List out= List::create(_["a"]=a, _["b"]=b, _["c"]=c, _["d"]=d, _["e"]=e, _["f"]=f, _["SD_resid"]=SD_resid);
-  return(out);
 }
 
 //Multiscale metrics across matrix using sliding window (Quadratic Fit)

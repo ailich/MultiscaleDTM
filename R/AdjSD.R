@@ -16,6 +16,25 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
     w<- rep(w,2)}
   if(any(w<3) | any(0 == (w %% 2))){
     stop("Error: w must be odd and greater than or equal to 3")}
+  
+  #Define local coordinate system of window
+  x_mat<- matrix(res(r)[2], nrow = w[1], ncol=w[2])
+  for (C in 1:w[2]) {
+    x_mat[,C]<- x_mat[,C]*C
+  }
+  x_mat<- x_mat - mean(x_mat)
+  x<- as.vector(x_mat)
+  
+  y_mat<- matrix(res(r)[1], nrow = w[1], ncol=w[2])
+  for (R in 1:w[1]) {
+    y_mat[R,]<- y_mat[R,]*R
+  }
+  y_mat<- y_mat - mean(y_mat)
+  y<- as.vector(y_mat)
+  
+  #Explanatory Variable matrix X for linear fit
+  X<- X<- cbind(1, x*y, x, y)
+  
   if(pad==TRUE){
     if(na.rm==FALSE){
       na.rm<- TRUE
@@ -26,31 +45,41 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   }
   
   #Process large rasters as smaller chunks
-  run_in_blocks<- !raster::canProcessInMemory(r, n = 6)
+  run_in_blocks<- !raster::canProcessInMemory(r, n = 2)
   if(run_in_blocks==FALSE){
-    params<- WoodEvansHelper(r=r, w=w, type= 1, na.rm=na.rm)
+    out<- raster(r)
+    values(out)<- C_multiscale1(r = as.matrix(r), w= w, X=X, na_rm=na.rm)
   } else{
-    block_idx<- raster::blockSize(r, n = 6, minblocks = 2, minrows = w[1])
-    out_blocks<- vector(mode = "list", length = block_idx$n)
-    block_overlap<- w[1]-1
+    f_out <- raster::rasterTmpFile()
+    out<- raster::raster(r)
+    out <- raster::writeStart(out, filename = f_out)
+    
+    block_idx<- raster::blockSize(r, n = 2, minblocks = 2, minrows = w[1])
+    block_overlap<- (w[1]-1)/2
+    nr<- nrow(r)
+    nc<- ncol(r)
     for (i in 1:block_idx$n) {
-      min_row<- block_idx$row[[i]]
-      max_row<- min(min_row + block_idx$nrows[[i]] - 1 + block_overlap, nrow(r))
-      block_extent<- raster::extent(r, min_row, max_row, 1, ncol(r))
-      curr_block<- raster::crop(r, block_extent)
-      out_blocks[[i]]<- WoodEvansHelper(r=curr_block, w=w, type=type, na.rm = na.rm)
+      min_row<- max(c(block_idx$row[[i]] - block_overlap), 1)
+      max_row<- min(c(block_idx$row[[i]] + block_idx$nrows[[i]] - 1 + block_overlap, nr))
+      curr_block <- raster::getValues(r, row = min_row, nrows = max_row-min_row+1, format="matrix")
+      
+      out_block<- C_multiscale1(r = curr_block, w= w, X=X, na_rm=na.rm)
+      #out_block is a formatted as vector where you move across rows in the raster object with each element (required for writeValues)
+      if(i==1){
+        out_block<- out_block[1:(length(out_block)-(block_overlap*nc))] #Trim bottom edge of raster
+      } else if (i != block_idx$n){
+        out_block[(1+block_overlap*nc):(length(out_block)-(block_overlap*nc))] #Trim top and bottom edge of raster
+      } else {
+        out_block<- out_block[(1+block_overlap*nc):length(out_block)] #Trim top edge of raster
+      }
+      raster::writeValues(out, v= out_block, start= block_idx$row[i])
     }
-    params<- do.call(raster::merge, out_blocks)
+    out<- raster::writeStop(out)
   }
   if(pad==TRUE){
-    params<- raster::crop(params, og_extent)
+    out<- raster::crop(out, og_extent)
   }
-  names(params)<- c("a", "b", "c", "d", "e", "f", "adjSD")
-  out<- params$adjSD
+  names(out)<- "adjSD"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
   return(out)
-  }
-  
-
-
-
+}
