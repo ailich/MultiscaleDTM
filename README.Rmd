@@ -197,6 +197,7 @@ tm_shape(adj_SD, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="Adjusted SD")
 ```
+
 ### Relative Position
 ```{r}
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE, pad = TRUE)

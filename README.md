@@ -135,8 +135,9 @@ sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE, pad=TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- --> \#\#\#
-Relative Position
+![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+### Relative Position
 
 ``` r
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE, pad = TRUE)
