@@ -1,15 +1,24 @@
 Package: MultiscaleDEM
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Calculates multi-scale geomorphometric terrain attributes from regularly gridded DEM/bathymetry rasters
+Version: 0.0.1
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+     c(
+    person(given = "Alexander",
+           family = "Ilich",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+           email = "ailich@usf.edu",
+           comment = c(ORCID = "0000-0003-1758-8499")),
+    person(given = "Vincent",
+           family = "Lecours",
+           role = c("aut")),
+    person(given = "Benjamin",
+           family = "Misiuk",
+           role = c("aut")),
+    person(given = "Steven",
+           family = "Murawski",
+           role = c("aut")))
+Description: Calculates multi-scale geomorphometric terrain attributes from regularly gridded DEM/bathymetry rasters
+License: `use_mit_license()`
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

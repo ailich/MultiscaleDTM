@@ -8,6 +8,7 @@
 #' @param metrics a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect").
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
+#' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
 #' @return a RasterStack or RasterLayer of slope and/or aspect
 #' @details When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
 #' @import raster
@@ -22,10 +23,10 @@ SlopeAspect <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c(
     stop("w must be odd")
   }
   if(!(unit %in% c("degrees", "radians"))){
-    stop("unit must be degrees or radians")
+    stop("unit must be `degrees` or `radians`")
   }
   if(!(method %in% c("queen", "rook"))){
-    stop("method must be queen or rook")
+    stop("method must be `queen` or `rook`")
   }
   
   if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
