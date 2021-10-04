@@ -150,6 +150,7 @@ for (i in 1:length(WE_list)) {
   } else if(grepl(pattern = "Curv", curr_var)){
     curr_pal<- c("blue", "gray", "red")
     style<- "cont"
+    midpoint<- 0
   } else{
     curr_pal<- colorRamps::matlab.like(100)
     midpoint<- NULL
