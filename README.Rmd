@@ -166,6 +166,7 @@ for (i in 1:length(WE_list)) {
 WE_plot<- tmap_arrange(WE_list, ncol=4)
 WE_plot
 ```
+
 ### Rugosity
 
 ```{r}
@@ -197,6 +198,7 @@ tm_shape(adj_SD, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="Adjusted SD")
 ```
+
 ### Relative Position
 ```{r}
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE, pad = TRUE)
