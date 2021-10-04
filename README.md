@@ -7,11 +7,13 @@ October 04, 2021
 
 ## THIS IS A PRE-RELEASE. IT IS STILL BEING TESTED AND FUNCTIONS MAY RECEIVE MAJOR CHANGES.
 
-DOI GOES HERE
+[![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
 
 Please cite as
 
-CITATION GOES HERE
+Ilich, Alexander R.; Lecours, Vincent; Misiuk, Benjamin; Murawski,
+Steven A.; 2021. “MultiscaleDEM”, <doi:10.5281/zenodo.5548338>.
+<https://github.com/ailich/MultiscaleDEM>.
 
 ## Purpose
 
