@@ -33,7 +33,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   y<- as.vector(y_mat)
   
   #Explanatory Variable matrix X for linear fit
-  X<- X<- cbind(1, x*y, x, y)
+  X<- cbind(1, x, y)
   
   if(pad==TRUE){
     if(na.rm==FALSE){
