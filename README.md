@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-October 04, 2021
+October 05, 2021
 
 # MultiscaleDEM
 
@@ -54,8 +54,8 @@ Then to install this package use the code
     adjusting the planar area of the focal window using multi-scale
     slope.
 
--   `SurfaceArea` - Calculate the surface area of each grid cell
-    (Jenness, 2004). Used within `SAPA`.
+    -   `SurfaceArea` - Calculate the surface area of each grid cell
+        (Jenness, 2004). Used within `SAPA`.
 
 -   `AdjSD`- This new proposed rugosity metric modifies the standard
     deviation of elevation/bathymetry to account for slope. It does this
@@ -182,6 +182,11 @@ Seabed Mapping Applications. Marine Geodesy 44, 327–385.
 
 Ritter, P., 1987. A vector-based slope and aspect generation algorithm.
 Photogrammetric Engineering and Remote Sensing 53, 1109–1111.
+
+Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying
+Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using
+Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management
+71, 1419–1426. <https://doi.org/10.2193/2005-723>
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented
 at the ESRI user conference, San Diego, CA.
