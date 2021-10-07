@@ -161,7 +161,9 @@ NumericVector C_multiscale1(NumericMatrix r, IntegerVector w, NumericMatrix X, b
   out.fill(NA_REAL);
   
   //NEED AT LEAST 3 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
-  int thresh = 3;
+  //SET THRESH TO 4 B/C WITH 3 RESIDUALS WILL ALWAYS BE 0
+  
+  int thresh = 4;
   for(int i = min_row; i< max_row; ++i) {
     for(int j = min_col; j < max_col; ++j){
       IntegerVector idx = IntegerVector(2);

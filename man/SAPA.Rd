@@ -17,7 +17,7 @@ SAPA(
 
 \item{w}{A single number or a vector of length 2 (row, column) specifying the dimensions of the rectangular window over which surface area will be summed. Window size must be an odd number. 1 refers to "native" scale and surface area and planar area will be calculated per cell (the traditional implementation).}
 
-\item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlopeAspect function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
+\item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 }

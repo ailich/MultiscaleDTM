@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-October 05, 2021
+October 07, 2021
 
 # MultiscaleDEM
 
@@ -32,10 +32,10 @@ Then to install this package use the code
 
 ### Slope, Aspect and Curvature
 
--   `SlopeAspect` calculates multi-scale slope and aspect according to
-    the Misiuk et al (2021) which is a modification of the traditional 3
-    x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et
-    al., 1981; Ritter, 1987).
+-   `SlpAsp` calculates multi-scale slope and aspect according to the
+    Misiuk et al (2021) which is a modification of the traditional 3 x 3
+    slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al.,
+    1981; Ritter, 1987).
 
 -   `WoodEvans` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
@@ -104,7 +104,7 @@ crs(r)<- CRS("+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs") #Give r a proj
 ### Slope, Aspect, and Curvature
 
 ``` r
-slp_asp<- SlopeAspect(r = r, w = c(5,5), unit = "degrees", method = "queen")
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen")
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
