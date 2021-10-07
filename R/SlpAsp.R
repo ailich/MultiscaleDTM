@@ -14,7 +14,7 @@
 #' @import raster
 #' @export
 
-SlopeAspect <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "northness", "eastness"), include_scale=FALSE, mask_aspect=TRUE){ 
+SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "northness", "eastness"), include_scale=FALSE, mask_aspect=TRUE){ 
   if(any(w < 3)){
     stop("w must be >=3 and odd")
   }

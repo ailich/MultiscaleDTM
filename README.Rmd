@@ -36,7 +36,7 @@ Then to install this package use the code `devtools::install_github("ailich/Mult
 
 ### Slope, Aspect and Curvature
 
--   `SlopeAspect` calculates multi-scale slope and aspect according to the Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987).
+-   `SlpAsp` calculates multi-scale slope and aspect according to the Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987).
 
 -   `WoodEvans` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Wood, 1996). This is similar to [r.param.scale in GRASS GIS](https://grass.osgeo.org/grass80/manuals/r.param.scale.html).
 
@@ -91,7 +91,7 @@ tm_shape(r, raster.downsample = FALSE)+
 ### Slope, Aspect, and Curvature
 
 ```{r}
-slp_asp<- SlopeAspect(r = r, w = c(5,5), unit = "degrees", method = "queen")
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen")
 ```
 
 ```{r echo=FALSE}
