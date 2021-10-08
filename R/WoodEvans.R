@@ -163,9 +163,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   
   classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
   features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
-  features<- as.factor(features)
-  suppressWarnings(levels(features)[[1]]<- data.frame(ID=1:6)) #Make sure all factor levels are present even if it wasn't in the original raster
-  levels(features)[[1]]$Feature<- c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak")
+  levels(features)<- data.frame(ID=1:6, Feature = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
   names(features)<- "Features"
   
   out<- stack(slp, eastness, northness, profc, planc, profc_max, profc_min, mean_curv, max_curv, min_curv, longc, crosc, features)
