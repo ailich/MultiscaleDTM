@@ -22,11 +22,11 @@ from regularly gridded DEM/bathymetry rasters.
 
 ## Install and Load Package
 
-If you don’t already have devtools installed, use the code
-`install.packages("devtools")`
+If you don’t already have remotes installed, use the code
+`install.packages("remotes")`
 
 Then to install this package use the code
-`devtools::install_github("ailich/MultiscaleDEM")`
+`remotes::install_github("ailich/MultiscaleDEM")`
 
 ## Main Functions
 
