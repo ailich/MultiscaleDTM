@@ -7,9 +7,9 @@
 SAPA(
   r,
   w = 1,
-  slope_layer = NULL,
   slope_correction = TRUE,
-  include_scale = FALSE
+  include_scale = FALSE,
+  slope_layer = NULL
 )
 }
 \arguments{
@@ -17,9 +17,11 @@ SAPA(
 
 \item{w}{A single number or a vector of length 2 (row, column) specifying the dimensions of the rectangular window over which surface area will be summed. Window size must be an odd number. 1 refers to "native" scale and surface area and planar area will be calculated per cell (the traditional implementation).}
 
-\item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
+\item{slope_correction}{Whether to use the arc-chord ratio to correct planar area for slope (default is TRUE)}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+
+\item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
 }
 \value{
 a RasterLayer
