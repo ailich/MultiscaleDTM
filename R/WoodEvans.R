@@ -10,7 +10,7 @@
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
-#' @param mask_aspect A logical. If TRUE (default), when slope = 0 values, aspect (and therefore northness/eastness) will be set to NA. If FALSE, aspect will to 270 degrees or 3*pi/2 radians (atan2(0,0)-pi/2+2*pi).
+#' @param mask_aspect A logical. If TRUE (default), when slope = 0 values, aspect will be set to NA and northness and eastness will both be 0. If FALSE, aspect will to 270 degrees or 3*pi/2 radians (atan2(0,0)-pi/2+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
 #' @return a RasterStack
 #' @import raster
@@ -106,14 +106,18 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   
   asp[asp < 0]<- asp[asp < 0] + 2*pi
   asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
-  if (mask_aspect){
-    asp[slp==0]<- NA_real_
-    }
-  
+
   eastness<- sin(asp)
   names(eastness)<- "QuadEastness"
   northness<- cos(asp)
   names(northness)<- "QuadNorthness"
+  
+  if (mask_aspect){
+    slp0_idx<- slp==0
+    asp[slp0_idx]<- NA_real_
+    northness[slp0_idx]<- 0
+    eastness[slp0_idx]<- 0
+  }
   
   if(unit=="degrees"){
     slp<- slp*180/pi

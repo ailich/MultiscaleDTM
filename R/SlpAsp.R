@@ -7,7 +7,7 @@
 #' @param method "queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right).
 #' @param metrics a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect").
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
-#' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
+#' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
 #' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
 #' @return a RasterStack or RasterLayer of slope and/or aspect
 #' @details When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
@@ -117,9 +117,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   names(slope.k)<- "slope"
   aspect.k<- atan2(dz.dy, -dz.dx)
   aspect.k<- raster::calc(aspect.k, fun= convert_aspect)#convert aspect to clockwise distance from North
-  if(mask_aspect){
-    aspect.k[slope.k==0]<- NA_real_ #Set aspect to undefined where slope is zero
-    }
+
   names(aspect.k)<- "aspect"
 
   northness.k<- cos(aspect.k)
@@ -127,7 +125,13 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
 
   eastness.k<- sin(aspect.k)
   names(eastness.k)<- "eastness"
-
+  
+  if(mask_aspect){
+    slp0_idx<- slope.k==0
+    aspect.k[slp0_idx]<- NA_real_ #Set aspect to undefined where slope is zero
+    northness.k[slp0_idx]<- 0 #Set northenss to 0 where slope is zero
+    eastness.k[slp0_idx]<- 0 #Set eastness to 0 where slope is zero
+  }
   
   out<- stack(slope.k, aspect.k, northness.k, eastness.k)
   if(unit=="degrees"){
