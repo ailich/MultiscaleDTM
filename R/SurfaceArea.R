@@ -5,6 +5,8 @@
 #' @return a RasterLayer
 #' @import raster
 #' @importFrom sp surfaceArea
+#' @references
+#' Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839. https://doi.org/10.2193/0091-7648(2004)032[0829:CLSAFD]2.0.CO;2
 #' @export
 
 SurfaceArea<- function(r){

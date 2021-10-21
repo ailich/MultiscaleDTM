@@ -47,3 +47,10 @@ a RasterStack
 \description{
 Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface using the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
 }
+\references{
+Albani, M., Klinkenberg, B., Andison, D.W., Kimmins, J.P., 2004. The choice of window size in approximating topographic surfaces from Digital Elevation Models. International Journal of Geographical Information Science 18, 577-593.
+
+Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
+
+Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
+}

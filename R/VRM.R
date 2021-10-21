@@ -7,6 +7,8 @@
 #' @return a RasterLayer
 #' @import raster
 #' @importFrom spatialEco vrm
+#' @references
+#' Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419-1426. https://doi.org/10.2193/2005-723
 #' @export
 
 VRM<- function(r, w, include_scale=FALSE){

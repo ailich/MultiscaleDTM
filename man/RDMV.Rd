@@ -23,3 +23,6 @@ a RasterLayer
 \description{
 Calculates Relative Difference from Mean Value (RDMV). RDMV = (focal_value - local_mean)/local_range
 }
+\references{
+Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027
+}

@@ -14,6 +14,12 @@
 #' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
 #' @return a RasterStack
 #' @import raster
+#' @references
+#' Albani, M., Klinkenberg, B., Andison, D.W., Kimmins, J.P., 2004. The choice of window size in approximating topographic surfaces from Digital Elevation Models. International Journal of Geographical Information Science 18, 577-593.
+#' 
+#' Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
+#' 
+#' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
 

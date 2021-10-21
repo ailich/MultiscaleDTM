@@ -8,6 +8,8 @@
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @return a RasterLayer
 #' @import raster
+#' @references 
+#' Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027
 #' @export
 
 RDMV<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){

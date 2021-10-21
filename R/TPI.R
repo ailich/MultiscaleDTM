@@ -8,6 +8,8 @@
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @return a RasterLayer
 #' @import raster
+#' @references 
+#' Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.
 #' @export
 #' 
 

@@ -15,3 +15,6 @@ a RasterLayer
 \description{
 Calculates surface area on a per cell basis of a DEM based on Jenness, 2004. This wrapper for sp::surfaceArea that natively works on rasters.
 }
+\references{
+Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839. https://doi.org/10.2193/0091-7648(2004)032\link{0829:CLSAFD}2.0.CO;2
+}
