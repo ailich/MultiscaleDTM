@@ -68,7 +68,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
       if(i==1){
         out_block<- out_block[1:(length(out_block)-(block_overlap*nc))] #Trim bottom edge of raster
       } else if (i != block_idx$n){
-        out_block[(1+block_overlap*nc):(length(out_block)-(block_overlap*nc))] #Trim top and bottom edge of raster
+        out_block<- out_block[(1+block_overlap*nc):(length(out_block)-(block_overlap*nc))] #Trim top and bottom edge of raster
       } else {
         out_block<- out_block[(1+block_overlap*nc):length(out_block)] #Trim top edge of raster
       }
