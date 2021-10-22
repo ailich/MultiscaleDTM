@@ -7,7 +7,6 @@
 #' @return A function that can be passed to raster::overlay to classify morphometric features
 #' @references
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
-#' @export
 
 classify_features_ff<- function(slope_tolerance, curvature_tolerance){
   #1=PLANAR
