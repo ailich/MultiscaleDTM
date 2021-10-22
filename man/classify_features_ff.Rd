@@ -17,3 +17,6 @@ A function that can be passed to raster::overlay to classify morphometric featur
 \description{
 Helper function factory to classify morphometric features according to Wood 1996 page 120
 }
+\references{
+Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
+}
