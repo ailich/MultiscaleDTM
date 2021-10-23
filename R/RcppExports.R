@@ -9,10 +9,6 @@ subset_mat_rows <- function(x, idx) {
     .Call(`_MultiscaleDEM_subset_mat_rows`, x, idx)
 }
 
-C_Check_Xmat <- function(X) {
-    .Call(`_MultiscaleDEM_C_Check_Xmat`, X)
-}
-
 C_OLS_params <- function(X, Y) {
     .Call(`_MultiscaleDEM_C_OLS_params`, X, Y)
 }
