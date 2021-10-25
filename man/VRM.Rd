@@ -17,8 +17,10 @@ VRM(r, w, include_scale = FALSE)
 a RasterLayer
 }
 \description{
-Implementation of the Sappington et al., (2007) vector ruggedness measure. This is a simple wrapper around the vrm function from spatialEco by Jeffrey S Evans, to make the syntax consistent with the rest of the MultiscaleDEM package, and is included in this package since VRM is also a rugosity measure that corrects for slope. If you use this function, please cite the spatialEco package.
+Implementation of the Sappington et al., (2007) vector ruggedness measure, modified from Evans (2021).
 }
 \references{
+Evans JS (2021). spatialEco. R package version 1.3-6, https://github.com/jeffreyevans/spatialEco.
+
 Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419-1426. https://doi.org/10.2193/2005-723
 }
