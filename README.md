@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-October 18, 2021
+October 25, 2021
 
 # MultiscaleDEM
 
@@ -26,7 +26,9 @@ If you don’t already have remotes installed, use the code
 `install.packages("remotes")`
 
 Then to install this package use the code
-`remotes::install_github("ailich/MultiscaleDEM")`
+`remotes::install_github("ailich/MultiscaleDEM")` (you may need to
+install Rtools using the instructions found here:
+<https://cran.r-project.org/bin/windows/Rtools/>)
 
 ## Main Functions
 
