@@ -180,5 +180,28 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   if(return_aspect){out<- stack(out, asp)}
   if(return_params){out<- stack(out, params)}
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
+                             
+  #identify outliers that are beyond an order of magnitude of the 99th quantile
+  quant <- raster::quantile(out, probs=c(0, 0.01, 0.99, 1))
+  
+  outliers <- names(
+    which(
+      (
+        (quant[ ,1] / quant[ ,2]) != 0 & 
+          ((quant[ ,1] / quant[ ,2]) < (1/10) | (quant[ ,1] / quant[ ,2]) > 10)
+      ) |
+        (
+          (quant[ ,3] / quant[ ,4]) != 0 & 
+            ((quant[ ,3] / quant[ ,4]) < (1/10) | (quant[ ,3] / quant[ ,4]) > 10)
+        )
+    )
+  )
+  
+  if(length(outliers != 0)){
+    warning(
+      "Extreme outliers detected in: ", paste(outliers, collapse=", ")
+    )
+  }
+                             
   return(out)
 }
