@@ -188,11 +188,11 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
     which(
       (
         (quant[ ,1] / quant[ ,2]) != 0 & 
-          ((quant[ ,1] / quant[ ,2]) < (1/10) | (quant[ ,1] / quant[ ,2]) > 10)
+          ((quant[ ,1] / quant[ ,2]) < (1/100) | (quant[ ,1] / quant[ ,2]) > 100)
       ) |
         (
           (quant[ ,3] / quant[ ,4]) != 0 & 
-            ((quant[ ,3] / quant[ ,4]) < (1/10) | (quant[ ,3] / quant[ ,4]) > 10)
+            ((quant[ ,3] / quant[ ,4]) < (1/100) | (quant[ ,3] / quant[ ,4]) > 100)
         )
     )
   )
