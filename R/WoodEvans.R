@@ -187,7 +187,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   
   outliers <- names(
     which(
-      quant[ ,1] < (quant[ ,2] - 10*iqr)  | quant[ ,4] > (quant[ ,3] + 10*iqr)
+      quant[ ,1] < (quant[ ,2] - 100*iqr)  | quant[ ,4] > (quant[ ,3] + 100*iqr)
     )
   )
   
