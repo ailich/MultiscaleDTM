@@ -26,10 +26,18 @@
 WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_tolerance=1, curvature_tolerance=0.01, na.rm=FALSE, pad=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE){
   
   #Input checks
-  if(length(w==1)){
+  if(length(w)==1){
     w<- rep(w,2)}
-  if(any(w<3) | any(0 == (w %% 2))){
-    stop("Error: w must be odd and greater than or equal to 3")}
+  if(any(0 == (w %% 2))){
+    stop("Error: w must be odd")}
+  if(length(w) > 2){
+    stop("Specified window exceeds 2 dimensions")}
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
+  if(prod(w) < 6){
+    stop("Error: Window size must have at least 6 cells to fit surface")
+    }
   if (!any(unit==c("degrees", "radians"))){
     stop("unit must be 'degrees' or 'radians'")
   }

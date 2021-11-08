@@ -1,6 +1,6 @@
 Package: MultiscaleDEM
 Title: Calculates multi-scale geomorphometric terrain attributes from regularly gridded DEM/bathymetry rasters
-Version: 0.0.3.3
+Version: 0.0.3.4
 Authors@R: 
      c(
     person(given = "Alexander",
