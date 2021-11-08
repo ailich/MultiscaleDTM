@@ -16,7 +16,7 @@ authors:
     family-names: Misiuk
   - given-names: Steven A.
     family-names: Murawski
-doi: value: 10.5281/zenodo.5548338
+doi: 10.5281/zenodo.5548338
 url: 'https://github.com/ailich/MultiscaleDEM'
 license: MIT
 date-released: '2021-10-04'
