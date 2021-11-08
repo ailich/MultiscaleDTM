@@ -22,12 +22,14 @@
 SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_layer= NULL){
   
   if(length(w)==1){w<- rep(w,2)}
-  if(any(w %% 2 != 1)){
+  if(length(w) > 2){
+    stop( "Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
     stop("w must be odd")
   }
-  # if(any(w == 1) & any(w != 1)){
-  #     stop("w cannot be 1 in only one direction")
-  #   }
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
   if(all(w==c(1,1))){
     is_native<- TRUE} else{
       is_native<- FALSE} #Indicate whether SAPA is calculated at native scale

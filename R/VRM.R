@@ -15,10 +15,16 @@
 VRM<- function(r, w, include_scale=FALSE){
   if (class(r)[1] != "RasterLayer") 
     stop("r must be a raster object")
-  if(length(w) > 2){
-    stop( "Specified window exceeds 2 dimensions")}
   if(length(w)==1){
     w<- rep(w,2)}
+  if(length(w) > 2){
+    stop( "Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
+    stop("Error: w must be odd")}
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
+  
   scale.factor <- round(w[1] * w[2], 0)
   sa <- raster::terrain(r, opt=c("slope", "aspect"), unit="radians", 
                         neighbors=8) 					
@@ -27,14 +33,14 @@ VRM<- function(r, w, include_scale=FALSE){
   sin.asp <- raster::calc(sa[["aspect"]], fun=sin) * sin.slp      # yRaster
   cos.asp <- raster::calc(sa[["aspect"]], fun=cos) * sin.slp      # xRaster  
   f = matrix(1,w[1],w[2]) 
-  x.sum <- raster::focal(sin.asp, w = f, fun=sum) 
-  y.sum <- raster::focal(cos.asp, w = f, fun=sum) 
-  z.sum <- raster::focal(cos.slp, w = f, fun=sum) 
+  x.sum <- raster::focal(sin.asp, w = f, fun=sum, na.rm=FALSE) #Maybe allow na.rm to be either TRUE or FALSE
+  y.sum <- raster::focal(cos.asp, w = f, fun=sum, na.rm=FALSE) 
+  z.sum <- raster::focal(cos.slp, w = f, fun=sum, na.rm=FALSE) 
   vrm.fun <- function(x, y, z) { 
     sqrt( (x^2) + (y^2) + (z^2) ) 
   }
   res_vect <- raster::overlay(x.sum, y.sum, z.sum, fun=vrm.fun) #resultant vector
-  out<- 1 - (res_vect / scale.factor)
+  out<- 1 - (res_vect / scale.factor) #If include na.rm option, adjust scale.factor to be number of non-NA cells.
   names(out)<- "vrm"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
   return(out)

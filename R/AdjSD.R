@@ -12,10 +12,18 @@
 
 AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   #Input checks
-  if(length(w==1)){
+  if(length(w)==1){
     w<- rep(w,2)}
-  if(any(w<3) | any(0 == (w %% 2))){
-    stop("Error: w must be odd and greater than or equal to 3")}
+  if(length(w) > 2){
+    stop( "Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
+    stop("Error: w must be odd")}
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
+  if(prod(w) < 4){
+    stop("Error: Window size must have at least 4 cells to fit surface and have residuals")
+  }
   
   #Define local coordinate system of window
   x_mat<- matrix(res(r)[2], nrow = w[1], ncol=w[2])

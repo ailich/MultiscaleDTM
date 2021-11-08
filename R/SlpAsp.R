@@ -23,12 +23,14 @@
 #' @export
 
 SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "northness", "eastness"), include_scale=FALSE, mask_aspect=TRUE){ 
-  if(any(w < 3)){
-    stop("w must be >=3 and odd")
-  }
   if(length(w)==1){w<- rep(w,2)}
-  if(any(w %% 2 != 1)){
+  if(length(w) > 2){
+    stop( "Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
     stop("w must be odd")
+  }
+  if(any(w<3)){
+    stop("Error: w must be greater or equal to 3")
   }
   if(!(unit %in% c("degrees", "radians"))){
     stop("unit must be `degrees` or `radians`")
@@ -64,7 +66,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     xr.mid <- matrix(c(rep(0, times=kx-1), 2), ncol=kx, nrow=1)
     
     xl.mat <- rbind(xl.end, x.mids, xl.mid, x.mids, xl.end)
-    xr.mat <- rbind(xr.end, x.mids, xr.mid, x.mids, xr.end)
+    xr.mat <- rbind(xr.end, x.mids, xr.mid, x.mids, xr.end) #When upgrade to terra have NA weights instead of zero in *.mat so that you don't get NA if a cell in window that isn't used in calculation is NA
     
     #create matrix weights for y-component
     yt.end <- matrix(c(1, rep(0, times=ky-1)), ncol=1, nrow=ky)
@@ -79,11 +81,11 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     yb.mat <- cbind(yb.end, y.mids, yb.mid, y.mids, yb.end)
     
     #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- focal(r, xl.mat, fun=sum)
-    dz.dx.r <- focal(r, xr.mat, fun=sum)
+    dz.dx.l <- focal(r, xl.mat, fun=sum, na.rm=FALSE)
+    dz.dx.r <- focal(r, xr.mat, fun=sum, na.rm=FALSE)
     
-    dz.dy.t <- focal(r, yt.mat, fun=sum)
-    dz.dy.b <- focal(r, yb.mat, fun=sum)
+    dz.dy.t <- focal(r, yt.mat, fun=sum, na.rm=FALSE)
+    dz.dy.b <- focal(r, yb.mat, fun=sum, na.rm=FALSE)
     
     #calculate dz/dx and dz/dy using the components. 8*j is the weighted run, or distance between ends: 4*j*2, or (4 values in each row)*(length of the side)*(2 sides)
     dz.dx <- (dz.dx.r-dz.dx.l)/(8*jx*res(r)[1])
@@ -111,11 +113,11 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     yb.mat <- cbind(y.ends, yb.mid, y.ends)
     
     #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- focal(r, xl.mat, fun=sum)
-    dz.dx.r <- focal(r, xr.mat, fun=sum)
+    dz.dx.l <- focal(r, xl.mat, fun=sum, na.rm=FALSE)
+    dz.dx.r <- focal(r, xr.mat, fun=sum, na.rm=FALSE)
     
-    dz.dy.t <- focal(r, yt.mat, fun=sum)
-    dz.dy.b <- focal(r, yb.mat, fun=sum)
+    dz.dy.t <- focal(r, yt.mat, fun=sum, na.rm=FALSE)
+    dz.dy.b <- focal(r, yb.mat, fun=sum, na.rm=FALSE)
     
     #calculate dz/dx and dz/dy using the components. 2*j is the run: (2 sides)*(length of each side)
     dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*res(r)[1])

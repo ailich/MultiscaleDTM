@@ -14,8 +14,13 @@
 
 RDMV<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   if(length(w)==1){w<- rep(w, 2)}
-  if(any(w<3) | any(0 == (w %% 2))){
-    stop("Error: w must be odd and greater than or equal to 3")}
+  if(length(w) > 2){
+    stop( "Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
+    stop("Error: w must be odd")}
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
   
   w_mat <- matrix(1, nrow=w[1], ncol=w[2])
   
