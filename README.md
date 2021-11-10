@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-November 08, 2021
+November 10, 2021
 
 # MultiscaleDEM
 
@@ -41,8 +41,8 @@ install Rtools using the instructions found here:
 
 -   `WoodEvans` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
-    ordinary least squares (Wood, 1996). This is similar to
-    [r.param.scale in GRASS
+    ordinary least squares (Evans, 1980; Wood, 1996; Wilson et
+    al. 2007). This is similar to [r.param.scale in GRASS
     GIS](https://grass.osgeo.org/grass80/manuals/r.param.scale.html).
 
 ### Rugosity
@@ -160,6 +160,9 @@ Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for
 quantifying three-dimensional landscape structural complexity. Landscape
 Ecol 30, 181–192. <https://doi.org/10.1007/s10980-014-0118-8>
 
+Evans, I.S., 1980. An integrated system of terrain analysis and slope
+mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
+
 Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS
 data and DMA topographic data for forest cover type mapping (No. LARS
 Technical Report 062879). Laboratory for Applications of Remote Sensing,
@@ -192,6 +195,11 @@ Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented
 at the ESRI user conference, San Diego, CA.
+
+Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J.,
+2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for
+Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35.
+<https://doi.org/10.1080/01490410701295962>
 
 Wood, J., 1996. The geomorphological characterisation of digital
 elevation models (Ph.D.). University of Leicester.

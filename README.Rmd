@@ -38,7 +38,7 @@ Then to install this package use the code `remotes::install_github("ailich/Multi
 
 -   `SlpAsp` calculates multi-scale slope and aspect according to the Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987).
 
--   `WoodEvans` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Wood, 1996). This is similar to [r.param.scale in GRASS GIS](https://grass.osgeo.org/grass80/manuals/r.param.scale.html).
+-   `WoodEvans` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Evans, 1980; Wood, 1996; Wilson et al. 2007). This is similar to [r.param.scale in GRASS GIS](https://grass.osgeo.org/grass80/manuals/r.param.scale.html).
 
 ### Rugosity
 
@@ -163,7 +163,7 @@ for (i in 1:length(WE_list)) {
       main.title.position = "center",
       main.title.size=0.75)
 }
-WE_plot<- tmap_arrange(WE_list, ncol=4)
+WE_plot<- tmap_arrange(WE_list, ncol=3)
 WE_plot
 ```
 
@@ -223,6 +223,8 @@ tm_shape(rdmv, raster.downsample = FALSE)+
 
 Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for quantifying three-dimensional landscape structural complexity. Landscape Ecol 30, 181–192. https://doi.org/10.1007/s10980-014-0118-8
 
+Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
+
 Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS data and DMA topographic data for forest cover type mapping (No. LARS Technical Report 062879). Laboratory for Applications of Remote Sensing, Purdue University, West Lafayette, Indiana.
 
 Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of the IEEE 69, 14–47.
@@ -238,6 +240,8 @@ Ritter, P., 1987. A vector-based slope and aspect generation algorithm. Photogra
 Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419–1426. https://doi.org/10.2193/2005-723
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.
+
+Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
 
 Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 
