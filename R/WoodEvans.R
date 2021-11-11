@@ -1,7 +1,7 @@
 #' Calculates multiscale slope, aspect, curvature, and morphometric features
 #'
 #' Calculates multiscale slope, aspect, curvature/convexity, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood 1996).
-#' @param r DEM as a raster layer
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians"
 #' @param metrics a character vector specifying which terrain attributes to return. The default is to return all available metrics c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). slope, aspect, eastness, and northness are preceded with a q to differentiate them from the measures calculated by SlpAsp where the 'q' indicates that a quadratic surface was used to calculate them. 'profc' is the profile convexity, 'planc' is the plan convexity, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' is morphometric features. See details for more information.
@@ -30,6 +30,12 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   
   all_metrics<- c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features")
   #Input checks
+  if(raster::isLonLat(r)){
+    stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
+  }
+  if(suppressWarnings(raster::couldBeLonLat(r))){
+    warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
+  }
   if(length(w)==1){
     w<- rep(w,2)}
   if(any(0 == (w %% 2))){

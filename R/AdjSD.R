@@ -1,7 +1,7 @@
 #' Calculates standard deviation of bathymetry (a measure of rugosity) adjusted for slope
 #'
 #' Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated.
-#' @param r DEM as a raster layer
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
@@ -12,6 +12,12 @@
 
 AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   #Input checks
+  if(raster::isLonLat(r)){
+    stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
+  }
+  if(suppressWarnings(raster::couldBeLonLat(r))){
+    warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
+  }
   if(length(w)==1){
     w<- rep(w,2)}
   if(length(w) > 2){

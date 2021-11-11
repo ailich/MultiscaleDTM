@@ -13,7 +13,7 @@ SAPA(
 )
 }
 \arguments{
-\item{r}{DEM as a raster layer}
+\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
 
 \item{w}{A single number or a vector of length 2 (row, column) specifying the dimensions of the rectangular window over which surface area will be summed. Window size must be an odd number. 1 refers to "native" scale and surface area and planar area will be calculated per cell (the traditional implementation).}
 

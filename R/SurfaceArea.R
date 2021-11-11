@@ -1,7 +1,7 @@
 #' Calculates surface area of a DEM
 #'
 #' Calculates surface area on a per cell basis of a DEM based on Jenness, 2004. This wrapper for sp::surfaceArea that natively works on rasters.
-#' @param r DEM as a raster layer
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
 #' @return a RasterLayer
 #' @import raster
 #' @importFrom sp surfaceArea
@@ -10,6 +10,13 @@
 #' @export
 
 SurfaceArea<- function(r){
+  # Input Checks
+  if(raster::isLonLat(r)){
+    stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
+  }
+  if(suppressWarnings(raster::couldBeLonLat(r))){
+    warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
+  }
   run_in_blocks<- !raster::canProcessInMemory(r, n = 2)
   x_res<- res(r)[1]
   y_res<- res(r)[2]
