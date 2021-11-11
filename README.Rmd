@@ -62,20 +62,20 @@ Then to install this package use the code `remotes::install_github("ailich/Multi
 
 In this tutorial we will calculate various terrain attributes using a 5 x 5 cell rectangular window. Any rectangular odd numbered window size however could be used. Window sizes are specified with a vector of length 2 of `c(n_rows, n_cols)`. If a single number is provided it will be used for both the number of rows and columns.
 
-Load packages
+**Load packages**
 
 ```{r message=FALSE}
 library(raster) #Load raster package
 library(MultiscaleDEM) #Load MultiscaleDEM package
 ```
 
-See package help page
+**See package help page**
 
 ```{r eval=FALSE}
 help(package="MultiscaleDEM")
 ```
 
-Read in Data
+**Read in Data**
 ```{r}
 r<- raster(volcano, xmn=0, xmx=ncol(volcano)*10, ymn=0, ymx=nrow(volcano)*10) #Use built in volcano data set
 crs(r)<- CRS("+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs") #Give r a projection. This is not the right projection, but some functions currently throw an error if there is no crs.

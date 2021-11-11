@@ -81,20 +81,20 @@ however could be used. Window sizes are specified with a vector of
 length 2 of `c(n_rows, n_cols)`. If a single number is provided it will
 be used for both the number of rows and columns.
 
-Load packages
+**Load packages**
 
 ``` r
 library(raster) #Load raster package
 library(MultiscaleDEM) #Load MultiscaleDEM package
 ```
 
-See package help page
+**See package help page**
 
 ``` r
 help(package="MultiscaleDEM")
 ```
 
-Read in Data
+**Read in Data**
 
 ``` r
 r<- raster(volcano, xmn=0, xmx=ncol(volcano)*10, ymn=0, ymx=nrow(volcano)*10) #Use built in volcano data set
