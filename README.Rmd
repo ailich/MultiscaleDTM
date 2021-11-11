@@ -91,7 +91,7 @@ tm_shape(r, raster.downsample = FALSE)+
 ### Slope, Aspect, and Curvature
 
 ```{r}
-slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen")
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 ```
 
 ```{r echo=FALSE}
@@ -99,7 +99,7 @@ slp_asp_list<- vector(mode="list", length = nlayers(slp_asp))
 for (i in 1:length(slp_asp_list)) {
   curr_var<- names(slp_asp)[i]
   
-  if (grepl(pattern = "(^northness)|(eastness)", curr_var)) {
+  if (grepl(pattern = "(^northness)|(^eastness)", curr_var)) {
     breaks<- c(-1,0,1)
     midpoint<- 0
     curr_pal<- c("blue", "gray", "red")
@@ -124,7 +124,8 @@ slp_asp_plot
 ```
 
 ```{r}
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", return_aspect = TRUE, na.rm = TRUE, pad = TRUE)
+WE<- WoodEvans(r, w = c(5,5), unit = "degrees", c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
+    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE, pad = TRUE)
 ```
 
 ```{r echo= FALSE}
@@ -132,24 +133,25 @@ WE_list<- vector(mode="list", length = nlayers(WE))
 for (i in 1:length(WE_list)) {
   curr_var<- names(WE)[i]
   
-  if (grepl(pattern = "(^Northness)|(Eastness)", curr_var)) {
+  if (grepl(pattern = "(northness)|(eastness)", curr_var)) {
     breaks<- c(-1,0,1)
     midpoint<- 0
     curr_pal<- c("blue", "gray", "red")
     style<- "cont"
-  } else if (grepl(pattern = "Aspect", curr_var)) {
+  } else if (grepl(pattern = "aspect", curr_var)) {
     curr_pal<-c("blue", "purple", "red", "orange", "yellow", "green", "cyan", "blue")
     breaks<- c(0,90,180,270,360)
     midpoint<- 180
     style<- "cont"
-    } else if(grepl(pattern = "^Features", curr_var)) {
+    } else if(grepl(pattern = "^features", curr_var)) {
     curr_pal<- c("gray", "black", "blue", "green", "yellow", "red")
     midpoint<- NULL
     breaks<- NULL
     style<- "cat"
-  } else if(grepl(pattern = "Curv", curr_var)){
+  } else if(grepl(pattern = "c$", curr_var)){
     curr_pal<- c("blue", "gray", "red")
     style<- "cont"
+    breaks<- NULL
     midpoint<- 0
   } else{
     curr_pal<- colorRamps::matlab.like(100)

@@ -5,7 +5,7 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
 #' @param method "queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right).
-#' @param metrics a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect").
+#' @param metrics a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
 #' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
@@ -22,7 +22,7 @@
 #' @import raster
 #' @export
 
-SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "northness", "eastness"), include_scale=FALSE, mask_aspect=TRUE){ 
+SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), include_scale=FALSE, mask_aspect=TRUE){ 
   if(length(w)==1){w<- rep(w,2)}
   if(length(w) > 2){
     stop("Specified window exceeds 2 dimensions")}
@@ -41,7 +41,14 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   
   if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
     stop("metrics must be 'slope', 'aspect', 'northness', and/or 'eastness'")
-    }
+  }
+  needed_metrics<- metrics
+  if(any(c("eastness", "northness") %in% needed_metrics) & !("aspect" %in% needed_metrics)){
+    needed_metrics<- c(needed_metrics, "aspect")
+  }
+  if(mask_aspect & ("aspect" %in% needed_metrics)){
+    needed_metrics<- c(needed_metrics, "slope")
+  }
   
   #k is size of window in a given direction
   kx<- w[2]
@@ -123,33 +130,55 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*res(r)[1])
     dz.dy <- (dz.dy.b-dz.dy.t)/(2*jy*res(r)[2])
   }
-  slope.k<- (atan(sqrt((dz.dx^2)+(dz.dy^2))))
-  names(slope.k)<- "slope"
-  aspect.k<- atan2(dz.dy, -dz.dx)
-  aspect.k<- raster::calc(aspect.k, fun= convert_aspect)#convert aspect to clockwise distance from North
-
-  names(aspect.k)<- "aspect"
-
-  northness.k<- cos(aspect.k)
-  names(northness.k)<- "northness"
-
-  eastness.k<- sin(aspect.k)
-  names(eastness.k)<- "eastness"
   
-  if(mask_aspect){
-    slp0_idx<- slope.k==0
-    aspect.k[slp0_idx]<- NA_real_ #Set aspect to undefined where slope is zero
-    northness.k[slp0_idx]<- 0 #Set northenss to 0 where slope is zero
-    eastness.k[slp0_idx]<- 0 #Set eastness to 0 where slope is zero
+  out<- stack() #initialize output
+  
+  if("slope" %in% needed_metrics){
+    slope.k<- (atan(sqrt((dz.dx^2)+(dz.dy^2))))
+    if(mask_aspect){
+      slp0_idx<- slope.k==0
+      }
+    if(unit=="degrees" & ("slope" %in% metrics)){
+      slope.k<- slope.k * (180/pi)
+      }
+    
+    names(slope.k)<- "slope"
+    out<- stack(out, slope.k)
   }
   
-  out<- stack(slope.k, aspect.k, northness.k, eastness.k)
-  if(unit=="degrees"){
-    out$slope<- out$slope * (180/pi)
-    out$aspect<- out$aspect * (180/pi)
-  }
+  if("aspect" %in% needed_metrics){
+    aspect.k<- atan2(dz.dy, -dz.dx)
+    aspect.k<- raster::calc(aspect.k, fun= convert_aspect) #convert aspect to clockwise distance from North
+    
+    if("eastness" %in% needed_metrics){
+      eastness.k<- sin(aspect.k)
+      if(mask_aspect){
+        eastness.k[slp0_idx]<- 0 #Set eastness to 0 where slope is zero
+      }
+      names(eastness.k)<- "eastness"
+      out<- stack(out, eastness.k)
+    }
+    
+    if("northness" %in% needed_metrics){
+      northness.k<- cos(aspect.k)
+      if(mask_aspect){
+        northness.k[slp0_idx]<- 0 #Set northenss to 0 where slope is zero
+      }
+      names(northness.k)<- "northness"
+      out<- stack(out, northness.k)
+    }
+    
+    if(mask_aspect){
+      aspect.k[slp0_idx]<- NA_real_ #Set aspect to undefined where slope is zero
+    }
+    if(unit=="degrees"){
+      aspect.k<- aspect.k * (180/pi)
+      }
+    names(aspect.k)<- "aspect"
+    out<- stack(out, aspect.k)
+    }
   
-  out<- raster::subset(out, metrics, drop=TRUE)
+  out<- raster::subset(out, metrics, drop=TRUE) #Subset needed metrics to requested metrics in proper order
   if(include_scale){names(out)<- paste0(names(out), "_", w[1], "x", w[2])}
   return(out)
 }

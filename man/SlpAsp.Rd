@@ -9,7 +9,7 @@ SlpAsp(
   w = c(3, 3),
   unit = "degrees",
   method = "queen",
-  metrics = c("slope", "aspect", "northness", "eastness"),
+  metrics = c("slope", "aspect", "eastness", "northness"),
   include_scale = FALSE,
   mask_aspect = TRUE
 )
@@ -23,7 +23,7 @@ SlpAsp(
 
 \item{method}{"queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right).}
 
-\item{metrics}{a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect").}
+\item{metrics}{a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 

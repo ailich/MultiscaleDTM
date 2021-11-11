@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-November 10, 2021
+November 11, 2021
 
 # MultiscaleDEM
 
@@ -106,13 +106,14 @@ crs(r)<- CRS("+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs") #Give r a proj
 ### Slope, Aspect, and Curvature
 
 ``` r
-slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen")
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", return_aspect = TRUE, na.rm = TRUE, pad = TRUE)
+WE<- WoodEvans(r, w = c(5,5), unit = "degrees", c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
+    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE, pad = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
