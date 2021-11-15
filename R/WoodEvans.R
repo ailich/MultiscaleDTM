@@ -250,7 +250,12 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
                              
   #identify extreme outliers that are less than Q1% - 100*IQR or greater than Q99% + 100*IQR, where IQR is the range of 1-99% quantiles
-  quant <- raster::quantile(out[[c(1, 5:11)]], probs=c(0, 0.01, 0.99, 1))
+  quant <- raster::quantile(
+    out[[c(
+      which(!raster::is.factor(out))
+    )]], 
+    probs=c(0, 0.01, 0.99, 1)
+  )
   iqr <- quant[ ,3] - quant[ ,2]
   
   outliers <- names(
