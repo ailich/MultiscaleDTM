@@ -256,6 +256,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
     )]], 
     probs=c(0, 0.01, 0.99, 1)
   )
+                                
   iqr <- quant[ ,3] - quant[ ,2]
   
   outliers <- names(
