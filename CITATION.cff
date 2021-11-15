@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+title: ' MultiscaleDEM'
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Alexander R.
+    family-names: Ilich
+    email: ailich@usf.edu
+    affiliation: University of South Florida
+    orcid: 'https://orcid.org/0000-0003-1758-8499'
+  - family-names: Lecours
+    given-names: Vincent
+  - given-names: Benjamin
+    family-names: Misiuk
+  - given-names: Steven A.
+    family-names: Murawski
+doi: 10.5281/zenodo.5548338
+url: 'https://github.com/ailich/MultiscaleDEM'
+license: MIT
+date-released: '2021-10-04'

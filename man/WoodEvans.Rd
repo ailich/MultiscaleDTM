@@ -8,9 +8,10 @@ WoodEvans(
   r,
   w = c(3, 3),
   unit = "degrees",
-  return_aspect = FALSE,
+  metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
+    "meanc", "maxc", "minc", "longc", "crosc", "features"),
   slope_tolerance = 1,
-  curvature_tolerance = 0.01,
+  curvature_tolerance = 1e-04,
   na.rm = FALSE,
   pad = FALSE,
   include_scale = FALSE,
@@ -19,17 +20,17 @@ WoodEvans(
 )
 }
 \arguments{
-\item{r}{DEM as a raster layer}
+\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
 \item{unit}{"degrees" or "radians"}
 
-\item{return_aspect}{logical indicating whether or not to return aspect in addition to Northness and Eastness (default is FALSE)}
+\item{metrics}{a character vector specifying which terrain attributes to return. The default is to return all available metrics c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). slope, aspect, eastness, and northness are preceded with a q to differentiate them from the measures calculated by SlpAsp where the 'q' indicates that a quadratic surface was used to calculate them. 'profc' is the profile convexity, 'planc' is the plan convexity, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' is morphometric features. See details for more information.}
 
 \item{slope_tolerance}{Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.}
 
-\item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.}
+\item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.}
 
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
@@ -45,10 +46,15 @@ WoodEvans(
 a RasterStack
 }
 \description{
-Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface using the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
+Calculates multiscale slope, aspect, curvature/convexity, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood 1996).
+}
+\details{
+This function calculates slope, aspect, eastness, northness, profile curvature, planform curvature, mean curvature, maximum curvature, minimum curvature, longitudinal curvature, cross-sectional curvature, and morphometric features using a quadratic fit to the surface using the equation Z = aX^2+bY^2+cXY+dX+eY+f where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Wood 1996). This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect. Additionally, mean curvature is included which is not available in r.param.scale. All formulas with the exception of mean curvature are from Wood 1996. Mean curvature is calculated according to Wilson et al 2007. All multiplicative constants were removed from curvature formulas so that they are all reported in units of 1/length (Minár et al, 2020). Naming convention for curvatures is not consistent across the literature however Minár et al (2020) has suggested a framework for this. In this framework the reported measures of curvature translate as profile convexity = (kn)s), plan convexity = (kp)c), mean curvature = z''mean, maximum curvature = z''min, minimum curvature = z''max, longitudinal curvature = zss, and cross-sectional curvature = zcc. For curvatures, we have adopted a geographic sign convention where convex is positive and concave is negative (i.e. hills are considered convex with positive curvature values)(Minár et al, 2020; Wood 1996).
 }
 \references{
-Albani, M., Klinkenberg, B., Andison, D.W., Kimmins, J.P., 2004. The choice of window size in approximating topographic surfaces from Digital Elevation Models. International Journal of Geographical Information Science 18, 577-593.
+Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
+
+Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
 
 Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
 

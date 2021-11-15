@@ -7,7 +7,7 @@
 SurfaceArea(r)
 }
 \arguments{
-\item{r}{DEM as a raster layer}
+\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
 }
 \value{
 a RasterLayer

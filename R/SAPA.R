@@ -1,7 +1,7 @@
 #' Calculates surface area to planar area rugosity
 #'
 #' Calculates surface area (Jenness, 2004) to planar area rugosity and by default corrects planar area for slope using the arc-chord ratio (Du Preez, 2015). Additionally, the method has been modified to allow for calculations at multiple different window sizes (see details).
-#' @param r DEM as a raster layer
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
 #' @param w A single number or a vector of length 2 (row, column) specifying the dimensions of the rectangular window over which surface area will be summed. Window size must be an odd number. 1 refers to "native" scale and surface area and planar area will be calculated per cell (the traditional implementation).
 #' @param slope_correction Whether to use the arc-chord ratio to correct planar area for slope (default is TRUE)
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
@@ -20,14 +20,22 @@
 #' @export
 
 SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_layer= NULL){
+  if(raster::isLonLat(r)){
+    stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
+  }
+  if(suppressWarnings(raster::couldBeLonLat(r))){
+    warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
+  }
   
   if(length(w)==1){w<- rep(w,2)}
-  if(any(w %% 2 != 1)){
+  if(length(w) > 2){
+    stop("Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
     stop("w must be odd")
   }
-  # if(any(w == 1) & any(w != 1)){
-  #     stop("w cannot be 1 in only one direction")
-  #   }
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
   if(all(w==c(1,1))){
     is_native<- TRUE} else{
       is_native<- FALSE} #Indicate whether SAPA is calculated at native scale

@@ -89,11 +89,10 @@ NumericMatrix C_multiscale2(NumericMatrix r, IntegerVector w, NumericMatrix X, b
   
   //Z = aX2 + bY2 + cXY + dX + eY + f
   
-  NumericMatrix out = NumericMatrix(n_elem, 7);
-  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f", "mask");
+  NumericMatrix out = NumericMatrix(n_elem, 6);
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f");
   out.fill(NA_REAL);
-  out(_,6)=rep(0,100); //initialize mask with 0's
-  
+
   //NEED AT LEAST 6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
   int thresh = 6;
   for(int i = min_row; i< max_row; ++i) {
@@ -121,7 +120,6 @@ NumericMatrix C_multiscale2(NumericMatrix r, IntegerVector w, NumericMatrix X, b
           out(curr_elem_idx, 2) = 0; //c
           out(curr_elem_idx, 3) = 0; //d
           out(curr_elem_idx, 4) = 0; //e
-          out(curr_elem_idx,6) = 1; //mask
           } else{
             NumericVector params = C_OLS_params(as<arma::mat>(X_trim), as<arma::mat>(Z_trim));
             out(curr_elem_idx, 5) =  params[0]; //f

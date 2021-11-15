@@ -9,13 +9,13 @@ SlpAsp(
   w = c(3, 3),
   unit = "degrees",
   method = "queen",
-  metrics = c("slope", "aspect", "northness", "eastness"),
+  metrics = c("slope", "aspect", "eastness", "northness"),
   include_scale = FALSE,
   mask_aspect = TRUE
 )
 }
 \arguments{
-\item{r}{DEM as a raster layer}
+\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
 
@@ -23,7 +23,7 @@ SlpAsp(
 
 \item{method}{"queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right).}
 
-\item{metrics}{a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect").}
+\item{metrics}{a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 

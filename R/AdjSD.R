@@ -1,7 +1,7 @@
 #' Calculates standard deviation of bathymetry (a measure of rugosity) adjusted for slope
 #'
 #' Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated.
-#' @param r DEM as a raster layer
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
@@ -12,10 +12,24 @@
 
 AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   #Input checks
-  if(length(w==1)){
+  if(raster::isLonLat(r)){
+    stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
+  }
+  if(suppressWarnings(raster::couldBeLonLat(r))){
+    warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
+  }
+  if(length(w)==1){
     w<- rep(w,2)}
-  if(any(w<3) | any(0 == (w %% 2))){
-    stop("Error: w must be odd and greater than or equal to 3")}
+  if(length(w) > 2){
+    stop("Specified window exceeds 2 dimensions")}
+  if(any(0 == (w %% 2))){
+    stop("Error: w must be odd")}
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
+  if(prod(w) < 4){
+    stop("Error: Window size must have at least 4 cells to fit surface and have residuals")
+  }
   
   #Define local coordinate system of window
   x_mat<- matrix(res(r)[2], nrow = w[1], ncol=w[2])

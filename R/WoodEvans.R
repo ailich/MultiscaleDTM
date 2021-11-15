@@ -1,21 +1,24 @@
 #' Calculates multiscale slope, aspect, curvature, and morphometric features
 #'
-#' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface using the Wood/Evans method according to the equations of Wood 1996. This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect.  Additionally, compared to r.param.scale, curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004).
-#' @param r DEM as a raster layer
+#' Calculates multiscale slope, aspect, curvature/convexity, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood 1996).
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians"
-#' @param return_aspect logical indicating whether or not to return aspect in addition to Northness and Eastness (default is FALSE)
+#' @param metrics a character vector specifying which terrain attributes to return. The default is to return all available metrics c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). slope, aspect, eastness, and northness are preceded with a q to differentiate them from the measures calculated by SlpAsp where the 'q' indicates that a quadratic surface was used to calculate them. 'profc' is the profile convexity, 'planc' is the plan convexity, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' is morphometric features. See details for more information.
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.
-#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.
+#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. If TRUE (default), when slope = 0 values, aspect will be set to NA and northness and eastness will both be 0. If FALSE, aspect will to 270 degrees or 3*pi/2 radians (atan2(0,0)-pi/2+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
 #' @return a RasterStack
+#' @details This function calculates slope, aspect, eastness, northness, profile curvature, planform curvature, mean curvature, maximum curvature, minimum curvature, longitudinal curvature, cross-sectional curvature, and morphometric features using a quadratic fit to the surface using the equation Z = aX^2+bY^2+cXY+dX+eY+f where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Wood 1996). This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect. Additionally, mean curvature is included which is not available in r.param.scale. All formulas with the exception of mean curvature are from Wood 1996. Mean curvature is calculated according to Wilson et al 2007. All multiplicative constants were removed from curvature formulas so that they are all reported in units of 1/length (Minár et al, 2020). Naming convention for curvatures is not consistent across the literature however Minár et al (2020) has suggested a framework for this. In this framework the reported measures of curvature translate as profile convexity = (kn)s), plan convexity = (kp)c), mean curvature = z''mean, maximum curvature = z''min, minimum curvature = z''max, longitudinal curvature = zss, and cross-sectional curvature = zcc. For curvatures, we have adopted a geographic sign convention where convex is positive and concave is negative (i.e. hills are considered convex with positive curvature values)(Minár et al, 2020; Wood 1996).
 #' @import raster
 #' @references
-#' Albani, M., Klinkenberg, B., Andison, D.W., Kimmins, J.P., 2004. The choice of window size in approximating topographic surfaces from Digital Elevation Models. International Journal of Geographical Information Science 18, 577-593.
+#' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
+#' 
+#' Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
 #' 
 #' Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
 #' 
@@ -23,15 +26,46 @@
 #' @export
 
 
-WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_tolerance=1, curvature_tolerance=0.01, na.rm=FALSE, pad=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE){
+WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, pad=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE){
   
+  all_metrics<- c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features")
   #Input checks
-  if(length(w==1)){
+  if(raster::isLonLat(r)){
+    stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
+  }
+  if(suppressWarnings(raster::couldBeLonLat(r))){
+    warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
+  }
+  if(length(w)==1){
     w<- rep(w,2)}
-  if(any(w<3) | any(0 == (w %% 2))){
-    stop("Error: w must be odd and greater than or equal to 3")}
+  if(any(0 == (w %% 2))){
+    stop("Error: w must be odd")}
+  if(length(w) > 2){
+    stop("Specified window exceeds 2 dimensions")}
+  if(all(w<3)){
+    stop("Error: w must be greater or equal to 3 in at least one dimension")
+  }
+  if(prod(w) < 6){
+    stop("Error: Window size must have at least 6 cells to fit surface")
+    }
   if (!any(unit==c("degrees", "radians"))){
     stop("unit must be 'degrees' or 'radians'")
+  }
+  if (any(!(metrics %in% all_metrics))){
+    stop("Error: Invlaid metric. Valid metrics include 'qslope', 'qaspect', 'qeastness', 'qnorthness', 'profc', 'planc', 'meanc', 'maxc', 'minc', 'longc', 'crosc', and `features`.")
+    }
+  
+  needed_metrics<- metrics
+  
+  if(any(c("qeastness", "qnorthness") %in% needed_metrics) & (!("qaspect" %in% needed_metrics))){
+    needed_metrics<- c(needed_metrics, "qaspect")
+  }
+  
+  if("features" %in% needed_metrics){
+    if(!("qslope" %in% needed_metrics)){needed_metrics<- c(needed_metrics, "qslope")} 
+    if(!("crosc" %in% needed_metrics)){needed_metrics<- c(needed_metrics, "crosc")} 
+    if(!("maxc" %in% needed_metrics)){needed_metrics<- c(needed_metrics, "maxc")}
+    if(!("minc" %in% needed_metrics)){needed_metrics<- c(needed_metrics, "minc")}
   }
   
   #Define local coordinate system of window
@@ -62,18 +96,18 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
   }
   
   #Process large rasters as smaller chunks
-  run_in_blocks<- !raster::canProcessInMemory(r, n = 8)
+  run_in_blocks<- !raster::canProcessInMemory(r, n = 7)
   if(run_in_blocks==FALSE){
-    params<- raster::brick(r, nl=7, values=FALSE)
+    params<- raster::brick(r, nl=6, values=FALSE)
     values(params)<- C_multiscale2(r = as.matrix(r), w = w, X=X , na_rm=na.rm) 
     } else{
     
     f_out <- raster::rasterTmpFile()
-    params<- raster::brick(r, nl=7, values=FALSE)
+    params<- raster::brick(r, nl=6, values=FALSE)
     params <- raster::writeStart(params, filename = f_out)
-    names(params)<- c("a", "b", "c", "d", "e", "f", "mask")
+    names(params)<- c("a", "b", "c", "d", "e", "f")
     
-    block_idx<- raster::blockSize(r, n = 8, minblocks = 2, minrows = w[1])
+    block_idx<- raster::blockSize(r, n = 7, minblocks = 2, minrows = w[1])
     block_overlap<- (w[1]-1)/2
     nr<- nrow(r)
     nc<- ncol(r)
@@ -96,88 +130,122 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", return_aspect= FALSE, slope_t
     }
     params<- raster::writeStop(params)
     }
-  names(params)<- c("a", "b", "c", "d", "e", "f", "mask")
+  names(params)<- c("a", "b", "c", "d", "e", "f")
   if(pad==TRUE){
     params<- raster::crop(params, og_extent)
   }
   
-  mask_raster<- params$mask #mask indicating when all values are the same
-  params<- dropLayer(params, 7) #drop mask
+  mask_raster<- (params$d== 0 &  params$e== 0) #mask indicating when d ane e are 0 (slope is 0)
   
-  #Use regression parameters to calculate slope and aspect
-  slp<- atan(sqrt(params$d^2 + params$e^2))
-  names(slp)<- "QuadSlope"
-  asp<- atan2(params$e,params$d) - pi/2 #Shift aspect so north is zero
-  names(asp)<- "QuadAspect"
-  
-  asp[asp < 0]<- asp[asp < 0] + 2*pi
-  asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
+  out<- stack() #Initialize output
 
-  eastness<- sin(asp)
-  names(eastness)<- "QuadEastness"
-  northness<- cos(asp)
-  names(northness)<- "QuadNorthness"
-  
-  if (mask_aspect){
-    slp0_idx<- slp==0
-    asp[slp0_idx]<- NA_real_
-    northness[slp0_idx]<- 0
-    eastness[slp0_idx]<- 0
+  #Use regression parameters to calculate slope and aspect
+  if("qslope" %in% needed_metrics){
+    slp<- atan(sqrt(params$d^2 + params$e^2))
+    if(unit=="degrees"){
+      slp<- slp*180/pi
+    } else{
+      slope_tolerance<- slope_tolerance * (pi/180) #Convert slope tolerance to radians if unit is not degrees
+      }
+    names(slp)<- "qslope"
+    out<- stack(out, slp)
   }
   
-  if(unit=="degrees"){
-    slp<- slp*180/pi
-    asp<- asp*180/pi
-  } else{
-    slope_tolerance<- slope_tolerance * (pi/180)
-    } #Convert slope tolerance to radians if unit is not degrees
+  if("qaspect" %in% needed_metrics){
+    asp<- atan2(params$e,params$d) - pi/2 #Shift aspect so north is zero
+    asp[asp < 0]<- asp[asp < 0] + 2*pi
+    asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
+    
+    if (mask_aspect){
+      asp[mask_raster]<- NA_real_
+    }
+    
+    if("qeastness" %in% needed_metrics){
+      eastness<- sin(asp)
+      if (mask_aspect){
+        eastness[mask_raster]<- 0
+        }
+      names(eastness)<- "qeastness"
+      out<- stack(out, eastness)
+    }
+    
+    if("qnorthness" %in% needed_metrics){
+      northness<- cos(asp)
+      if (mask_aspect){
+        northness[mask_raster]<- 0
+      }
+      names(northness)<- "qnorthness"
+      out<- stack(out, northness)
+    }
+    if(unit=="degrees"){
+      asp<- asp*180/pi
+      }
+    names(asp)<- "qaspect"
+    out<- stack(out, asp)
+  }
   
   #Curvature
   #Note curvature has been multiplied by 100 to express curvature as percent gradient per unit length (Albani et al 2004)
   
-  #  Wood 1996 page 86 & Wilson 2007 page 9-10
-  profc<- raster::overlay(params, fun = function(a,b,c,d,e,f)(-200 * (a*d^2 + b*e^2 + c*d*e)) / ((e^2 + d^2)*(1 + e^2 + d^2)^1.5))
-  profc[mask_raster]<- 0
-  names(profc)<- "ProfCurv"
-
-  planc<- raster::overlay(params, fun = function(a,b,c,d,e,f)(200 * (b*d^2 +a*e^2 - c*d*e)) / ((e^2+d^2)^1.5))
-  planc[mask_raster]<- 0
-  names(planc)<- "PlanCurv"
-
-  profc_max<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100*(-a - b + sqrt((a-b)^2+c^2)))
-  names(profc_max)<- "ProfCurvMax"
+  #  Wood 1996 page 86
+  if("profc" %in% needed_metrics){
+    profc<- raster::overlay(params, fun = function(a,b,c,d,e,f)(-2 * (a*d^2 + b*e^2 + c*d*e)) / ((e^2 + d^2)*(1 + e^2 + d^2)^1.5))
+    profc[mask_raster]<- 0
+    names(profc)<- "profc"
+    out<- stack(out, profc)
+  }
   
-  profc_min<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100*(-a - b - sqrt((a-b)^2+c^2)))
-  names(profc_min)<- "ProfCurvMin"
-  
-  mean_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100*(-a - b))
-  names(mean_curv)<- "MeanCurv"
+  if("planc" %in% needed_metrics){
+    planc<- raster::overlay(params, fun = function(a,b,c,d,e,f)(2 * (b*d^2 +a*e^2 - c*d*e)) / ((e^2+d^2)^1.5))
+    planc[mask_raster]<- 0
+    names(planc)<- "planc"
+    out<- stack(out, planc)
+  }
   
   #Wood 1996 page 88
-  longc<- raster::overlay(params, fun = function(a,b,c,d,e,f) -200 * ((a*d^2 + b*e^2 + c*d*e) / (d^2 + e^2)))
-  longc[mask_raster]<- 0
-  names(longc)<- "LongCurv"
+  if("longc" %in% needed_metrics){
+    longc<- raster::overlay(params, fun = function(a,b,c,d,e,f) -2 * ((a*d^2 + b*e^2 + c*d*e) / (d^2 + e^2)))
+    longc[mask_raster]<- 0
+    names(longc)<- "longc"
+    out<- stack(out, longc)
+    }
   
-  crosc<- raster::overlay(params, fun = function(a,b,c,d,e,f) -200 * ((b*d^2 + a*e^2 - c*d*e) / (d^2 + e^2)))
-  crosc[mask_raster]<- 0
-  names(crosc)<- "CrossCurv"
+  if("crosc" %in% needed_metrics){
+    crosc<- raster::overlay(params, fun = function(a,b,c,d,e,f) -2 * ((b*d^2 + a*e^2 - c*d*e) / (d^2 + e^2)))
+    crosc[mask_raster]<- 0
+    names(crosc)<- "crosc"
+    out<- stack(out, crosc)
+    }
   
   #Wood 1996 page 115
-  max_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100 * (-a - b + sqrt((a-b)^2+c^2)))
-  names(max_curv)<- "MaxCurv"
+  if("maxc" %in% needed_metrics){
+    max_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) (-a - b + sqrt((a-b)^2+c^2)))
+    names(max_curv)<- "maxc"
+    out<- stack(out, max_curv)
+    }
+  if("minc" %in% needed_metrics){
+    min_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) (-a - b - sqrt((a-b)^2+c^2)))
+    names(min_curv)<- "minc"
+    out<- stack(out, min_curv)
+    }
   
-  min_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) 100 * (-a - b - sqrt((a-b)^2+c^2)))
-  names(min_curv)<- "MinCurv"
- 
+  #Wilson 2007 page 10
+  if("meanc" %in% needed_metrics){
+    mean_curv<- raster::overlay(params, fun = function(a,b,c,d,e,f) (-a - b))
+    names(mean_curv)<- "meanc"
+    out<- stack(out, mean_curv)
+  }
+  
   #Morphometric Features (Wood 1996, Page 120)
+  if("features" %in% needed_metrics){
+    classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
+    features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
+    levels(features)<- data.frame(ID=1:6, Feature = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
+    names(features)<- "features"
+    out<- stack(out, features)
+  }
   
-  classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
-  features<- raster::overlay(slp, crosc, max_curv, min_curv, fun = classify_features)
-  levels(features)<- data.frame(ID=1:6, Feature = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
-  names(features)<- "Features"
-  
-  out<- stack(slp, eastness, northness, profc, planc, profc_max, profc_min, mean_curv, max_curv, min_curv, longc, crosc, features)
-  if(return_aspect){out<- stack(out, asp)}
+  out<- raster::subset(out, metrics, drop=TRUE) #Subset needed metrics to requested metrics in proper order
   if(return_params){out<- stack(out, params)}
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
                              
