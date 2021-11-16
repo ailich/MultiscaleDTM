@@ -1,19 +1,19 @@
 #' Calculates multiscale slope, aspect, curvature, and morphometric features
 #'
-#' Calculates multiscale slope, aspect, curvature/convexity, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood 1996).
-#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
-#' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
-#' @param unit "degrees" or "radians"
-#' @param metrics a character vector specifying which terrain attributes to return. The default is to return all available metrics c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). slope, aspect, eastness, and northness are preceded with a q to differentiate them from the measures calculated by SlpAsp where the 'q' indicates that a quadratic surface was used to calculate them. 'profc' is the profile convexity, 'planc' is the plan convexity, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' is morphometric features. See details for more information.
-#' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.
-#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.
-#' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
-#' @param pad logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.
-#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
-#' @param mask_aspect A logical. If TRUE (default), when slope = 0 values, aspect will be set to NA and northness and eastness will both be 0. If FALSE, aspect will to 270 degrees or 3*pi/2 radians (atan2(0,0)-pi/2+2*pi) and northness and eastness will be calculated from this.
-#' @param return_params logical indicating whether to return Wood/Evans regression parameters (default FALSE)
+#' Calculates multiscale slope, aspect, curvature/convexity, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood, 1996).
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units.
+#' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
+#' @param unit "degrees" or "radians".
+#' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'profc' is the profile convexity, 'planc' is the plan convexity, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' are morphometric features. See details.
+#' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.
+#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
+#' @param na.rm Logical vector indicating whether or not to remove NA values before calculations.
+#' @param pad Logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (default = FALSE). If pad is TRUE, na.rm must be TRUE.
+#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
+#' @param mask_aspect Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3*pi/2 radians (atan2(0,0)-pi/2+2*pi) and northness and eastness will be calculated from this.
+#' @param return_params Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).
 #' @return a RasterStack
-#' @details This function calculates slope, aspect, eastness, northness, profile curvature, planform curvature, mean curvature, maximum curvature, minimum curvature, longitudinal curvature, cross-sectional curvature, and morphometric features using a quadratic fit to the surface using the equation Z = aX^2+bY^2+cXY+dX+eY+f where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Wood 1996). This is an R/C++ implementation of r.param.scale GRASS GIS function. Note however, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect. Additionally, mean curvature is included which is not available in r.param.scale. All formulas with the exception of mean curvature are from Wood 1996. Mean curvature is calculated according to Wilson et al 2007. All multiplicative constants were removed from curvature formulas so that they are all reported in units of 1/length (Minár et al, 2020). Naming convention for curvatures is not consistent across the literature however Minár et al (2020) has suggested a framework for this. In this framework the reported measures of curvature translate as profile convexity = (kn)s), plan convexity = (kp)c), mean curvature = z''mean, maximum curvature = z''min, minimum curvature = z''max, longitudinal curvature = zss, and cross-sectional curvature = zcc. For curvatures, we have adopted a geographic sign convention where convex is positive and concave is negative (i.e. hills are considered convex with positive curvature values)(Minár et al, 2020; Wood 1996).
+#' @details This function calculates slope, aspect, eastness, northness, profile curvature, planform curvature, mean curvature, maximum curvature, minimum curvature, longitudinal curvature, cross-sectional curvature, and morphometric features using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Wood, 1996). This is an R/C++ implementation of r.param.scale GRASS GIS function. Note, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect. Additionally, mean curvature is included, which is not available in r.param.scale. All formulas with the exception of mean curvature are from Wood 1996. Mean curvature is calculated according to Wilson et al 2007. All multiplicative constants were removed from curvature formulas so that they are all reported in units of 1/length (Minár et al, 2020). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile convexity = (kn)s), plan convexity = (kp)c), mean curvature = z''mean, maximum curvature = z''min, minimum curvature = z''max, longitudinal curvature = zss, and cross-sectional curvature = zcc. For curvatures, we have adopted a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values; Minár et al, 2020; Wood, 1996).
 #' @import raster
 #' @references
 #' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
@@ -248,5 +248,28 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   out<- raster::subset(out, metrics, drop=TRUE) #Subset needed metrics to requested metrics in proper order
   if(return_params){out<- stack(out, params)}
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
+                             
+  #identify extreme outliers that are less than Q1% - 100*IQR or greater than Q99% + 100*IQR, where IQR is the range of 1-99% quantiles
+  quant <- raster::quantile(
+    out[[c(
+      which(!raster::is.factor(out))
+    )]], 
+    probs=c(0, 0.01, 0.99, 1)
+  )
+                                
+  iqr <- quant[ ,3] - quant[ ,2]
+  
+  outliers <- names(
+    which(
+      quant[ ,1] < (quant[ ,2] - 100*iqr)  | quant[ ,4] > (quant[ ,3] + 100*iqr)
+    )
+  )
+  
+  if(length(outliers != 0)){
+    warning(
+      "Extreme outliers detected in: ", paste(outliers, collapse=", ")
+    )
+  }
+                             
   return(out)
 }
