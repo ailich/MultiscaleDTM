@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-November 11, 2021
+November 17, 2021
 
 # MultiscaleDEM
 
@@ -112,7 +112,7 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
+WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
     "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE, pad = TRUE)
 ```
 

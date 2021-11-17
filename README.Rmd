@@ -124,7 +124,7 @@ slp_asp_plot
 ```
 
 ```{r}
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
+WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
     "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE, pad = TRUE)
 ```
 
