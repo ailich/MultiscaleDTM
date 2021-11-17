@@ -96,18 +96,17 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   }
   
   #Process large rasters as smaller chunks
-  run_in_blocks<- !raster::canProcessInMemory(r, n = 7)
+  run_in_blocks<- !raster::canProcessInMemory(r, n = 8)
   if(run_in_blocks==FALSE){
-    params<- raster::brick(r, nl=6, values=FALSE)
+    params<- raster::brick(r, nl=7, values=FALSE)
     values(params)<- C_multiscale2(r = as.matrix(r), w = w, X=X , na_rm=na.rm) 
     } else{
     
     f_out <- raster::rasterTmpFile()
-    params<- raster::brick(r, nl=6, values=FALSE)
+    params<- raster::brick(r, nl=7, values=FALSE)
     params <- raster::writeStart(params, filename = f_out)
-    names(params)<- c("a", "b", "c", "d", "e", "f")
-    
-    block_idx<- raster::blockSize(r, n = 7, minblocks = 2, minrows = w[1])
+
+    block_idx<- raster::blockSize(r, n = 8, minblocks = 2, minrows = w[1])
     block_overlap<- (w[1]-1)/2
     nr<- nrow(r)
     nc<- ncol(r)
@@ -130,12 +129,13 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
     }
     params<- raster::writeStop(params)
     }
-  names(params)<- c("a", "b", "c", "d", "e", "f")
+  names(params)<- c("a", "b", "c", "d", "e", "f", "mask")
   if(pad==TRUE){
     params<- raster::crop(params, og_extent)
   }
   
-  mask_raster<- (params$d== 0 &  params$e== 0) #mask indicating when d ane e are 0 (slope is 0)
+  mask_raster<- params$mask #mask indicating when all values are the same
+  params<- dropLayer(params, 7) #drop mask
   
   out<- stack() #Initialize output
 
@@ -157,13 +157,14 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
     asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
     
     if (mask_aspect){
-      asp[mask_raster]<- NA_real_
+      slp0_idx<- (params$d== 0 &  params$e== 0) #mask indicating when d ane e are 0 (slope is 0)
+      asp[slp0_idx]<- NA_real_
     }
     
     if("qeastness" %in% needed_metrics){
       eastness<- sin(asp)
       if (mask_aspect){
-        eastness[mask_raster]<- 0
+        eastness[slp0_idx]<- 0
         }
       names(eastness)<- "qeastness"
       out<- stack(out, eastness)
@@ -172,7 +173,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
     if("qnorthness" %in% needed_metrics){
       northness<- cos(asp)
       if (mask_aspect){
-        northness[mask_raster]<- 0
+        northness[slp0_idx]<- 0
       }
       names(northness)<- "qnorthness"
       out<- stack(out, northness)

@@ -15,7 +15,7 @@ output:
 
 Please cite as
 
-Ilich, Alexander R.; Lecours, Vincent; Misiuk, Benjamin; Murawski, Steven A.; 2021. “MultiscaleDEM”, doi:10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDEM.
+Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 2021. “MultiscaleDEM”, doi:10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDEM.
 
 
 ```{r setup, include=FALSE}

@@ -11,7 +11,7 @@ November 17, 2021
 
 Please cite as
 
-Ilich, Alexander R.; Lecours, Vincent; Misiuk, Benjamin; Murawski,
+Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski,
 Steven A.; 2021. “MultiscaleDEM”, <doi:10.5281/zenodo.5548338>.
 <https://github.com/ailich/MultiscaleDEM>.
 
