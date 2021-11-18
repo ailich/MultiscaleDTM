@@ -1,7 +1,7 @@
 #' Calculates multiscale slope, aspect, curvature, and morphometric features
 #'
 #' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood, 1996).
-#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units.
+#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
 #' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' are morphometric features. See details.
@@ -13,7 +13,7 @@
 #' @param mask_aspect Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3*pi/2 radians (atan2(0,0)-pi/2+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).
 #' @return a RasterStack
-#' @details This function calculates slope, aspect, eastness, northness, profile curvature, planform curvature, mean curvature, maximum curvature, minimum curvature, longitudinal curvature, cross-sectional curvature, and morphometric features using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Wood, 1996). This is an R/C++ implementation of r.param.scale GRASS GIS function. Note, for aspect, 0 degrees represents north and increases clockwise which differs from the way r.param.scale reports aspect. Additionally, mean curvature is included, which is not available in r.param.scale. All formulas with the exception of mean curvature are from Wood 1996. Mean curvature is calculated according to Wilson et al 2007. Formulas for curvatures were adjusted to remove multiplicative constants so that they are all reported in units of 1/length and were adjusted to provide consistent sign convention (Minár et al, 2020). For curvatures, we have adopted a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values; Minár et al, 2020). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s), plan curvature = (kp)c), mean curvature = z''mean, maximum curvature = z''min, minimum curvature = z''max, longitudinal curvature = zss, and cross-sectional curvature = zcc.
+#' @details This function calculates slope, aspect, eastness, northness, profile curvature, planform curvature, mean curvature, maximum curvature, minimum curvature, longitudinal curvature, cross-sectional curvature, and morphometric features using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Wood, 1996). This is an R/C++ function similar to r.param.scale GRASS GIS function. Note, for aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise which differs from the way r.param.scale reports aspect. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. Additionally, mean curvature is included, which is not available in r.param.scale. All formulas with the exception of mean curvature are from Wood 1996. Mean curvature is calculated according to Wilson et al 2007. Formulas for curvatures were adjusted to remove multiplicative constants so that they are all reported in units of 1/length and were adjusted to provide consistent sign convention (Minár et al, 2020). For curvatures, we have adopted a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values; Minár et al, 2020). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s), plan curvature = (kp)c), mean curvature = z''mean, maximum curvature = z''min, minimum curvature = z''max, longitudinal curvature = zss, and cross-sectional curvature = zcc.
 #' @import raster
 #' @references
 #' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
@@ -78,7 +78,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   
   y_mat<- matrix(res(r)[1], nrow = w[1], ncol=w[2])
   for (R in 1:w[1]) {
-    y_mat[R,]<- y_mat[R,]*R
+    y_mat[R,]<- y_mat[R,]*(w[1]-(R-1)) #Have up be positive
   }
   y_mat<- y_mat - mean(y_mat)
   y<- as.vector(y_mat)
@@ -152,7 +152,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   }
   
   if("qaspect" %in% needed_metrics){
-    asp<- atan2(params$e,params$d) - pi/2 #Shift aspect so north is zero
+    asp<- (-pi/2) - atan2(params$e,params$d) #Shift aspect so north is zero
     asp[asp < 0]<- asp[asp < 0] + 2*pi
     asp[asp >= 2*pi]<- asp[asp >= 2*pi] - 2*pi # Constrain aspect from 0 to 2pi
     

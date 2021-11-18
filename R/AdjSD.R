@@ -41,7 +41,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, pad=FALSE, include_scale=FALSE){
   
   y_mat<- matrix(res(r)[1], nrow = w[1], ncol=w[2])
   for (R in 1:w[1]) {
-    y_mat[R,]<- y_mat[R,]*R
+    y_mat[R,]<- y_mat[R,]*(w[1]-(R-1)) #Have up be positive
   }
   y_mat<- y_mat - mean(y_mat)
   y<- as.vector(y_mat)
