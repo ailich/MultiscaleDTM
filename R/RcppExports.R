@@ -25,11 +25,11 @@ C_multiscale1 <- function(r, w, X, na_rm) {
     .Call(`_MultiscaleDEM_C_multiscale1`, r, w, X, na_rm)
 }
 
-C_Multiscale2b <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDEM_C_Multiscale2b`, z, X_full, na_rm, ni, nw)
+C_WoodEvans <- function(z, X_full, na_rm, ni, nw) {
+    .Call(`_MultiscaleDEM_C_WoodEvans`, z, X_full, na_rm, ni, nw)
 }
 
-C_OLSraw2 <- function(y, X, ni, nw) {
-    .Call(`_MultiscaleDEM_C_OLSraw2`, y, X, ni, nw)
+C_AdjSD <- function(z, X_full, na_rm, ni, nw) {
+    .Call(`_MultiscaleDEM_C_AdjSD`, z, X_full, na_rm, ni, nw)
 }
 

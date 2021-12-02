@@ -38,7 +38,7 @@ WoodEvans(
 
 \item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE).}
 
-\item{mask_aspect}{Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3\emph{pi/2 radians (atan2(0,0)-pi/2+2}pi) and northness and eastness will be calculated from this.}
+\item{mask_aspect}{Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3\emph{pi/2 radians ((-pi/2)- atan2(0,0)+2}pi) and northness and eastness will be calculated from this.}
 
 \item{return_params}{Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).}
 }

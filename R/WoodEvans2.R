@@ -1,34 +1,3 @@
-#' Helper function factory to classify morphometric features
-#'
-#' Helper function factory to classify morphometric features according to Wood 1996 page 120
-#' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.
-#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.
-#' @importFrom dplyr case_when
-#' @return A function that can be passed to raster::overlay to classify morphometric features
-#' @references
-#' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
-
-classify_features_ff<- function(slope_tolerance, curvature_tolerance){
-  #1=PLANAR
-  #2=PIT
-  #3=CHANNEL
-  #4=PASS
-  #5=RIDGE
-  #6=PEAK
-  out_fun<- function(slope, crosc, maxic, minic){
-    dplyr::case_when(is.na(slope) ~ NA_real_,
-                     (slope > slope_tolerance) & (crosc > curvature_tolerance) ~ 5,
-                     (slope > slope_tolerance) & (crosc < -curvature_tolerance) ~ 3,
-                     slope > slope_tolerance ~ 1,
-                     (maxic > curvature_tolerance) & (minic > curvature_tolerance) ~ 6,
-                     (maxic > curvature_tolerance) & (minic < -curvature_tolerance) ~ 4,
-                     maxic > curvature_tolerance ~ 5,
-                     (minic < -curvature_tolerance) & (maxic < -curvature_tolerance) ~ 2,
-                     minic < -curvature_tolerance ~ 3,
-                     TRUE ~ 1)}
-  return(out_fun)
-}
-
 #' Calculates multiscale slope, aspect, curvature, and morphometric features
 #'
 #' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood, 1996).
@@ -59,17 +28,16 @@ classify_features_ff<- function(slope_tolerance, curvature_tolerance){
 
 WoodEvans2<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE){
   
+  all_metrics<- c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features")
   og_class<- class(r)[1]
-  if(!(og_class %in% c("RasterLayer", "SpatRaster"))){
-    stop("Error: Input must be a 'SpatRaster' or 'RasterLayer'")
-  }
-  
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
   }
   
-  all_metrics<- c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features")
-  #Input checks
+  # Input checks
+  if(!(og_class %in% c("RasterLayer", "SpatRaster"))){
+    stop("Error: Input must be a 'SpatRaster' or 'RasterLayer'")
+  }
   if(terra::nlyr(r)!=1){
     stop("Error: Input raster must be one layer.")
     }
@@ -127,11 +95,10 @@ WoodEvans2<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspec
   y<- as.vector(t(y_mat)) #Transpose for focal
   
   #Explanatory Variable matrix X for quadratic fit
-  X<- cbind(1, x^2,y^2, x*y, x, y)
+  X<- cbind(x^2,y^2, x*y, x, y, 1) # Z = ax^2+by^2+cxy+dx+ey+f
   
-  #Calculate Regression Parameters
-  params<- terra::focalCpp(r, w=w, fun = C_Multiscale2b, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
-  names(params)<- c("a", "b", "c", "d", "e", "f", "mask")
+  # Calculate Regression Parameters
+  params<- terra::focalCpp(r, w=w, fun = C_WoodEvans, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
   mask_raster<- params$mask
   params<- params[[-7]] #drop mask
   
@@ -150,8 +117,9 @@ WoodEvans2<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspec
   }
   
   if("qaspect" %in% needed_metrics){
-    asp<- (-pi/2) - atan2(params$e,params$d) #Shift aspect so north is zero
-    asp[asp < 0]<- asp[asp < 0] + 2*pi # Constrain aspect from 0 to 2pi
+    asp<- terra::app(atan2(params$e,params$d), fun = convert_aspect2) #Shift aspect so north is zero
+    #asp<- (-pi/2) - atan2(params$e,params$d) #Shift aspect so north is zero
+    #asp[asp < 0]<- asp[asp < 0] + 2*pi # Constrain aspect from 0 to 2pi
 
     if (mask_aspect){
       slp0_idx<- (params$d== 0 &  params$e== 0) #mask indicating when d ane e are 0 (slope is 0)
@@ -236,14 +204,14 @@ WoodEvans2<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspec
   
   #Morphometric Features (Wood 1996, Page 120)
   if("features" %in% needed_metrics){
-    classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
+    classify_features<- classify_features_ff2(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
     features<- terra::lapp(c(slp, crosc, max_curv, min_curv), fun = classify_features)
-    levels(features)<- data.frame(ID=1:6, Feature = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
+    levels(features)<- data.frame(ID=0:5, features = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
     names(features)<- "features"
     out<- c(out, features, warn=FALSE)
   }
   
-  out<- terra::subset(out, metrics) #Subset needed metrics to requested metrics in proper order
+  if(!is.null(metrics)){out<- terra::subset(out, metrics)} #Subset needed metrics to requested metrics in proper order
   if(return_params){out<- c(out, params, warn=FALSE)}
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
                              

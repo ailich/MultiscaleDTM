@@ -88,9 +88,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_Multiscale2b
-NumericMatrix C_Multiscale2b(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_Multiscale2b(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_WoodEvans
+NumericMatrix C_WoodEvans(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_WoodEvans(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -99,21 +99,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_Multiscale2b(z, X_full, na_rm, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_WoodEvans(z, X_full, na_rm, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
-// C_OLSraw2
-NumericMatrix C_OLSraw2(NumericVector y, arma::mat X, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_OLSraw2(SEXP ySEXP, SEXP XSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_AdjSD
+NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_AdjSD(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type y(ySEXP);
-    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_OLSraw2(y, X, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD(z, X_full, na_rm, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -125,8 +126,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 2},
     {"_MultiscaleDEM_C_multiscale2", (DL_FUNC) &_MultiscaleDEM_C_multiscale2, 4},
     {"_MultiscaleDEM_C_multiscale1", (DL_FUNC) &_MultiscaleDEM_C_multiscale1, 4},
-    {"_MultiscaleDEM_C_Multiscale2b", (DL_FUNC) &_MultiscaleDEM_C_Multiscale2b, 5},
-    {"_MultiscaleDEM_C_OLSraw2", (DL_FUNC) &_MultiscaleDEM_C_OLSraw2, 4},
+    {"_MultiscaleDEM_C_WoodEvans", (DL_FUNC) &_MultiscaleDEM_C_WoodEvans, 5},
+    {"_MultiscaleDEM_C_AdjSD", (DL_FUNC) &_MultiscaleDEM_C_AdjSD, 5},
     {NULL, NULL, 0}
 };
 
