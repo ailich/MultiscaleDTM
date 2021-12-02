@@ -183,3 +183,89 @@ NumericVector C_multiscale1(NumericMatrix r, IntegerVector w, NumericMatrix X, b
   }
   return(out);
 }
+
+
+//FOR TERRA
+// [[Rcpp::export]]
+NumericMatrix C_Multiscale2b(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+  
+  size_t nlyr = X_full.ncol() + 1; //Number of layers
+  size_t n = nlyr * ni;	//Number of elements in all layers
+  NumericMatrix out = NumericMatrix(ni, 7);
+  out.fill(NA_REAL);
+  out(_,6)=rep(0,out.nrow()); //initialize mask with 0's
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f", "mask");
+  
+  int thresh = 6; //NEED AT LEAST 6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
+  
+  for (size_t i=0; i<ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    NumericVector zw_full = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    LogicalVector NA_idx = is_na(zw_full);
+    int n_obs = sum(!NA_idx);
+    if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
+      NumericVector zw = zw_full[!NA_idx];
+      NumericMatrix Z(n_obs,1, zw.begin());
+      NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
+      NumericVector uni_Zvals = unique(zw);
+      if(uni_Zvals.length() == 1){
+        //If all Z values are the same, intercept should just be the value and all other parameters are 0. mask is 1 indicating all values are the same
+        out(i, 5) = uni_Zvals[0]; //f
+        out(i, 0) = 0; //a
+        out(i, 1) = 0; //b
+        out(i, 2) = 0; //c
+        out(i, 3) = 0; //d
+        out(i, 4) = 0; //e
+        out(i,6) = 1; //mask
+      } else{
+        NumericVector params = C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+        out(i, 5) =  params[0]; //f
+        out(i, 0) =  params[1]; //a
+        out(i, 1) =  params[2]; //b
+        out(i, 2) =  params[3]; //c
+        out(i, 3) =  params[4]; //d
+        out(i, 4) =  params[5]; //e
+      }
+    }}
+  return out;
+}
+
+
+// [[Rcpp::export]]
+NumericMatrix C_OLSraw2(NumericVector y, arma::mat X, size_t ni, size_t nw) {
+  
+  arma::mat Xt = trans(X);
+  arma::mat XtX = Xt * X;
+  double d = det(XtX);
+  
+  size_t nlyr = X.n_cols;
+  size_t n = nlyr * ni;
+  NumericMatrix out(ni, nlyr);
+  out.fill(NA_REAL);
+  
+  if(d==0){
+    return out;
+  } 
+  arma::mat XtX_inv= inv(XtX);
+  arma::mat H = X * XtX_inv * Xt;
+  arma::mat Y(nw, 1);
+  
+  for (size_t i=0; i<ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    NumericVector yw = y[Rcpp::Range(start,end)];
+    if (all(! Rcpp::is_na(yw))) {
+      for(size_t j=0; j<nw; j++){
+        Y(j,0) = yw[j];
+      }
+      NumericVector B = wrap(XtX_inv * (Xt * Y));	
+      // output values must be interleaved by band (layer), not by pixel
+      for (size_t j=0; j<nlyr; j++) { 
+        out(i,j) = B[j];
+      }
+    }
+  }
+  
+  return out;
+}
