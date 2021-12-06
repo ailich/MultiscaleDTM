@@ -33,3 +33,15 @@ C_AdjSD <- function(z, X_full, na_rm, ni, nw) {
     .Call(`_MultiscaleDEM_C_AdjSD`, z, X_full, na_rm, ni, nw)
 }
 
+C_TriArea <- function(a, b, c) {
+    .Call(`_MultiscaleDEM_C_TriArea`, a, b, c)
+}
+
+C_SurfaceArea <- function(z, x_res, y_res, ni, nw) {
+    .Call(`_MultiscaleDEM_C_SurfaceArea`, z, x_res, y_res, ni, nw)
+}
+
+C_CountVals <- function(z, ni, nw) {
+    .Call(`_MultiscaleDEM_C_CountVals`, z, ni, nw)
+}
+

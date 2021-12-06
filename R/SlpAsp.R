@@ -155,6 +155,9 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   if("aspect" %in% needed_metrics){
     aspect.k<- atan2(dz.dy, -dz.dx)
     aspect.k<- raster::calc(aspect.k, fun= convert_aspect) #convert aspect to clockwise distance from North
+    # aspect.k<- (pi/2)- aspect.k #Seems like this could replace convert_aspect
+    # aspect.k[aspect.k >= (2*pi)]<- aspect.k[aspect.k >= (2*pi)] - (2*pi)
+    # aspect.k[aspect.k < 0]<- aspect.k[aspect.k < 0] + (2*pi)
     
     if("eastness" %in% needed_metrics){
       eastness.k<- sin(aspect.k)

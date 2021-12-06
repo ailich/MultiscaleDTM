@@ -260,3 +260,66 @@ NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
     }}
   return out;
 }
+
+// Calculate area of triangle based on side lengths
+// [[Rcpp::export]]
+double C_TriArea (double a, double b, double c){
+  double s = (a+b+c)/2;
+  double out =sqrt(s*(s-a)*(s-b)*(s-c));
+  return out;
+}
+
+//Surface Area
+// [[Rcpp::export]]
+NumericVector C_SurfaceArea (NumericVector z, double x_res, double y_res, size_t ni, size_t nw){
+  NumericVector out = NumericVector(ni, NA_REAL);
+  double Lx2= pow(x_res, 2);
+  double Ly2= pow(y_res, 2);
+  double Ld2= Lx2 + Ly2;
+  
+  for (size_t i=0; i< ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    NumericVector zw = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    //|A|B|C|
+    //|D|E|F|
+    //|G|H|I|
+    //Calculate Edge Lengths
+    //Horiz
+    double AB= sqrt(Lx2+pow(zw[0]-zw[1],2))/2;
+    double BC= sqrt(Lx2+pow(zw[1]-zw[2],2))/2;
+    double DE= sqrt(Lx2+pow(zw[3]-zw[4],2))/2;
+    double EF= sqrt(Lx2+pow(zw[4]-zw[5],2))/2;
+    double GH= sqrt(Lx2+pow(zw[6]-zw[7],2))/2;
+    double HI= sqrt(Lx2+pow(zw[7]-zw[8],2))/2;
+    //Vertical
+    double AD= sqrt(Ly2+pow(zw[0]-zw[3],2))/2;
+    double BE= sqrt(Ly2+pow(zw[1]-zw[4],2))/2;
+    double CF= sqrt(Ly2+pow(zw[2]-zw[5],2))/2;
+    double DG= sqrt(Ly2+pow(zw[3]-zw[6],2))/2;
+    double EH= sqrt(Ly2+pow(zw[4]-zw[7],2))/2;
+    double FI= sqrt(Ly2+pow(zw[5]-zw[8],2))/2;
+    //Diagonal
+    double EA= sqrt(Ld2+pow(zw[4]-zw[0],2))/2;
+    double EC= sqrt(Ld2+pow(zw[4]-zw[2],2))/2;
+    double EG= sqrt(Ld2+pow(zw[4]-zw[6],2))/2;
+    double EI= sqrt(Ld2+pow(zw[4]-zw[8],2))/2;
+    
+    //Sum area of the 8 triangles
+    out[i] = C_TriArea(EA, AB, BE) + C_TriArea(BE, BC, EC) + C_TriArea(AD, DE, EA) + C_TriArea(EC, CF, EF) + C_TriArea(DE, DG, EG) + C_TriArea(EF, FI, EI) + C_TriArea(EG, EH, GH) + C_TriArea(EH, EI, HI);
+  }
+  return out;
+}
+
+//Count values
+// [[Rcpp::export]]
+NumericVector C_CountVals (NumericVector z, size_t ni, size_t nw){
+  NumericVector out = NumericVector(ni, NA_REAL);
+  for (size_t i=0; i< ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    NumericVector zw = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    out[i] = sum(!is_na(zw));
+  }
+  return out;
+}
