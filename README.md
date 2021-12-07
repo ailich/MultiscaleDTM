@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-November 18, 2021
+December 06, 2021
 
 # MultiscaleDEM
 
@@ -29,6 +29,10 @@ Then to install this package use the code
 `remotes::install_github("ailich/MultiscaleDEM")` (you may need to
 install Rtools using the instructions found here:
 <https://cran.r-project.org/bin/windows/Rtools/>)
+
+Also, this package relies on the `terra` package for handling of raster
+data. To install the development version of `terra`, use
+`install.packages('terra', repos='https://rspatial.r-universe.dev')`.
 
 ## Main Functions
 
@@ -84,7 +88,7 @@ be used for both the number of rows and columns.
 **Load packages**
 
 ``` r
-library(raster) #Load raster package
+library(terra) #Load terra package for handling of raster data
 library(MultiscaleDEM) #Load MultiscaleDEM package
 ```
 
@@ -97,8 +101,7 @@ help(package="MultiscaleDEM")
 **Read in Data**
 
 ``` r
-r<- raster(volcano, xmn=0, xmx=ncol(volcano)*10, ymn=0, ymx=nrow(volcano)*10) #Use built in volcano data set
-crs(r)<- CRS("+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs") #Give r a projection. This is not the right projection, but some functions currently throw an error if there is no crs.
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
@@ -113,7 +116,7 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 
 ``` r
 WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
-    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE, pad = TRUE)
+    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
@@ -136,7 +139,7 @@ sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 ![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
-adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE, pad=TRUE)
+adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
@@ -144,13 +147,13 @@ adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE, pad=TRUE)
 ### Relative Position
 
 ``` r
-tpi<- TPI(r, w=c(5,5), na.rm = TRUE, pad = TRUE)
+tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
-rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, pad = TRUE)
+rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->

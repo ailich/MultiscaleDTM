@@ -4,12 +4,14 @@
 \alias{VRM}
 \title{Implementation of the Sappington et al., (2007) vector ruggedness measure}
 \usage{
-VRM(r, w, include_scale = FALSE)
+VRM(r, w, na.rm = FALSE, include_scale = FALSE)
 }
 \arguments{
-\item{r}{DEM as a raster layer}
+\item{r}{DEM as a SpatRaster or RasterLayer}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
+
+\item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 }

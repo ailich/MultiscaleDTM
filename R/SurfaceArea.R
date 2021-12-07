@@ -1,53 +1,35 @@
 #' Calculates surface area of a DEM
 #'
-#' Calculates surface area on a per cell basis of a DEM based on Jenness, 2004. This wrapper for sp::surfaceArea that natively works on rasters.
-#' @param r DEM as a raster layer in a projected coordinate system where map units match elevation/depth units
-#' @return a RasterLayer
-#' @import raster
-#' @importFrom sp surfaceArea
+#' Calculates surface area on a per cell basis of a DEM based on Jenness, 2004.
+#' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
+#' @param expand logical. If TRUE The value of the cells in the virtual rows and columns outside of the raster are set to be the same as the value on the border.
+#' @return a SpatRaster or RasterLayer
+#' @import terra
+#' @importFrom raster raster
 #' @references
 #' Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839. https://doi.org/10.2193/0091-7648(2004)032[0829:CLSAFD]2.0.CO;2
 #' @export
 
-SurfaceArea<- function(r){
-  # Input Checks
-  if(raster::isLonLat(r)){
+SurfaceArea<- function(r, expand=FALSE){
+  og_class<- class(r)[1]
+  if(og_class=="RasterLayer"){
+    r<- terra::rast(r) #Convert to SpatRaster
+  }
+  # Input checks
+  if(!(og_class %in% c("RasterLayer", "SpatRaster"))){
+    stop("Error: Input must be a 'SpatRaster' or 'RasterLayer'")
+  }
+  if(terra::nlyr(r)!=1){
+    stop("Error: Input raster must be one layer.")
+  }
+  if(terra::is.lonlat(r, perhaps=FALSE)){
     stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
   }
-  if(suppressWarnings(raster::couldBeLonLat(r))){
+  if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){
     warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
   }
-  run_in_blocks<- !raster::canProcessInMemory(r, n = 2)
-  x_res<- res(r)[1]
-  y_res<- res(r)[2]
-  
-  if(run_in_blocks==FALSE){
-    SA<- sp::surfaceArea(as.matrix(r), cellx =x_res, celly=y_res, byCell=TRUE)
-    SA<- raster::raster(SA, template=r)
-    } else{
-      f_out <- raster::rasterTmpFile()
-      SA<- raster::raster(r)
-      SA <- raster::writeStart(SA, filename = f_out)
-      
-      block_idx<- raster::blockSize(r, n = 2, minblocks = 2, minrows = 3)
-      block_overlap<- 1
-      nr<- nrow(r)
-    for (i in 1:block_idx$n) {
-      min_row<- max(c(block_idx$row[[i]] - block_overlap), 1)
-      max_row<- min(c(block_idx$row[[i]] + block_idx$nrows[[i]] - 1 + block_overlap, nr))
-      curr_block <- raster::getValues(r, row = min_row, nrows = max_row-min_row+1, format="matrix")
-      out_block<- sp::surfaceArea(curr_block, cellx =x_res, celly=y_res, byCell=TRUE)
-      if(i==1){
-        out_block<- out_block[-nrow(out_block),] #Trim last row
-      } else if (i != block_idx$n){
-        out_block<- out_block[2:(nrow(out_block)-1),] #Trim first and last row
-      } else {
-        out_block<- out_block[-1,] #Trim first row
-      }
-      SA<- raster::writeValues(SA, v= as.vector(t(out_block)), start= block_idx$row[i])
-    }
-      SA<- raster::writeStop(SA)
-      }
+  SA<- terra::focalCpp(r, w=c(3,3), fun = C_SurfaceArea,  x_res = terra::res(r)[1], y_res = terra::res(r)[2], expand=expand)
   names(SA)<- "SA"
+  if(og_class=="RasterLayer"){SA<- raster::raster(SA)}
   return(SA)
   }

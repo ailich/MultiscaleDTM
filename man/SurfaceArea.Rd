@@ -4,16 +4,18 @@
 \alias{SurfaceArea}
 \title{Calculates surface area of a DEM}
 \usage{
-SurfaceArea(r)
+SurfaceArea(r, expand = FALSE)
 }
 \arguments{
-\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
+\item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
+
+\item{expand}{logical. If TRUE The value of the cells in the virtual rows and columns outside of the raster are set to be the same as the value on the border.}
 }
 \value{
-a RasterLayer
+a SpatRaster or RasterLayer
 }
 \description{
-Calculates surface area on a per cell basis of a DEM based on Jenness, 2004. This wrapper for sp::surfaceArea that natively works on rasters.
+Calculates surface area on a per cell basis of a DEM based on Jenness, 2004.
 }
 \references{
 Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839. https://doi.org/10.2193/0091-7648(2004)032\link{0829:CLSAFD}2.0.CO;2
