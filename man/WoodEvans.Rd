@@ -13,14 +13,13 @@ WoodEvans(
   slope_tolerance = 1,
   curvature_tolerance = 1e-04,
   na.rm = FALSE,
-  pad = FALSE,
   include_scale = FALSE,
   mask_aspect = TRUE,
   return_params = FALSE
 )
 }
 \arguments{
-\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).}
+\item{r}{DEM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).}
 
 \item{w}{Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
@@ -34,16 +33,14 @@ WoodEvans(
 
 \item{na.rm}{Logical vector indicating whether or not to remove NA values before calculations.}
 
-\item{pad}{Logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (default = FALSE). If pad is TRUE, na.rm must be TRUE.}
-
 \item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE).}
 
-\item{mask_aspect}{Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3\emph{pi/2 radians (atan2(0,0)-pi/2+2}pi) and northness and eastness will be calculated from this.}
+\item{mask_aspect}{Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3\emph{pi/2 radians ((-pi/2)- atan2(0,0)+2}pi) and northness and eastness will be calculated from this.}
 
 \item{return_params}{Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).}
 }
 \value{
-a RasterStack
+a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 }
 \description{
 Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood, 1996).

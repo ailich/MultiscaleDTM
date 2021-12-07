@@ -27,10 +27,11 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) #Default ch
 This package calculates multi-scale geomorphometric terrain attributes from regularly gridded DEM/bathymetry rasters.
 
 ## Install and Load Package
-
 If you don't already have remotes installed, use the code `install.packages("remotes")`
 
 Then to install this package use the code `remotes::install_github("ailich/MultiscaleDEM")` (you may need to install Rtools using the instructions found here: https://cran.r-project.org/bin/windows/Rtools/)
+
+Also, this package relies on the `terra` package for handling of raster data. To install the development version of `terra`, use `install.packages('terra', repos='https://rspatial.r-universe.dev')`.
 
 ## Main Functions
 
@@ -65,7 +66,7 @@ In this tutorial we will calculate various terrain attributes using a 5 x 5 cell
 **Load packages**
 
 ```{r message=FALSE}
-library(raster) #Load raster package
+library(terra) #Load terra package for handling of raster data
 library(MultiscaleDEM) #Load MultiscaleDEM package
 ```
 
@@ -77,8 +78,7 @@ help(package="MultiscaleDEM")
 
 **Read in Data**
 ```{r}
-r<- raster(volcano, xmn=0, xmx=ncol(volcano)*10, ymn=0, ymx=nrow(volcano)*10) #Use built in volcano data set
-crs(r)<- CRS("+proj=utm +zone=16 +datum=WGS84 +units=m +no_defs") #Give r a projection. This is not the right projection, but some functions currently throw an error if there is no crs.
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 ```
 
 ```{r echo= FALSE, message=FALSE}
@@ -95,7 +95,7 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 ```
 
 ```{r echo=FALSE}
-slp_asp_list<- vector(mode="list", length = nlayers(slp_asp))
+slp_asp_list<- vector(mode="list", length = nlyr(slp_asp))
 for (i in 1:length(slp_asp_list)) {
   curr_var<- names(slp_asp)[i]
   
@@ -125,11 +125,11 @@ slp_asp_plot
 
 ```{r}
 WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
-    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE, pad = TRUE)
+    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE)
 ```
 
 ```{r echo= FALSE}
-WE_list<- vector(mode="list", length = nlayers(WE))
+WE_list<- vector(mode="list", length = nlyr(WE))
 for (i in 1:length(WE_list)) {
   curr_var<- names(WE)[i]
   
@@ -191,8 +191,9 @@ tm_shape(sapa, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="SAPA")
 ```
+
 ```{r}
-adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE, pad=TRUE)
+adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ```{r echo=FALSE}
@@ -203,7 +204,7 @@ tm_shape(adj_SD, raster.downsample = FALSE)+
 
 ### Relative Position
 ```{r}
-tpi<- TPI(r, w=c(5,5), na.rm = TRUE, pad = TRUE)
+tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ```{r echo=FALSE}
@@ -211,8 +212,9 @@ tm_shape(tpi, raster.downsample = FALSE)+
   tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="TPI")
 ```
+
 ```{r}
-rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, pad = TRUE)
+rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ```{r echo=FALSE}

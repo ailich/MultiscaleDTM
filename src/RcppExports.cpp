@@ -11,19 +11,6 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// C_extract_window
-NumericMatrix C_extract_window(NumericMatrix r, IntegerVector w, IntegerVector idx);
-RcppExport SEXP _MultiscaleDEM_C_extract_window(SEXP rSEXP, SEXP wSEXP, SEXP idxSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type idx(idxSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_extract_window(r, w, idx));
-    return rcpp_result_gen;
-END_RCPP
-}
 // subset_mat_rows
 NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx);
 RcppExport SEXP _MultiscaleDEM_subset_mat_rows(SEXP xSEXP, SEXP idxSEXP) {
@@ -60,42 +47,87 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_multiscale2
-NumericMatrix C_multiscale2(NumericMatrix r, IntegerVector w, NumericMatrix X, bool na_rm);
-RcppExport SEXP _MultiscaleDEM_C_multiscale2(SEXP rSEXP, SEXP wSEXP, SEXP XSEXP, SEXP na_rmSEXP) {
+// C_WoodEvans
+NumericMatrix C_WoodEvans(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_WoodEvans(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_multiscale2(r, w, X, na_rm));
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_WoodEvans(z, X_full, na_rm, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
-// C_multiscale1
-NumericVector C_multiscale1(NumericMatrix r, IntegerVector w, NumericMatrix X, bool na_rm);
-RcppExport SEXP _MultiscaleDEM_C_multiscale1(SEXP rSEXP, SEXP wSEXP, SEXP XSEXP, SEXP na_rmSEXP) {
+// C_AdjSD
+NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_AdjSD(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type r(rSEXP);
-    Rcpp::traits::input_parameter< IntegerVector >::type w(wSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_multiscale1(r, w, X, na_rm));
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD(z, X_full, na_rm, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_TriArea
+double C_TriArea(double a, double b, double c);
+RcppExport SEXP _MultiscaleDEM_C_TriArea(SEXP aSEXP, SEXP bSEXP, SEXP cSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type a(aSEXP);
+    Rcpp::traits::input_parameter< double >::type b(bSEXP);
+    Rcpp::traits::input_parameter< double >::type c(cSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_TriArea(a, b, c));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_SurfaceArea
+NumericVector C_SurfaceArea(NumericVector z, double x_res, double y_res, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_SurfaceArea(SEXP zSEXP, SEXP x_resSEXP, SEXP y_resSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type x_res(x_resSEXP);
+    Rcpp::traits::input_parameter< double >::type y_res(y_resSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_SurfaceArea(z, x_res, y_res, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_CountVals
+NumericVector C_CountVals(NumericVector z, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_CountVals(SEXP zSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_CountVals(z, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MultiscaleDEM_C_extract_window", (DL_FUNC) &_MultiscaleDEM_C_extract_window, 3},
     {"_MultiscaleDEM_subset_mat_rows", (DL_FUNC) &_MultiscaleDEM_subset_mat_rows, 2},
     {"_MultiscaleDEM_C_OLS_params", (DL_FUNC) &_MultiscaleDEM_C_OLS_params, 2},
     {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 2},
-    {"_MultiscaleDEM_C_multiscale2", (DL_FUNC) &_MultiscaleDEM_C_multiscale2, 4},
-    {"_MultiscaleDEM_C_multiscale1", (DL_FUNC) &_MultiscaleDEM_C_multiscale1, 4},
+    {"_MultiscaleDEM_C_WoodEvans", (DL_FUNC) &_MultiscaleDEM_C_WoodEvans, 5},
+    {"_MultiscaleDEM_C_AdjSD", (DL_FUNC) &_MultiscaleDEM_C_AdjSD, 5},
+    {"_MultiscaleDEM_C_TriArea", (DL_FUNC) &_MultiscaleDEM_C_TriArea, 3},
+    {"_MultiscaleDEM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDEM_C_SurfaceArea, 5},
+    {"_MultiscaleDEM_C_CountVals", (DL_FUNC) &_MultiscaleDEM_C_CountVals, 3},
     {NULL, NULL, 0}
 };
 

@@ -15,7 +15,7 @@ SlpAsp(
 )
 }
 \arguments{
-\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
+\item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
 
@@ -30,7 +30,7 @@ SlpAsp(
 \item{mask_aspect}{A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.}
 }
 \value{
-a RasterStack or RasterLayer of slope and/or aspect
+a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
 }
 \description{
 Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows.

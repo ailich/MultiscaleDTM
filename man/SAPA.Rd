@@ -13,7 +13,7 @@ SAPA(
 )
 }
 \arguments{
-\item{r}{DEM as a raster layer in a projected coordinate system where map units match elevation/depth units}
+\item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
 
 \item{w}{A single number or a vector of length 2 (row, column) specifying the dimensions of the rectangular window over which surface area will be summed. Window size must be an odd number. 1 refers to "native" scale and surface area and planar area will be calculated per cell (the traditional implementation).}
 
@@ -24,7 +24,7 @@ SAPA(
 \item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
 }
 \value{
-a RasterLayer
+a SpatRaster or RasterLayer
 }
 \description{
 Calculates surface area (Jenness, 2004) to planar area rugosity and by default corrects planar area for slope using the arc-chord ratio (Du Preez, 2015). Additionally, the method has been modified to allow for calculations at multiple different window sizes (see details).

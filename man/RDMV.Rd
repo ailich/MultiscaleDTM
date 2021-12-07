@@ -7,18 +7,16 @@
 RDMV(r, w = c(3, 3), na.rm = FALSE, pad = FALSE, include_scale = FALSE)
 }
 \arguments{
-\item{r}{DEM as a raster layer}
+\item{r}{DEM as a SpatRaster, RasterLayer, RasterStack, or RasterBrick}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
-\item{pad}{logical value specifying whether rows/columns of NA's should be padded to the edge of the raster to remove edge effects (FALSE by default). If pad is TRUE, na.rm must be TRUE.}
-
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 }
 \value{
-a RasterLayer
+a SpatRaster or RasterLayer
 }
 \description{
 Calculates Relative Difference from Mean Value (RDMV). RDMV = (focal_value - local_mean)/local_range
