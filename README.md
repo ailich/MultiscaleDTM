@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-December 06, 2021
+December 08, 2021
 
 # MultiscaleDEM
 
@@ -30,9 +30,12 @@ Then to install this package use the code
 install Rtools using the instructions found here:
 <https://cran.r-project.org/bin/windows/Rtools/>)
 
-Also, this package relies on the `terra` package for handling of raster
-data. To install the development version of `terra`, use
+This package relies on the `terra` package for handling of spatial
+raster data. To install the development version of `terra`, use
 `install.packages('terra', repos='https://rspatial.r-universe.dev')`.
+This package is also backwards compatible with the `raster` package. To
+install the development version of `raster` use
+`install.packages('raster', repos='https://rspatial.r-universe.dev')`
 
 ## Main Functions
 
@@ -77,13 +80,17 @@ data. To install the development version of `terra`, use
 
 -   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017)
 
+-   `BPI` - Bathymetric Position Index (Lundblad et al., 2006)
+
 ## Tutorial
 
 In this tutorial we will calculate various terrain attributes using a 5
 x 5 cell rectangular window. Any rectangular odd numbered window size
 however could be used. Window sizes are specified with a vector of
 length 2 of `c(n_rows, n_cols)`. If a single number is provided it will
-be used for both the number of rows and columns.
+be used for both the number of rows and columns. The only metric that
+does not follow this syntax is BPI which uses an annulus shaped focal
+window.
 
 **Load packages**
 
@@ -115,8 +122,8 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
-    "meanc", "maxc", "minc", "longc", "crosc", "features"), na.rm = TRUE)
+WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc",
+    "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
@@ -124,7 +131,7 @@ WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect",
 ### Rugosity
 
 ``` r
-vrm<- VRM(r, w=c(5,5))
+vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
@@ -158,6 +165,34 @@ rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE)
 
 ![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
+BPI is a modification of TPI that uses an annulus shaped focal window
+and therefore requires an inner and outer radius. This can be specified
+in cell units (number of raster cells) or in map units (e.g. meters)
+which can be useful if your x and y resolutions are not equal. For
+example, an annulus window with an inner radius of 2 cells and an outer
+radius of 4 cells would be
+
+``` r
+annulus_window(radius = c(2,4), unit = "cell")
+```
+
+    ##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
+    ##  [1,]   NA   NA   NA   NA    1   NA   NA   NA   NA
+    ##  [2,]   NA   NA    1    1    1    1    1   NA   NA
+    ##  [3,]   NA    1    1    1    1    1    1    1   NA
+    ##  [4,]   NA    1    1   NA   NA   NA    1    1   NA
+    ##  [5,]    1    1    1   NA   NA   NA    1    1    1
+    ##  [6,]   NA    1    1   NA   NA   NA    1    1   NA
+    ##  [7,]   NA    1    1    1    1    1    1    1   NA
+    ##  [8,]   NA   NA    1    1    1    1    1   NA   NA
+    ##  [9,]   NA   NA   NA   NA    1   NA   NA   NA   NA
+
+``` r
+bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
+
 # References
 
 Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for
@@ -183,6 +218,11 @@ Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J.,
 2017. Towards a Framework for Terrain Attribute Selection in
 Environmental Studies. Environmental Modelling & Software 89, 19–30.
 <https://doi.org/10.1016/j.envsoft.2016.11.027>
+
+Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R.,
+Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic
+terrain classification scheme for American Samoa. Marine Geodesy 29,
+89–111.
 
 Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the
 Suitability of Multi-Scale Terrain Attribute Calculation Approaches for
