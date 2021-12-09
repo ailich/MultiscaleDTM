@@ -11,7 +11,7 @@ VRM(r, w, na.rm = FALSE, include_scale = FALSE)
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
 
-\item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
+\item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 }

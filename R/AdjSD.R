@@ -3,7 +3,7 @@
 #' Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated.
 #' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
-#' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
+#' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @return a SpatRaster or RasterLayer of adjusted rugosity
 #' @import terra
@@ -23,7 +23,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE){
   if(terra::nlyr(r)!=1){
     stop("Error: Input raster must be one layer.")
   }
-  if(terra::is.lonlat(r, perhaps=FALSE)){
+  if(isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
     stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
   }
   if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){

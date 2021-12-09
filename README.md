@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-December 08, 2021
+December 09, 2021
 
 # MultiscaleDEM
 
@@ -41,20 +41,23 @@ install the development version of `raster` use
 
 ### Slope, Aspect and Curvature
 
--   `SlpAsp` calculates multi-scale slope and aspect according to the
-    Misiuk et al (2021) which is a modification of the traditional 3 x 3
-    slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al.,
-    1981; Ritter, 1987).
+-   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
+    et al (2021) which is a modification of the traditional 3 x 3 slope
+    and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
+    Ritter, 1987).
 
 -   `WoodEvans` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
-    ordinary least squares (Evans, 1980; Wood, 1996; Wilson et
-    al. 2007). This is similar to [r.param.scale in GRASS
-    GIS](https://grass.osgeo.org/grass80/manuals/r.param.scale.html).
+    ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood,
+    1996). The morphometric features algorithm has been modified to use
+    more robust measures of curvature based on the suggestions of Minár
+    et al. (2020).
 
 ### Rugosity
 
--   `VRM` - Vector ruggedness measure (Sappington et al. 2007).
+-   `VRM` - Vector ruggedness measure (Sappington et al. 2007)
+    quantifies terrain ruggedness by measuring the dispersion of vectors
+    orthogonal to the terrain surface.
 
 -   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004).
     Additionally, planar area can be corrected for slope (Du Preez
@@ -76,11 +79,18 @@ install the development version of `raster` use
 
 ### Relative Position
 
--   `TPI` - Topographic Position Index (Weiss, 2001)
+-   `TPI` - Topographic Position Index (Weiss, 2001) is the difference
+    between the value of a focal cell and the mean of the surrounding
+    cells.
 
 -   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017)
+    is the difference between the value of a focal cell and the mean of
+    the cells in the focal window divided by the range of the values in
+    the focal window.
 
--   `BPI` - Bathymetric Position Index (Lundblad et al., 2006)
+-   `BPI` - Bathymetric Position Index (Lundblad et al., 2006) is the
+    difference between the value of a focal cell and the mean of the
+    surrounding cells contained within an annulus shaped window.
 
 ## Tutorial
 
@@ -90,7 +100,8 @@ however could be used. Window sizes are specified with a vector of
 length 2 of `c(n_rows, n_cols)`. If a single number is provided it will
 be used for both the number of rows and columns. The only metric that
 does not follow this syntax is BPI which uses an annulus shaped focal
-window.
+window which we will calculate using an inner radius of 2 and an outer
+radius of 4 cells.
 
 **Load packages**
 
@@ -165,6 +176,12 @@ rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE)
 
 ![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
+``` r
+bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+
 BPI is a modification of TPI that uses an annulus shaped focal window
 and therefore requires an inner and outer radius. This can be specified
 in cell units (number of raster cells) or in map units (e.g. meters)
@@ -186,12 +203,6 @@ annulus_window(radius = c(2,4), unit = "cell")
     ##  [7,]   NA    1    1    1    1    1    1    1   NA
     ##  [8,]   NA   NA    1    1    1    1    1   NA   NA
     ##  [9,]   NA   NA   NA   NA    1   NA   NA   NA   NA
-
-``` r
-bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
-```
-
-![](README_files/figure-gfm/unnamed-chunk-21-1.png)<!-- -->
 
 # References
 
@@ -223,6 +234,12 @@ Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R.,
 Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic
 terrain classification scheme for American Samoa. Marine Geodesy 29,
 89–111.
+
+Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of
+definitions of land surface (topographic) curvatures, with implications
+for their application in geoscience modelling and prediction.
+Earth-Science Reviews 211, 103414.
+<https://doi.org/10.1016/j.earscirev.2020.103414>
 
 Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the
 Suitability of Multi-Scale Terrain Attribute Calculation Approaches for

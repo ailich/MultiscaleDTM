@@ -53,7 +53,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   if(terra::nlyr(r)!=1){
     stop("Error: Input raster must be one layer.")
   }
-  if(terra::is.lonlat(r, perhaps=FALSE)){
+  if(isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
     stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
   }
   if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){
@@ -171,27 +171,21 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   
   if("slope" %in% needed_metrics){
     slope.k<- (atan(sqrt((dz.dx^2)+(dz.dy^2))))
-    if(mask_aspect){
-      slp0_idx<- slope.k==0
-      }
     if(unit=="degrees" & ("slope" %in% metrics)){
       slope.k<- slope.k * (180/pi)
       }
-    
     names(slope.k)<- "slope"
     out<- c(out, slope.k, warn=FALSE)
   }
   
   if("aspect" %in% needed_metrics){
     aspect.k<- terra::app(atan2(dz.dy, -dz.dx), fun = convert_aspect) #aspect relative to North
-    # aspect.k<- (pi/2) - atan2(dz.dy, -dz.dx) #aspect relative to North
-    # aspect.k[aspect.k < 0]<- aspect.k[aspect.k < 0] + (2*pi) #Constrain in range of 0 - 2 pi
     
     if("eastness" %in% needed_metrics){
       eastness.k<- sin(aspect.k)
       if(mask_aspect){
-        eastness.k[slp0_idx]<- 0 #Set eastness to 0 where slope is zero
-      }
+        eastness.k<- terra::mask(eastness.k, mask= slope.k, maskvalues = 0, updatevalue = 0) #Set eastness to 0 where slope is zero
+        }
       names(eastness.k)<- "eastness"
       out<- c(out, eastness.k, warn=FALSE)
     }
@@ -199,15 +193,15 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     if("northness" %in% needed_metrics){
       northness.k<- cos(aspect.k)
       if(mask_aspect){
-        northness.k[slp0_idx]<- 0 #Set northenss to 0 where slope is zero
-      }
+        northness.k<- terra::mask(northness.k, mask= slope.k, maskvalues = 0, updatevalue = 0) #Set northenss to 0 where slope is zero
+        }
       names(northness.k)<- "northness"
       out<- c(out, northness.k, warn=FALSE)
     }
     
     if(mask_aspect){
-      aspect.k[slp0_idx]<- NA_real_ #Set aspect to undefined where slope is zero
-    }
+      aspect.k<- terra::mask(aspect.k, mask= slope.k, maskvalues = 0, updatevalue = NA) #Set aspect to undefined where slope is zero
+      }
     if(unit=="degrees"){
       aspect.k<- aspect.k * (180/pi)
       }

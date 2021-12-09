@@ -31,7 +31,7 @@ WoodEvans(
 
 \item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.}
 
-\item{na.rm}{Logical vector indicating whether or not to remove NA values before calculations.}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
 \item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE).}
 

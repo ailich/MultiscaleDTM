@@ -37,13 +37,13 @@ This package relies on the `terra` package for handling of spatial raster data. 
 
 ### Slope, Aspect and Curvature
 
--   `SlpAsp` calculates multi-scale slope and aspect according to the Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987).
+-   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987).
 
--   `WoodEvans` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Evans, 1980; Wood, 1996; Wilson et al. 2007). This is similar to [r.param.scale in GRASS GIS](https://grass.osgeo.org/grass80/manuals/r.param.scale.html).
+-   `WoodEvans` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
 ### Rugosity
 
--   `VRM` - Vector ruggedness measure (Sappington et al. 2007).
+-   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies terrain ruggedness by measuring the dispersion of vectors orthogonal to the terrain surface.
 
 -   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Additionally, planar area can be corrected for slope (Du Preez 2015). Additionally, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
 
@@ -55,15 +55,15 @@ This package relies on the `terra` package for handling of spatial raster data. 
 
 ### Relative Position
 
--   `TPI` - Topographic Position Index (Weiss, 2001)
+-   `TPI` - Topographic Position Index (Weiss, 2001) is the difference between the value of a focal cell and the mean of the surrounding cells. 
 
--   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017)
+-   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017) is the difference between the value of a focal cell and the mean of the cells in the focal window divided by the range of the values in the focal window. 
 
--   `BPI` -  Bathymetric Position Index (Lundblad et al., 2006)
+-   `BPI` -  Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window.
 
 ## Tutorial
 
-In this tutorial we will calculate various terrain attributes using a 5 x 5 cell rectangular window. Any rectangular odd numbered window size however could be used. Window sizes are specified with a vector of length 2 of `c(n_rows, n_cols)`. If a single number is provided it will be used for both the number of rows and columns. The only metric that does not follow this syntax is BPI which uses an annulus shaped focal window.
+In this tutorial we will calculate various terrain attributes using a 5 x 5 cell rectangular window. Any rectangular odd numbered window size however could be used. Window sizes are specified with a vector of length 2 of `c(n_rows, n_cols)`. If a single number is provided it will be used for both the number of rows and columns. The only metric that does not follow this syntax is BPI which uses an annulus shaped focal window which we will calculate using an inner radius of 2 and an outer radius of 4 cells.
 
 **Load packages**
 
@@ -225,11 +225,6 @@ tm_shape(rdmv, raster.downsample = FALSE)+
   tm_layout(legend.outside = TRUE, main.title="RDMV")
 ```
 
-BPI is a modification of TPI that uses an annulus shaped focal window and therefore requires an inner and outer radius. This can be specified in cell units (number of raster cells) or in map units (e.g. meters) which can be useful if your x and y resolutions are not equal. For example, an annulus window with an inner radius of 2 cells and an outer radius of 4 cells would be
-```{r}
-annulus_window(radius = c(2,4), unit = "cell")
-```
-
 ```{r}
 bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
 ```
@@ -238,6 +233,12 @@ bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
 tm_shape(bpi, raster.downsample = FALSE)+
   tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="BPI")
+```
+
+BPI is a modification of TPI that uses an annulus shaped focal window and therefore requires an inner and outer radius. This can be specified in cell units (number of raster cells) or in map units (e.g. meters) which can be useful if your x and y resolutions are not equal. For example, an annulus window with an inner radius of 2 cells and an outer radius of 4 cells would be
+
+```{r}
+annulus_window(radius = c(2,4), unit = "cell")
 ```
 
 # References
@@ -255,6 +256,8 @@ Jenness, J.S., 2004. Calculating landscape surface area from digital elevation m
 Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19–30. https://doi.org/10.1016/j.envsoft.2016.11.027
 
 Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111.
+
+Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
 
 Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the Suitability of Multi-Scale Terrain Attribute Calculation Approaches for Seabed Mapping Applications. Marine Geodesy 44, 327–385. https://doi.org/10.1080/01490419.2021.1925789
 

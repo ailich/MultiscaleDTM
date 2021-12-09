@@ -52,7 +52,7 @@ convert_aspect2<- function(aspect){
 #' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' are morphometric features. See details.
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
-#' @param na.rm Logical vector indicating whether or not to remove NA values before calculations.
+#' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
 #' @param mask_aspect Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3*pi/2 radians ((-pi/2)- atan2(0,0)+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).
@@ -86,7 +86,7 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   if(terra::nlyr(r)!=1){
     stop("Error: Input raster must be one layer.")
     }
-  if(terra::is.lonlat(r, perhaps=FALSE)){
+  if(isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
     stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
   }
   if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){
@@ -115,6 +115,10 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   
   if(any(c("qeastness", "qnorthness") %in% needed_metrics) & (!("qaspect" %in% needed_metrics))){
     needed_metrics<- c(needed_metrics, "qaspect")
+  }
+  
+  if(mask_aspect & ("qaspect" %in% needed_metrics) & (!("qslope" %in% needed_metrics))){
+    needed_metrics<- c(needed_metrics, "qslope")
   }
   
   if("features" %in% needed_metrics){
@@ -164,14 +168,13 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   if("qaspect" %in% needed_metrics){
     asp<- terra::app(atan2(params$e,params$d), fun = convert_aspect2) #Shift aspect so north is zero
     if (mask_aspect){
-      slp0_idx<- (params$d== 0 &  params$e== 0) #mask indicating when d ane e are 0 (slope is 0)
-      asp[slp0_idx]<- NA_real_
+      asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA) #Set aspect to undefined where slope is zero
     }
     
     if("qeastness" %in% needed_metrics){
       eastness<- sin(asp)
       if (mask_aspect){
-        eastness[slp0_idx]<- 0
+        eastness<- terra::mask(eastness, mask= slp, maskvalues = 0, updatevalue = 0) #Set eastness to 0 where slope is zero
         }
       names(eastness)<- "qeastness"
       out<- c(out, eastness, warn=FALSE)
@@ -180,8 +183,8 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
     if("qnorthness" %in% needed_metrics){
       northness<- cos(asp)
       if (mask_aspect){
-        northness[slp0_idx]<- 0
-      }
+        northness<- terra::mask(northness, mask= slp, maskvalues = 0, updatevalue = 0) #Set northness to 0 where slope is zero
+        }
       names(northness)<- "qnorthness"
       out<- c(out, northness, warn=FALSE)
     }
@@ -202,21 +205,21 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   
   if("profc" %in% needed_metrics){
     profc<- terra::lapp(params, fun = kns)
-    profc[mask_raster]<- 0
+    profc<- terra::mask(profc, mask= mask_raster, maskvalues = 1, updatevalue = 0) #Set curvature to 0 where all values are the same
     names(profc)<- "profc"
     out<- c(out, profc, warn=FALSE)
   }
   
   if("planc" %in% needed_metrics){
     planc<- terra::lapp(params, fun = knc)
-    planc[mask_raster]<- 0
+    planc<- terra::mask(planc, mask= mask_raster, maskvalues = 1, updatevalue = 0) #Set curvature to 0 where all values are the same
     names(planc)<- "planc"
     out<- c(out, planc, warn=FALSE)
   }
   
   if("twistc" %in% needed_metrics){
     twistc<- terra::lapp(params, fun = tgc)
-    twistc[mask_raster]<- 0
+    twistc<- terra::mask(twistc, mask= mask_raster, maskvalues = 1, updatevalue = 0) #Set curvature to 0 where all values are the same
     names(twistc)<- "twistc"
     out<- c(out, twistc, warn=FALSE)
     }

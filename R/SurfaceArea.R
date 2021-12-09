@@ -22,7 +22,7 @@ SurfaceArea<- function(r, expand=FALSE){
   if(terra::nlyr(r)!=1){
     stop("Error: Input raster must be one layer.")
   }
-  if(terra::is.lonlat(r, perhaps=FALSE)){
+  if(isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
     stop("Error: Coordinate system is Lat/Lon. Coordinate system must be projected with elevation/depth units matching map units.")
   }
   if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){
