@@ -1,3 +1,60 @@
+kns2<- function(a,b,c,d,e){
+    #Profc: Normal Slope Line Curvature
+    out<- (-2 * (a*d^2 + c*d*e + b*e^2)) / ((d^2 + e^2)*(1 + d^2 + e^2)^1.5)
+    return(out)
+}
+
+knc2<- function(a,b,c,d,e){
+    #Planc: Normal Contour Curvature
+    out<- -2*(a*(e^2) - c*d*e + b*d^2)/((d^2+e^2) * sqrt(1+d^2+e^2))
+    return(out)
+}
+
+tgc2<- function(a,b,c,d,e){
+    #TwistC: Contour geodesic torsion
+    out<- (2*d*e*(a-b) - c*(d^2-e^2))/((d^2+e^2)*(1+d^2+e^2))
+    return(out)
+}
+
+kmean2<- function(a,b,c,d,e){
+    #Mean Curvature
+    out<- -(a*(1+e^2) - c*d*e + b*(1+d^2)) / (sqrt((1+d^2+e^2)^3))
+    return(out)
+}
+
+ku2<- function(a,b,c,d,e){
+    #unsphericity curvature
+    out<- sqrt(((a*(1+e^2) - c*d*e +b*(1+d^2)) / (sqrt((1+d^2+e^2)^3)))^2 - ((4*a*b-c^2)/(1+d^2+e^2)^2))
+    return(out)
+}
+
+kmin2<- function(a,b,c,d,e){
+    #Min Curvature
+    out<- kmean2(a,b,c,d,e)-ku2(a,b,c,d,e)
+    return(out)
+}
+
+kmax2<- function(a,b,c,d,e){
+    #Max Curvature
+    out<- kmean2(a,b,c,d,e)+ku2(a,b,c,d,e)
+    return(out)
+}
+
+classify_features2<- function(slope, planc, maxc, minc) {
+    slope_tolerance<- 1
+    curvature_tolerance<- 0.0001
+    dplyr::case_when(is.na(slope) ~ NA_character_,
+                 (slope > slope_tolerance) & (planc > curvature_tolerance) ~ "Ridge",
+                 (slope > slope_tolerance) & (planc < -curvature_tolerance) ~ "Channel",
+                 slope > slope_tolerance ~ "Planar", #Maybe make this 7 (slope, new category)
+                 (maxc > curvature_tolerance) & (minc > curvature_tolerance) ~ "Peak",
+                 (maxc > curvature_tolerance) & (minc < -curvature_tolerance) ~ "Pass",
+                 maxc > curvature_tolerance ~ "Ridge",
+                 (minc < -curvature_tolerance) & (maxc < -curvature_tolerance) ~ "Pit",
+                 minc < -curvature_tolerance ~ "Channel",
+                 TRUE ~ "Planar")
+    }
+
 nr<-3
 nc<- 3
 x<- matrix(1:nc, nrow=nr, ncol=nc, byrow=TRUE)
@@ -5,8 +62,6 @@ x<- x-mean(x)
 
 y<- matrix(nr:1, nrow=nr, ncol=nc, byrow=FALSE)
 y<- y-mean(y)
-
-classify_features<- MultiscaleDEM:::classify_features_ff(slope_tolerance = 1, curvature_tolerance = 0.0001)
 
 plot_surface<- function(a,b,c,d,e){
     z<- a*x^2+ b*y^2+ c*x*y + d*x + e*y
@@ -41,12 +96,12 @@ make_table<- function(a,b,c,d,e){
     asp_deg<- asp * (180/pi)
     slp_deg<- slp * (180/pi)
     
-    profc<- MultiscaleDEM:::kns(a,b,c,d,e)
-    planc<- MultiscaleDEM:::knc(a,b,c,d,e)
-    twistc<- MultiscaleDEM:::tgc(a,b,c,d,e)
-    maxc<- MultiscaleDEM:::kmax(a,b,c,d,e)
-    minc<- MultiscaleDEM:::kmin(a,b,c,d,e)
-    meanc<- MultiscaleDEM:::kmean(a,b,c,d,e)
+    profc<- kns2(a,b,c,d,e)
+    planc<- knc2(a,b,c,d,e)
+    twistc<- tgc2(a,b,c,d,e)
+    maxc<- kmax2(a,b,c,d,e)
+    minc<- kmin2(a,b,c,d,e)
+    meanc<- kmean2(a,b,c,d,e)
     
     #Translation to Minar 2020 formulas
     # zx<- (2*a*x) + (c*y) + d
@@ -72,23 +127,9 @@ make_table<- function(a,b,c,d,e){
                            aspect_degrees=asp_deg,
                            eastness=eastness,
                            northness=northness,
-                           feature= classify_features(slp, planc, maxc, minc)),3)
+                           feature = NA_real_),3)
     
-    if(out$feature[1]==1){
-        out$feature[1]<- "Planar"
-        } else if(out$feature[1]==2){
-            out$feature[1]<- "Pit"
-        } else if(out$feature[1]==3){
-            out$feature[1]<- "Channel"
-        } else if(out$feature[1]==4){
-            out$feature[1]<- "Pass"
-        } else if(out$feature[1]==5){
-            out$feature[1]<- "Ridge"
-        } else if(out$feature[1]==6){
-            out$feature[1]<- "Peak"
-            } else{
-                out$feature[1]<- "Error"
-                }
+    out$feature[1] = classify_features2(slp, planc, maxc, minc)
     return(out)
     }
 
@@ -127,8 +168,6 @@ ui <- fluidPage(
 
 server <- function(input, output, output2) {
     output$plot <- rgl::renderRglwidget({
-        #rgl.open(useNULL=T)
-        #rgl.bg(color = "white")
         plot_surface(input$a, input$b, input$c, input$d, input$e)
         rgl::rglwidget()
     })

@@ -98,7 +98,7 @@ kmean<- function(a,b,c,d,e){
 
 ku<- function(a,b,c,d,e){
   #unsphericity curvature
-  out<- sqrt(((a*(1+e^2) - c*d*e +b*(1+d^2)) / (2*sqrt((1+d^2+e^2)^3)))^2 - ((4*a*b-c^2)/(1+d^2+e^2)^2))
+  out<- sqrt(((a*(1+e^2) - c*d*e +b*(1+d^2)) / (sqrt((1+d^2+e^2)^3)))^2 - ((4*a*b-c^2)/(1+d^2+e^2)^2))
   return(out)
 }
 

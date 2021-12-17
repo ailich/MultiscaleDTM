@@ -3,6 +3,7 @@
 #' Interactive Shiny app to look at terrain attributes based on a surface fit using a Wood/Evans Quadratic Equation: Z =ax^2+by^2+cxy+dx+ey(+f)
 #' @import shiny
 #' @import rgl
+#' @importFrom dplyr case_when
 #' @references
 #' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
 #' 
