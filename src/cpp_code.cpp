@@ -47,13 +47,13 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
     }
 }
 
+//Fit Wood/Evans Quadratic Surface with Intercept
 // [[Rcpp::export]]
-NumericMatrix C_WoodEvans(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+NumericMatrix C_WoodEvans1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
   size_t nlyr = X_full.ncol() + 1; //Number of layers
   NumericMatrix out = NumericMatrix(ni, nlyr);
   out.fill(NA_REAL);
-  out(_,6)=rep(0,out.nrow()); //initialize mask with 0's
   colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f", "mask");
   
   int thresh = 6; //NEED AT LEAST 6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
@@ -91,7 +91,51 @@ NumericMatrix C_WoodEvans(NumericVector z, NumericMatrix X_full, bool na_rm, siz
   return out;
 }
 
-//Multiscale metrics across matrix using sliding window (Planar Fit SD)
+//Fit Wood/Evans Quadratic Surface forced throough center
+// [[Rcpp::export]]
+NumericMatrix C_WoodEvans2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+  
+  size_t nlyr = X_full.ncol() + 1; //Number of layers
+  NumericMatrix out = NumericMatrix(ni, nlyr);
+  out.fill(NA_REAL);
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "mask");
+  
+  int thresh = 5; //NEED AT LEAST 5 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
+  
+  for (size_t i=0; i<ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    NumericVector zw_full = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    double center_val =  zw_full[floor(zw_full.length()/2)];
+    zw_full = zw_full - center_val; //reference values as difference from center value
+    LogicalVector NA_idx = is_na(zw_full);
+    int n_obs = sum(!NA_idx);
+    if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
+      NumericVector zw = zw_full[!NA_idx];
+      NumericMatrix Z(n_obs,1, zw.begin());
+      NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
+      NumericVector uni_Zvals = unique(zw);
+      if(uni_Zvals.length() == 1){
+        //If all Z values are the same, intercept should just be the value and all other parameters are 0. mask is 1 indicating all values are the same
+        out(i, 0) = 0; //a
+        out(i, 1) = 0; //b
+        out(i, 2) = 0; //c
+        out(i, 3) = 0; //d
+        out(i, 4) = 0; //e
+        out(i, 5) = 1; //mask
+      } else{
+        NumericVector params = C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+        out(i, 0) =  params[0]; //a
+        out(i, 1) =  params[1]; //b
+        out(i, 2) =  params[2]; //c
+        out(i, 3) =  params[3]; //d
+        out(i, 4) =  params[4]; //e
+      }
+    }}
+  return out;
+}
+
+//SD of residuals from a planar fit
 // [[Rcpp::export]]
 NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw){
   NumericVector out = NumericVector(ni, NA_REAL);

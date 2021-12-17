@@ -4,7 +4,7 @@
 \alias{ku}
 \title{Calculate unsphericity curvature}
 \usage{
-ku(a, b, c, d, e, f)
+ku(a, b, c, d, e)
 }
 \arguments{
 \item{a}{regression coefficient}
@@ -16,11 +16,9 @@ ku(a, b, c, d, e, f)
 \item{d}{regression coefficient}
 
 \item{e}{regression coefficient}
-
-\item{f}{regression intercept}
 }
 \description{
-Calculate  unsphericity curvature, ku, from the equation Z =ax^2+by^2+cxy+dx+e+f.
+Calculate  unsphericity curvature, ku, from the equation Z =ax^2+by^2+cxy+dx+ey(+f).
 }
 \references{
 Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.

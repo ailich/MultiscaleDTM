@@ -4,12 +4,12 @@
 \alias{classify_features_ff}
 \title{Helper function factory to classify morphometric features}
 \usage{
-classify_features_ff(slope_tolerance, curvature_tolerance)
+classify_features_ff(slope_tolerance = 1, curvature_tolerance = 1e-04)
 }
 \arguments{
 \item{slope_tolerance}{Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.}
 
-\item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.}
+\item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.}
 }
 \value{
 A function that can be passed to raster::overlay to classify morphometric features

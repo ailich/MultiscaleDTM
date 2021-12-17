@@ -2,24 +2,25 @@
 #'
 #' Helper function factory to classify morphometric features according to Wood 1996 page 120
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.
-#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.01). Relevant for the features layer.
+#' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.
 #' @importFrom dplyr case_when
 #' @return A function that can be passed to raster::overlay to classify morphometric features
 #' @references
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 
-classify_features_ff<- function(slope_tolerance, curvature_tolerance){
-  #1=PLANAR
+classify_features_ff<- function(slope_tolerance=1, curvature_tolerance=0.0001){
+  #1=PLANAR (If add slope redefine to FLAT?)
   #2=PIT
   #3=CHANNEL
   #4=PASS
   #5=RIDGE
   #6=PEAK
+  #7=SLOPE??? (add a new category?)
   out_fun<- function(slope, planc, maxc, minc){
     dplyr::case_when(is.na(slope) ~ NA_real_,
                      (slope > slope_tolerance) & (planc > curvature_tolerance) ~ 5,
                      (slope > slope_tolerance) & (planc < -curvature_tolerance) ~ 3,
-                     slope > slope_tolerance ~ 1,
+                     slope > slope_tolerance ~ 1, #Maybe make this 7 (slope, new category)
                      (maxc > curvature_tolerance) & (minc > curvature_tolerance) ~ 6,
                      (maxc > curvature_tolerance) & (minc < -curvature_tolerance) ~ 4,
                      maxc > curvature_tolerance ~ 5,
@@ -49,15 +50,17 @@ convert_aspect2<- function(aspect){
 #' @param r DEM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
-#' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' are morphometric features. See details.
+#' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'elev' is the predicted elevation at the central cell (i.e. the intercept term of the regression) and is only relevant when force_center=FALSE. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, and 'features' are morphometric features. See details.
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
+#' @param force_center Logical specifying whether the constrain the model through the central cell of the focal window
 #' @param mask_aspect Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3*pi/2 radians ((-pi/2)- atan2(0,0)+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).
+#' @param as_derivs Logical indicating whether parameters should be formatted as partial derivatives instead of regression coefficients (default = FALSE) (Minár et al., 2020).
 #' @return a SpatRaster (terra) or RasterStack/RasterLayer (raster)
-#' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, and morphometric features using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
+#' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster stack
@@ -71,9 +74,9 @@ convert_aspect2<- function(aspect){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE){
+WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE){
   
-  all_metrics<- c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "longc", "crosc", "features")
+  all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -101,16 +104,23 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   if(all(w<3)){
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
-  if(prod(w) < 6){
+  if((prod(w) < 6) & (!force_center)){
     stop("Error: Window size must have at least 6 cells to fit surface")
-    }
+  }
+  if((prod(w) < 5) & (force_center)){
+    stop("Error: Window size must have at least 5 cells to fit surface")
+  }
   if (!any(unit==c("degrees", "radians"))){
     stop("unit must be 'degrees' or 'radians'")
   }
   if (any(!(metrics %in% all_metrics))){
-    stop("Error: Invlaid metric. Valid metrics include 'qslope', 'qaspect', 'qeastness', 'qnorthness', 'profc', 'planc', 'twistc', 'meanc', 'maxc', 'minc', and `features`.")
+    stop("Error: Invlaid metric. Valid metrics include 'elev', 'qslope', 'qaspect', 'qeastness', 'qnorthness', 'profc', 'planc', 'twistc', 'meanc', 'maxc', 'minc', and `features`.")
     }
   
+  if(force_center & ("elev" %in% metrics)){
+    metrics<- metrics[metrics!="elev"]
+    warning("Warning: dropping 'elev' from metrics since force_central is TRUE")
+    }
   needed_metrics<- metrics
   
   if(any(c("qeastness", "qnorthness") %in% needed_metrics) & (!("qaspect" %in% needed_metrics))){
@@ -144,14 +154,28 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   y<- as.vector(t(y_mat)) #Transpose for focal
   
   #Explanatory Variable matrix X for quadratic fit
-  X<- cbind(x^2,y^2, x*y, x, y, 1) # Z = ax^2+by^2+cxy+dx+ey+f
+  X<- cbind(x^2,y^2, x*y, x, y) # Z = ax^2+by^2+cxy+dx+ey (no intercept)
+  if(!force_center){
+    X<- cbind(X,1)
+    } # Z = ax^2+by^2+cxy+dx+ey+f (with intercept)
   
   # Calculate Regression Parameters
-  params<- terra::focalCpp(r, w=w, fun = C_WoodEvans, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
-  mask_raster<- params$mask
-  params<- params[[-7]] #drop mask
-  
+  if(force_center){
+    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans2, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
+    mask_raster<- params$mask
+    params<- params[[-6]] #drop mask
+  } else{
+    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans1, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
+    elev<- params$f
+    names(elev)<- "elev"
+    mask_raster<- params$mask
+    params<- params[[-c(6,7)]] #drop mask and intercept
+    }
+
   out<- terra::rast() #Initialize output
+  if("elev" %in% needed_metrics){
+    out<- c(out, elev, warn=FALSE)
+    }
 
   #Use regression parameters to calculate slope and aspect
   if("qslope" %in% needed_metrics){
@@ -252,6 +276,12 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("qslope", "qaspect
   }
   
   if(!is.null(metrics)){out<- terra::subset(out, metrics)} #Subset needed metrics to requested metrics in proper order
+  if(as_derivs){
+    params$a<- 2*params$a
+    params$b<- 2*params$b
+    names(params)<- c("zxx", "zyy", "zxy", "zx", "zy") #partial derivatives with respect to x^2, y^2, xy, x, and y (Minar et al, 2020)
+    }
+  
   if(return_params){out<- c(out, params, warn=FALSE)}
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
                              

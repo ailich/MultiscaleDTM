@@ -4,7 +4,7 @@
 \alias{kmax}
 \title{Calculate max curvature}
 \usage{
-kmax(a, b, c, d, e, f)
+kmax(a, b, c, d, e)
 }
 \arguments{
 \item{a}{regression coefficient}
@@ -16,11 +16,9 @@ kmax(a, b, c, d, e, f)
 \item{d}{regression coefficient}
 
 \item{e}{regression coefficient}
-
-\item{f}{regression intercept}
 }
 \description{
-Calculate max curvature, kmax, from the equation Z =ax^2+by^2+cxy+dx+e+f.
+Calculate max curvature, kmax, from the equation Z =ax^2+by^2+cxy+dx+ey(+f).
 }
 \references{
 Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.

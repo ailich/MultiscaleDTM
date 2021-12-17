@@ -8,14 +8,16 @@ WoodEvans(
   r,
   w = c(3, 3),
   unit = "degrees",
-  metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
-    "meanc", "maxc", "minc", "longc", "crosc", "features"),
+  metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc",
+    "twistc", "meanc", "maxc", "minc", "features"),
   slope_tolerance = 1,
   curvature_tolerance = 1e-04,
   na.rm = FALSE,
+  force_center = FALSE,
   include_scale = FALSE,
   mask_aspect = TRUE,
-  return_params = FALSE
+  return_params = FALSE,
+  as_derivs = FALSE
 )
 }
 \arguments{
@@ -25,7 +27,7 @@ WoodEvans(
 
 \item{unit}{"degrees" or "radians".}
 
-\item{metrics}{Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "meanc", "maxc", "minc", "longc", "crosc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, 'longc' is longitudinal curvature, crosc is cross-sectional curvature, and 'features' are morphometric features. See details.}
+\item{metrics}{Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'elev' is the predicted elevation at the central cell (i.e. the intercept term of the regression) and is only relevant when force_center=FALSE. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, and 'features' are morphometric features. See details.}
 
 \item{slope_tolerance}{Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.}
 
@@ -33,11 +35,15 @@ WoodEvans(
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
+\item{force_center}{Logical specifying whether the constrain the model through the central cell of the focal window}
+
 \item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE).}
 
 \item{mask_aspect}{Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3\emph{pi/2 radians ((-pi/2)- atan2(0,0)+2}pi) and northness and eastness will be calculated from this.}
 
 \item{return_params}{Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).}
+
+\item{as_derivs}{Logical indicating whether parameters should be formatted as partial derivatives instead of regression coefficients (default = FALSE) (Minár et al., 2020).}
 }
 \value{
 a SpatRaster (terra) or RasterStack/RasterLayer (raster)
@@ -46,7 +52,7 @@ a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood, 1996).
 }
 \details{
-This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, and morphometric features using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
+This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
 }
 \references{
 Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.

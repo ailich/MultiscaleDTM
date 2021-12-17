@@ -4,7 +4,7 @@
 \alias{kns}
 \title{Calculate normal slope line curvature}
 \usage{
-kns(a, b, c, d, e, f)
+kns(a, b, c, d, e)
 }
 \arguments{
 \item{a}{regression coefficient}
@@ -16,11 +16,9 @@ kns(a, b, c, d, e, f)
 \item{d}{regression coefficient}
 
 \item{e}{regression coefficient}
-
-\item{f}{regression intercept}
 }
 \description{
-Calculate normal slope line curvature (kn)s, which is the principal representative of the profile curvature group based on regression coefficients from the equation Z =ax^2+by^2+cxy+dx+e+f.
+Calculate normal slope line curvature (kn)s, which is the principal representative of the profile curvature group based on regression coefficients from the equation Z =ax^2+by^2+cxy+dx+ey(+f).
 }
 \references{
 Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
