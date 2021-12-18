@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-December 17, 2021
+December 18, 2021
 
 # MultiscaleDEM
 
@@ -27,8 +27,8 @@ If you don’t already have remotes installed, use the code
 
 Then to install this package use the code
 `remotes::install_github("ailich/MultiscaleDEM")` (you may need to
-install Rtools using the instructions found here:
-<https://cran.r-project.org/bin/windows/Rtools/>)
+install Rtools using the instructions found
+[here](https://cran.r-project.org/bin/windows/Rtools/)
 
 This package relies on the `terra` package for handling of spatial
 raster data. To install the development version of `terra`, use
@@ -133,14 +133,15 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc",
+WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc",
     "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 To explore these measures in an interactive environment use
-`explore_terrain()`
+`explore_terrain()` or go to this
+[website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)
 
 ### Rugosity
 
