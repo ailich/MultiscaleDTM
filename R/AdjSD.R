@@ -61,7 +61,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE){
   X<- cbind(x, y, 1) #Z = dx+ey+f
   
   #Fit Quadratic and Extract Residuals
-  out<- terra::focalCpp(r, w=w, fun = C_AdjSD, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
+  out<- terra::focalCpp(r, w=w, fun = C_AdjSD, X_full= X, na_rm=na.rm, fillvalue=NA)
   
   names(out)<- "adjSD"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names

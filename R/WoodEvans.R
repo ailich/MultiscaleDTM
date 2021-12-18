@@ -161,11 +161,11 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", 
   
   # Calculate Regression Parameters
   if(force_center){
-    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans2, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
+    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans2, X_full= X, na_rm=na.rm, fillvalue=NA)
     mask_raster<- params$mask
     params<- params[[-6]] #drop mask
   } else{
-    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans1, X_full= X, na_rm=na.rm, fillvalue=NA, expand=FALSE)
+    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans1, X_full= X, na_rm=na.rm, fillvalue=NA)
     elev<- params$f
     names(elev)<- "elev"
     mask_raster<- params$mask

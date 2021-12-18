@@ -8,8 +8,6 @@ SurfaceArea(r, expand = FALSE)
 }
 \arguments{
 \item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
-
-\item{expand}{logical. If TRUE The value of the cells in the virtual rows and columns outside of the raster are set to be the same as the value on the border.}
 }
 \value{
 a SpatRaster or RasterLayer

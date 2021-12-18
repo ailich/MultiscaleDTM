@@ -54,7 +54,7 @@ SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_laye
   x_res<- terra::res(r)[1]
   y_res<- terra::res(r)[2]
 
-  SA<- SurfaceArea(r, expand=FALSE)
+  SA<- SurfaceArea(r)
   
   if(!is_native) {
     SA<- terra::focal(SA, w= w, fun=sum, na.rm=FALSE)

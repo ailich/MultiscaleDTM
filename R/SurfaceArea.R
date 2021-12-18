@@ -2,7 +2,6 @@
 #'
 #' Calculates surface area on a per cell basis of a DEM based on Jenness, 2004.
 #' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
-#' @param expand logical. If TRUE The value of the cells in the virtual rows and columns outside of the raster are set to be the same as the value on the border.
 #' @return a SpatRaster or RasterLayer
 #' @import terra
 #' @importFrom raster raster
@@ -28,7 +27,7 @@ SurfaceArea<- function(r, expand=FALSE){
   if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){
     warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
   }
-  SA<- terra::focalCpp(r, w=c(3,3), fun = C_SurfaceArea,  x_res = terra::res(r)[1], y_res = terra::res(r)[2], expand=expand)
+  SA<- terra::focalCpp(r, w=c(3,3), fun = C_SurfaceArea,  x_res = terra::res(r)[1], y_res = terra::res(r)[2])
   names(SA)<- "SA"
   if(og_class=="RasterLayer"){SA<- raster::raster(SA)}
   return(SA)

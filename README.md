@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-December 09, 2021
+December 17, 2021
 
 # MultiscaleDEM
 
@@ -138,6 +138,9 @@ WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("qslope", "qaspect",
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+To explore these measures in an interactive environment use
+`explore_terrain()`
 
 ### Rugosity
 

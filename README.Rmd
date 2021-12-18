@@ -171,6 +171,8 @@ WE_plot<- tmap_arrange(WE_list, ncol=3)
 WE_plot
 ```
 
+To explore these measures in an interactive environment use `explore_terrain()`
+
 ### Rugosity
 
 ```{r}
