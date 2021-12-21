@@ -4,7 +4,14 @@
 \alias{RDMV}
 \title{Calculates Relative Difference from Mean Value (RDMV)}
 \usage{
-RDMV(r, w = c(3, 3), na.rm = FALSE, pad = FALSE, include_scale = FALSE)
+RDMV(
+  r,
+  w = c(3, 3),
+  na.rm = FALSE,
+  include_scale = FALSE,
+  filename = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{r}{DEM as a SpatRaster, RasterLayer, RasterStack, or RasterBrick}
@@ -14,6 +21,10 @@ RDMV(r, w = c(3, 3), na.rm = FALSE, pad = FALSE, include_scale = FALSE)
 \item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+
+\item{filename}{character Output filename.}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster or RasterLayer

@@ -17,7 +17,9 @@ WoodEvans(
   include_scale = FALSE,
   mask_aspect = TRUE,
   return_params = FALSE,
-  as_derivs = FALSE
+  as_derivs = FALSE,
+  filename = NULL,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -44,6 +46,10 @@ WoodEvans(
 \item{return_params}{Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).}
 
 \item{as_derivs}{Logical indicating whether parameters should be formatted as partial derivatives instead of regression coefficients (default = FALSE) (Minár et al., 2020).}
+
+\item{filename}{character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster (terra) or RasterStack/RasterLayer (raster)

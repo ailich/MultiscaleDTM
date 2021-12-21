@@ -11,7 +11,9 @@ SlpAsp(
   method = "queen",
   metrics = c("slope", "aspect", "eastness", "northness"),
   include_scale = FALSE,
-  mask_aspect = TRUE
+  mask_aspect = TRUE,
+  filename = NULL,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -28,6 +30,10 @@ SlpAsp(
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
 \item{mask_aspect}{A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.}
+
+\item{filename}{character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)

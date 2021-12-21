@@ -5,12 +5,16 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
+#' @param filename character Output filename.
+#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @return a SpatRaster or RasterLayer of adjusted rugosity
 #' @import terra
 #' @importFrom raster raster
+#' @importFrom raster writeRaster
+
 #' @export
 
-AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE){
+AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -66,6 +70,15 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE){
   names(out)<- "adjSD"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
   
-  if(og_class=="RasterLayer"){out<- raster::raster(out)}
+  # Return
+  if(og_class =="RasterLayer"){
+    out<- raster::raster(out)
+    if(!is.null(filename)){
+      return(raster::writeRaster(out, filename=filename, overwrite=overwrite))
+    }
+  }
+  if(!is.null(filename)){
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+  }
   return(out)
-}
+  }

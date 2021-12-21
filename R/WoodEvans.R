@@ -59,11 +59,15 @@ convert_aspect2<- function(aspect){
 #' @param mask_aspect Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3*pi/2 radians ((-pi/2)- atan2(0,0)+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).
 #' @param as_derivs Logical indicating whether parameters should be formatted as partial derivatives instead of regression coefficients (default = FALSE) (Minár et al., 2020).
+#' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer
+#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @return a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 #' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster stack
+#' @importFrom raster writeRaster
+
 #' @references
 #' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
 #' 
@@ -74,7 +78,7 @@ convert_aspect2<- function(aspect){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE){
+WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE){
   
   all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
@@ -295,12 +299,27 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", 
       warning("Extreme outliers detected in: ", paste(outliers, collapse=", "))
       }
   }
+  
+  #Return
   if(og_class=="RasterLayer"){
     if(terra::nlyr(out) > 1){
       out<- raster::stack(out) #Convert to RasterStack
+      if(!is.null(filename)){
+        if(length(filename)==1){
+          return(raster::writeRaster(out, filename=filename, overwrite=overwrite, bylayer=FALSE))
+        } else{
+          return(raster::writeRaster(out, filename=filename, overwrite=overwrite, bylayer=TRUE))
+        }
+      }
     } else{
       out<- raster::raster(out)
+      if(!is.null(filename)){
+        return(raster::writeRaster(out, filename=filename, overwrite=overwrite))
+      }
     }
-    }
+  }
+  if(!is.null(filename)){
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+  }
   return(out)
 }

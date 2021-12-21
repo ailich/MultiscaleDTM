@@ -155,12 +155,12 @@ ui <- fluidPage(
                             p(withMathJax("$$\\small{\\text{Twisting Curvature} = \\frac{2de(a-b) - c(d^2-e^2)}{(d^2+e^2)(1+d^2+e^2)}}$$")),
                             p(withMathJax("$$\\small{\\text{Mean Curvature} = -\\frac{a(1+e^2) - cde + b(1+d^2)}{(1+d^2+e^2)^\\frac{3}{2}}}$$")),
                             p(withMathJax("$$\\small{\\text{ku} =\\sqrt{\\left(\\frac{a(1+e^2) - cde + b(1+d^2)}{(1+d^2+e^2)^\\frac{3}{2}}\\right)^2 - \\frac{4ab-c^2}{(1+d^2+e^2)^2}}}$$")),
-                            p(withMathJax("$$\\small{\\text{Max Curvature} = \\text{Mean Curvature} + ku}$$")),
-                            p(withMathJax("$$\\small{\\text{Min Curvature} = \\text{Mean Curvature} - ku}$$")),
-                            p(withMathJax("$$\\small{Slope = arctan(\\sqrt{d^2 + e^2})}$$")),
-                            p(withMathJax("$$\\small{Aspect = -\\frac{\\pi}{2} - arctan2(e,d)}$$")),
-                            p(withMathJax("$$\\small{Eastness = sin(Aspect)}$$")),
-                            p(withMathJax("$$\\small{Northness = cos(Aspect)}$$")),
+                            p(withMathJax("$$\\small{\\text{Max Curvature} = \\text{Mean Curvature} + \\text{ku}}$$")),
+                            p(withMathJax("$$\\small{\\text{Min Curvature} = \\text{Mean Curvature} - \\text{ku}}$$")),
+                            p(withMathJax("$$\\small{\\text{Slope} = arctan(\\sqrt{d^2 + e^2})}$$")),
+                            p(withMathJax("$$\\small{\\text{Aspect} = -\\frac{\\pi}{2} - arctan2(e,d)}$$")),
+                            p(withMathJax("$$\\small{\\text{Eastness} = sin(\\text{Aspect})}$$")),
+                            p(withMathJax("$$\\small{\\text{Northness} = cos(\\text{Aspect})}$$")),
                             ))),
         fluidRow(column(12, wellPanel(tableOutput("table"))))))
 

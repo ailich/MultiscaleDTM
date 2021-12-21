@@ -5,16 +5,19 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
+#' @param filename character Output filename.
+#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @return a RasterLayer
 #' @import terra
 #' @importFrom raster raster
+#' @importFrom raster writeRaster
 #' @references
 #' Evans JS (2021). spatialEco. R package version 1.3-6, https://github.com/jeffreyevans/spatialEco.
 #' 
 #' Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419-1426. https://doi.org/10.2193/2005-723
 #' @export
 
-VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE){
+VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -55,6 +58,16 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE){
   out<- 1 - (res_vect / scale.factor) 
   names(out)<- "vrm"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
-  if(og_class=="RasterLayer"){out<- raster::raster(out)}
+  
+  #Return
+  if(og_class =="RasterLayer"){
+    out<- raster::raster(out)
+    if(!is.null(filename)){
+      return(raster::writeRaster(out, filename=filename, overwrite=overwrite))
+    }
+  }
+  if(!is.null(filename)){
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+  }
   return(out)
   }

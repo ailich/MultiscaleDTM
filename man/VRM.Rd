@@ -4,7 +4,14 @@
 \alias{VRM}
 \title{Implementation of the Sappington et al., (2007) vector ruggedness measure}
 \usage{
-VRM(r, w, na.rm = FALSE, include_scale = FALSE)
+VRM(
+  r,
+  w,
+  na.rm = FALSE,
+  include_scale = FALSE,
+  filename = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{r}{DEM as a SpatRaster or RasterLayer}
@@ -14,6 +21,10 @@ VRM(r, w, na.rm = FALSE, include_scale = FALSE)
 \item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+
+\item{filename}{character Output filename.}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a RasterLayer

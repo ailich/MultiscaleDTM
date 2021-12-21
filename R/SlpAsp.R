@@ -24,6 +24,12 @@ convert_aspect<- function(aspect){
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
 #' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
+#' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer
+#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @import terra
+#' @importFrom raster raster
+#' @importFrom raster stack
+#' @importFrom raster writeRaster
 #' @return a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
 #' @details When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
 #' @references
@@ -39,7 +45,7 @@ convert_aspect<- function(aspect){
 #' @importFrom raster stack
 #' @export
 
-SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), include_scale=FALSE, mask_aspect=TRUE){ 
+SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), include_scale=FALSE, mask_aspect=TRUE, filename=NULL, overwrite=FALSE){ 
   og_class<- class(r)[1]
 
   if(og_class=="RasterLayer"){
@@ -212,13 +218,26 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   if(!is.null(metrics)){out<- terra::subset(out, metrics)} #Subset needed metrics to requested metrics in proper order
   if(include_scale){names(out)<- paste0(names(out), "_", w[1], "x", w[2])}
   
+  #Return
   if(og_class=="RasterLayer"){
     if(terra::nlyr(out) > 1){
       out<- raster::stack(out) #Convert to RasterStack
+      if(!is.null(filename)){
+        if(length(filename)==1){
+          return(raster::writeRaster(out, filename=filename, overwrite=overwrite, bylayer=FALSE))
+        } else{
+          return(raster::writeRaster(out, filename=filename, overwrite=overwrite, bylayer=TRUE))
+        }
+      }
     } else{
       out<- raster::raster(out)
+      if(!is.null(filename)){
+        return(raster::writeRaster(out, filename=filename, overwrite=overwrite))
+      }
     }
   }
-  
+  if(!is.null(filename)){
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+  }
   return(out)
 }

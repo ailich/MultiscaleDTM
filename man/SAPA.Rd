@@ -9,7 +9,9 @@ SAPA(
   w = 1,
   slope_correction = TRUE,
   include_scale = FALSE,
-  slope_layer = NULL
+  slope_layer = NULL,
+  filename = NULL,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ SAPA(
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
 \item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
+
+\item{filename}{character Output filename.}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster or RasterLayer
@@ -37,7 +43,7 @@ Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for quantifying
 
 Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of the IEEE 69, 14-47.
 
-Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839. https://doi.org/10.2193/0091-7648(2004)032\link{0829:CLSAFD}2.0.CO;2
+Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839.
 
 Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the Suitability of Multi-Scale Terrain Attribute Calculation Approaches for Seabed Mapping Applications. Marine Geodesy 44, 327-385. https://doi.org/10.1080/01490419.2021.1925789
 }

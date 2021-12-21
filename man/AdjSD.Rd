@@ -4,7 +4,14 @@
 \alias{AdjSD}
 \title{Calculates standard deviation of bathymetry (a measure of rugosity) adjusted for slope}
 \usage{
-AdjSD(r, w = c(3, 3), na.rm = FALSE, include_scale = FALSE)
+AdjSD(
+  r,
+  w = c(3, 3),
+  na.rm = FALSE,
+  include_scale = FALSE,
+  filename = NULL,
+  overwrite = FALSE
+)
 }
 \arguments{
 \item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
@@ -14,6 +21,10 @@ AdjSD(r, w = c(3, 3), na.rm = FALSE, include_scale = FALSE)
 \item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+
+\item{filename}{character Output filename.}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster or RasterLayer of adjusted rugosity

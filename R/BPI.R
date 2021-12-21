@@ -87,14 +87,17 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @param w A focal weights matrix representing the annulus focal window created using MultiscaleDEM::annulus_window.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE). Only valid if radius is used.
+#' @param filename character Output filename.
+#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @return a SpatRaster or RasterLayer
 #' @import terra
 #' @importFrom raster raster
+#' @importFrom raster writeRaster
 #' @references 
 #' Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111.
 #' @export
 
-BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=FALSE){
+BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -125,6 +128,16 @@ BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=
   bpi<- r - terra::focal(x = r, w = w, fun = mean, na.rm = na.rm)
   names(bpi)<- "BPI"
   if(include_scale & (!is.null(radius))){names(bpi)<- paste0(names(bpi), "_", radius[1],"x", radius[2])} #Add scale to layer names
-  if(og_class=="RasterLayer"){bpi<- raster::raster(bpi)}
+  
+  #Return
+  if(og_class =="RasterLayer"){
+    bpi<- raster::raster(bpi)
+    if(!is.null(filename)){
+      return(raster::writeRaster(bpi, filename=filename, overwrite=overwrite))
+    }
+  }
+  if(!is.null(filename)){
+    return(terra::writeRaster(bpi, filename=filename, overwrite=overwrite))
+  }
   return(bpi)
 }

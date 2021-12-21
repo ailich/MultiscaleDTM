@@ -5,15 +5,18 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
+#' @param filename character Output filename.
+#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @return a SpatRaster or RasterLayer
 #' @import terra
 #' @importFrom raster raster
+#' @importFrom raster writeRaster
 #' @references 
 #' Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.
 #' @export
 #' 
 
-TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE){
+TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -40,6 +43,16 @@ TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE){
   tpi<- r - terra::focal(x = r, w = w_mat, fun = mean, na.rm = na.rm)
   names(tpi)<- "TPI"
   if(include_scale){names(tpi)<- paste0(names(tpi), "_", w[1],"x", w[2])} #Add scale to layer names
-  if(og_class=="RasterLayer"){tpi<- raster::raster(tpi)}
+  
+  #Return
+  if(og_class =="RasterLayer"){
+    tpi<- raster::raster(tpi)
+    if(!is.null(filename)){
+      return(raster::writeRaster(tpi, filename=filename, overwrite=overwrite))
+    }
+  }
+  if(!is.null(filename)){
+    return(terra::writeRaster(tpi, filename=filename, overwrite=overwrite))
+  }
   return(tpi)
 }

@@ -10,7 +10,9 @@ BPI(
   unit = "cell",
   w = NULL,
   na.rm = FALSE,
-  include_scale = FALSE
+  include_scale = FALSE,
+  filename = NULL,
+  overwrite = FALSE
 )
 }
 \arguments{
@@ -25,6 +27,10 @@ BPI(
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE). Only valid if radius is used.}
+
+\item{filename}{character Output filename.}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster or RasterLayer

@@ -4,10 +4,14 @@
 \alias{SurfaceArea}
 \title{Calculates surface area of a DEM}
 \usage{
-SurfaceArea(r, expand = FALSE)
+SurfaceArea(r, filename = NULL, overwrite = FALSE)
 }
 \arguments{
 \item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
+
+\item{filename}{character Output filename.}
+
+\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
 }
 \value{
 a SpatRaster or RasterLayer
@@ -16,5 +20,5 @@ a SpatRaster or RasterLayer
 Calculates surface area on a per cell basis of a DEM based on Jenness, 2004.
 }
 \references{
-Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839. https://doi.org/10.2193/0091-7648(2004)032\link{0829:CLSAFD}2.0.CO;2
+Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839.
 }
