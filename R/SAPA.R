@@ -47,9 +47,6 @@ SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_laye
   if(any(0 == (w %% 2))){
     stop("w must be odd")
   }
-  if(all(w<3)){
-    stop("Error: w must be greater or equal to 3 in at least one dimension")
-  }
   if(all(w==c(1,1))){
     is_native<- TRUE} else{
       is_native<- FALSE} #Indicate whether SAPA is calculated at native scale
