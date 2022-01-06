@@ -7,6 +7,7 @@
 RDMV(
   r,
   w = c(3, 3),
+  method = "range",
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -17,6 +18,8 @@ RDMV(
 \item{r}{DEM as a SpatRaster, RasterLayer, RasterStack, or RasterBrick}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
+
+\item{method}{standardization method. Either "range" (the default) or "sd".}
 
 \item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
@@ -30,7 +33,7 @@ RDMV(
 a SpatRaster or RasterLayer
 }
 \description{
-Calculates Relative Difference from Mean Value (RDMV). RDMV = (focal_value - local_mean)/local_range
+Calculates Relative Difference from Mean Value (RDMV). RDMV = (focal_value - local_mean)/local_range or RDMV = (focal_value - local_mean)/local_sd.
 }
 \references{
 Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027

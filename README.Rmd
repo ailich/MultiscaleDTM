@@ -39,7 +39,7 @@ This package relies on the `terra` package for handling of spatial raster data. 
 
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987).
 
--   `WoodEvans` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
+-   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
 ### Rugosity
 
@@ -57,7 +57,7 @@ This package relies on the `terra` package for handling of spatial raster data. 
 
 -   `TPI` - Topographic Position Index (Weiss, 2001) is the difference between the value of a focal cell and the mean of the surrounding cells. 
 
--   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017) is the difference between the value of a focal cell and the mean of the cells in the focal window divided by the range of the values in the focal window. 
+-   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017) is the difference between the value of a focal cell and the mean of the cells in the focal window divided by the range or standard deviation of the values in the focal window. 
 
 -   `BPI` -  Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window.
 
@@ -126,14 +126,13 @@ slp_asp_plot
 ```
 
 ```{r}
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc",
-    "meanc", "maxc", "minc", "features"), na.rm = TRUE)
+qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
 ```{r echo= FALSE}
-WE_list<- vector(mode="list", length = nlyr(WE))
-for (i in 1:length(WE_list)) {
-  curr_var<- names(WE)[i]
+qmetrics_list<- vector(mode="list", length = nlyr(qmetrics))
+for (i in 1:length(qmetrics_list)) {
+  curr_var<- names(qmetrics)[i]
   
   if (grepl(pattern = "(northness)|(eastness)", curr_var)) {
     breaks<- c(-1,0,1)
@@ -161,14 +160,14 @@ for (i in 1:length(WE_list)) {
     breaks<- NULL
     style<- "cont"}
   
-  WE_list[[i]]<- tm_shape(WE[[i]], raster.downsample = FALSE) +
+  qmetrics_list[[i]]<- tm_shape(qmetrics[[i]], raster.downsample = FALSE) +
     tm_raster(palette = curr_pal, style= style, title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
       tm_layout(main.title = curr_var, 
       main.title.position = "center",
       main.title.size=0.75)
 }
-WE_plot<- tmap_arrange(WE_list, ncol=3)
-WE_plot
+qmetrics_plot<- tmap_arrange(qmetrics_list, ncol=3)
+qmetrics_plot
 ```
 
 To explore these measures in an interactive environment use `explore_terrain()` or go to this [website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)
@@ -218,7 +217,7 @@ tm_shape(tpi, raster.downsample = FALSE)+
 ```
 
 ```{r}
-rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE)
+rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 ```
 
 ```{r echo=FALSE}

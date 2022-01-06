@@ -1,6 +1,6 @@
 #' Helper function factory to classify morphometric features
 #'
-#' Helper function factory to classify morphometric features according to Wood 1996 page 120
+#' Helper function factory to classify morphometric features according to a modified version of Wood 1996 page 120
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default is 1.0). Relevant for the features layer.
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default is 0.0001). Relevant for the features layer.
 #' @importFrom dplyr case_when
@@ -44,9 +44,9 @@ convert_aspect2<- function(aspect){
   return(out)
 }
 
-#' Calculates multiscale slope, aspect, curvature, and morphometric features
+#' Calculates multiscale slope, aspect, curvature, and morphometric features using a local quadratic fit
 #'
-#' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a quadratic fit to the surface (Evans, 1980; Wood, 1996).
+#' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
 #' @param r DEM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
@@ -78,7 +78,7 @@ convert_aspect2<- function(aspect){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE){
+Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE){
   
   all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
@@ -165,11 +165,11 @@ WoodEvans<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", 
   
   # Calculate Regression Parameters
   if(force_center){
-    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans2, X_full= X, na_rm=na.rm, fillvalue=NA)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA)
     mask_raster<- params$mask
     params<- params[[-6]] #drop mask
   } else{
-    params<- terra::focalCpp(r, w=w, fun = C_WoodEvans1, X_full= X, na_rm=na.rm, fillvalue=NA)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA)
     elev<- params$f
     names(elev)<- "elev"
     mask_raster<- params$mask

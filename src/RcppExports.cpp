@@ -47,9 +47,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_WoodEvans1
-NumericMatrix C_WoodEvans1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_WoodEvans1(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_Qfit1
+NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_Qfit1(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,13 +58,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_WoodEvans1(z, X_full, na_rm, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_Qfit1(z, X_full, na_rm, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
-// C_WoodEvans2
-NumericMatrix C_WoodEvans2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_WoodEvans2(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_Qfit2
+NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDEM_C_Qfit2(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -73,7 +73,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_WoodEvans2(z, X_full, na_rm, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_Qfit2(z, X_full, na_rm, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -138,8 +138,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDEM_subset_mat_rows", (DL_FUNC) &_MultiscaleDEM_subset_mat_rows, 2},
     {"_MultiscaleDEM_C_OLS_params", (DL_FUNC) &_MultiscaleDEM_C_OLS_params, 2},
     {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 2},
-    {"_MultiscaleDEM_C_WoodEvans1", (DL_FUNC) &_MultiscaleDEM_C_WoodEvans1, 5},
-    {"_MultiscaleDEM_C_WoodEvans2", (DL_FUNC) &_MultiscaleDEM_C_WoodEvans2, 5},
+    {"_MultiscaleDEM_C_Qfit1", (DL_FUNC) &_MultiscaleDEM_C_Qfit1, 5},
+    {"_MultiscaleDEM_C_Qfit2", (DL_FUNC) &_MultiscaleDEM_C_Qfit2, 5},
     {"_MultiscaleDEM_C_AdjSD", (DL_FUNC) &_MultiscaleDEM_C_AdjSD, 5},
     {"_MultiscaleDEM_C_TriArea", (DL_FUNC) &_MultiscaleDEM_C_TriArea, 3},
     {"_MultiscaleDEM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDEM_C_SurfaceArea, 5},

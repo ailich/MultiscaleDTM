@@ -13,12 +13,12 @@ C_OLS_resid <- function(X, Y) {
     .Call(`_MultiscaleDEM_C_OLS_resid`, X, Y)
 }
 
-C_WoodEvans1 <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDEM_C_WoodEvans1`, z, X_full, na_rm, ni, nw)
+C_Qfit1 <- function(z, X_full, na_rm, ni, nw) {
+    .Call(`_MultiscaleDEM_C_Qfit1`, z, X_full, na_rm, ni, nw)
 }
 
-C_WoodEvans2 <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDEM_C_WoodEvans2`, z, X_full, na_rm, ni, nw)
+C_Qfit2 <- function(z, X_full, na_rm, ni, nw) {
+    .Call(`_MultiscaleDEM_C_Qfit2`, z, X_full, na_rm, ni, nw)
 }
 
 C_AdjSD <- function(z, X_full, na_rm, ni, nw) {

@@ -49,7 +49,7 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
 
 //Fit Wood/Evans Quadratic Surface with Intercept
 // [[Rcpp::export]]
-NumericMatrix C_WoodEvans1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
   size_t nlyr = X_full.ncol() + 1; //Number of layers
   NumericMatrix out = NumericMatrix(ni, nlyr);
@@ -93,7 +93,7 @@ NumericMatrix C_WoodEvans1(NumericVector z, NumericMatrix X_full, bool na_rm, si
 
 //Fit Wood/Evans Quadratic Surface forced throough center
 // [[Rcpp::export]]
-NumericMatrix C_WoodEvans2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
   size_t nlyr = X_full.ncol() + 1; //Number of layers
   NumericMatrix out = NumericMatrix(ni, nlyr);

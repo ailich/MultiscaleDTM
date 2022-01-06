@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-December 20, 2021
+January 06, 2022
 
 # MultiscaleDEM
 
@@ -46,7 +46,7 @@ install the development version of `raster` use
     and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
     Ritter, 1987).
 
--   `WoodEvans` calculates slope, aspect, curvature, and morphometric
+-   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
     ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood,
     1996). The morphometric features algorithm has been modified to use
@@ -85,8 +85,8 @@ install the development version of `raster` use
 
 -   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017)
     is the difference between the value of a focal cell and the mean of
-    the cells in the focal window divided by the range of the values in
-    the focal window.
+    the cells in the focal window divided by the range or standard
+    deviation of the values in the focal window.
 
 -   `BPI` - Bathymetric Position Index (Lundblad et al., 2006) is the
     difference between the value of a focal cell and the mean of the
@@ -133,11 +133,13 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
-WE<- WoodEvans(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc",
-    "meanc", "maxc", "minc", "features"), na.rm = TRUE)
+qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+    ## Error in rgb(terra::coltab(.x)[[1]], maxColorValue = 255) : 
+    ##   argument "green" is missing, with no default
 
 To explore these measures in an interactive environment use
 `explore_terrain()` or go to this
@@ -175,7 +177,7 @@ tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
 ![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
-rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE)
+rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
