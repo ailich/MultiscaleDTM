@@ -51,10 +51,10 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
 // [[Rcpp::export]]
 NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
-  size_t nlyr = X_full.ncol() + 1; //Number of layers
+  size_t nlyr = X_full.ncol(); //Number of layers
   NumericMatrix out = NumericMatrix(ni, nlyr);
   out.fill(NA_REAL);
-  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f", "mask");
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f");
   
   int thresh = 6; //NEED AT LEAST 6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
   
@@ -70,14 +70,13 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
       NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
       NumericVector uni_Zvals = unique(zw);
       if(uni_Zvals.length() == 1){
-        //If all Z values are the same, intercept should just be the value and all other parameters are 0. mask is 1 indicating all values are the same
+        //If all Z values are the same, intercept should just be the value and all other parameters are 0.
         out(i, 0) = 0; //a
         out(i, 1) = 0; //b
         out(i, 2) = 0; //c
         out(i, 3) = 0; //d
         out(i, 4) = 0; //e
         out(i, 5) = uni_Zvals[0]; //f
-        out(i, 6) = 1; //mask
       } else{
         NumericVector params = C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
         out(i, 0) =  params[0]; //a
@@ -95,10 +94,10 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
 // [[Rcpp::export]]
 NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
-  size_t nlyr = X_full.ncol() + 1; //Number of layers
+  size_t nlyr = X_full.ncol(); //Number of layers
   NumericMatrix out = NumericMatrix(ni, nlyr);
   out.fill(NA_REAL);
-  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "mask");
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e");
   
   int thresh = 5; //NEED AT LEAST 5 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
   
@@ -116,13 +115,12 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
       NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
       NumericVector uni_Zvals = unique(zw);
       if(uni_Zvals.length() == 1){
-        //If all Z values are the same, intercept should just be the value and all other parameters are 0. mask is 1 indicating all values are the same
+        //If all Z values are the same, intercept should just be the value and all other parameters are 0.
         out(i, 0) = 0; //a
         out(i, 1) = 0; //b
         out(i, 2) = 0; //c
         out(i, 3) = 0; //d
         out(i, 4) = 0; //e
-        out(i, 5) = 1; //mask
       } else{
         NumericVector params = C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
         out(i, 0) =  params[0]; //a

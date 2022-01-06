@@ -160,7 +160,7 @@ for (i in 1:length(qmetrics_list)) {
     breaks<- NULL
     style<- "cont"}
   
-  qmetrics_list[[i]]<- tm_shape(qmetrics[[i]], raster.downsample = FALSE) +
+  qmetrics_list[[i]]<- tm_shape(raster::raster(qmetrics[[i]]), raster.downsample = FALSE) +
     tm_raster(palette = curr_pal, style= style, title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
       tm_layout(main.title = curr_var, 
       main.title.position = "center",

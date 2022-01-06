@@ -138,9 +138,6 @@ qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "
 
 ![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
-    ## Error in rgb(terra::coltab(.x)[[1]], maxColorValue = 255) : 
-    ##   argument "green" is missing, with no default
-
 To explore these measures in an interactive environment use
 `explore_terrain()` or go to this
 [website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)

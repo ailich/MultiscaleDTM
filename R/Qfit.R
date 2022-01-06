@@ -166,16 +166,17 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   # Calculate Regression Parameters
   if(force_center){
     params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA)
-    mask_raster<- params$mask
-    params<- params[[-6]] #drop mask
-  } else{
+    mask_raster<- terra::app(params, fun= abs)
+    mask_raster<- terra::app(mask_raster, fun= sum, na.rm=FALSE) #If all parameters sum are 0, then all predicted values are the same (i.e. completely smooth flat surface)
+    } else{
     params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA)
     elev<- params$f
     names(elev)<- "elev"
-    mask_raster<- params$mask
-    params<- params[[-c(6,7)]] #drop mask and intercept
+    params<- params[[-6]] #drop intercept
+    mask_raster<- terra::app(params, fun= abs)
+    mask_raster<- terra::app(mask_raster, fun= sum, na.rm=FALSE) #If all parameters are 0, then all predicted values are the same (i.e. completely smooth flat surface)
     }
-
+  
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){
     out<- c(out, elev, warn=FALSE)
@@ -233,21 +234,21 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   
   if("profc" %in% needed_metrics){
     profc<- terra::lapp(params, fun = kns)
-    profc<- terra::mask(profc, mask= mask_raster, maskvalues = 1, updatevalue = 0) #Set curvature to 0 where all values are the same
+    profc<- terra::mask(profc, mask= mask_raster, maskvalues = 0, updatevalue = 0) #Set curvature to 0 where all parameters are 0
     names(profc)<- "profc"
     out<- c(out, profc, warn=FALSE)
   }
   
   if("planc" %in% needed_metrics){
     planc<- terra::lapp(params, fun = knc)
-    planc<- terra::mask(planc, mask= mask_raster, maskvalues = 1, updatevalue = 0) #Set curvature to 0 where all values are the same
+    planc<- terra::mask(planc, mask= mask_raster, maskvalues = 0, updatevalue = 0) #Set curvature to 0 where all parameters are 0
     names(planc)<- "planc"
     out<- c(out, planc, warn=FALSE)
   }
   
   if("twistc" %in% needed_metrics){
     twistc<- terra::lapp(params, fun = tgc)
-    twistc<- terra::mask(twistc, mask= mask_raster, maskvalues = 1, updatevalue = 0) #Set curvature to 0 where all values are the same
+    twistc<- terra::mask(twistc, mask= mask_raster, maskvalues = 0, updatevalue = 0) #Set curvature to 0 where all parameters are 0
     names(twistc)<- "twistc"
     out<- c(out, twistc, warn=FALSE)
     }
