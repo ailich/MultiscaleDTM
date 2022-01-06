@@ -129,7 +129,7 @@ make_table<- function(a,b,c,d,e){
                            northness=northness,
                            feature = NA_real_),3)
     
-    out$feature[1] = classify_features2(slp, planc, maxc, minc)
+    out$feature[1] = classify_features2(slp_deg, planc, maxc, minc)
     return(out)
     }
 
