@@ -52,7 +52,7 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
 NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
   size_t nlyr = X_full.ncol(); //Number of layers
-  NumericMatrix out = NumericMatrix(ni, nlyr);
+  NumericMatrix out(ni, nlyr);
   out.fill(NA_REAL);
   colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f");
   
@@ -71,20 +71,10 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
       NumericVector uni_Zvals = unique(zw);
       if(uni_Zvals.length() == 1){
         //If all Z values are the same, intercept should just be the value and all other parameters are 0.
-        out(i, 0) = 0; //a
-        out(i, 1) = 0; //b
-        out(i, 2) = 0; //c
-        out(i, 3) = 0; //d
-        out(i, 4) = 0; //e
+        out(i, _) = rep(0, 6); //all zeros
         out(i, 5) = uni_Zvals[0]; //f
       } else{
-        NumericVector params = C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
-        out(i, 0) =  params[0]; //a
-        out(i, 1) =  params[1]; //b
-        out(i, 2) =  params[2]; //c
-        out(i, 3) =  params[3]; //d
-        out(i, 4) =  params[4]; //e
-        out(i, 5) =  params[5]; //f
+        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
       }
     }}
   return out;
@@ -95,7 +85,7 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
 NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
   size_t nlyr = X_full.ncol(); //Number of layers
-  NumericMatrix out = NumericMatrix(ni, nlyr);
+  NumericMatrix out(ni, nlyr);
   out.fill(NA_REAL);
   colnames(out)= CharacterVector::create("a", "b", "c", "d", "e");
   
@@ -115,19 +105,10 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
       NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
       NumericVector uni_Zvals = unique(zw);
       if(uni_Zvals.length() == 1){
-        //If all Z values are the same, intercept should just be the value and all other parameters are 0.
-        out(i, 0) = 0; //a
-        out(i, 1) = 0; //b
-        out(i, 2) = 0; //c
-        out(i, 3) = 0; //d
-        out(i, 4) = 0; //e
+        //If all Z values are the same, all parameters are 0.
+        out(i, _) = rep(0,5);
       } else{
-        NumericVector params = C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
-        out(i, 0) =  params[0]; //a
-        out(i, 1) =  params[1]; //b
-        out(i, 2) =  params[2]; //c
-        out(i, 3) =  params[3]; //d
-        out(i, 4) =  params[4]; //e
+        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
       }
     }}
   return out;
@@ -136,7 +117,7 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
 //SD of residuals from a planar fit
 // [[Rcpp::export]]
 NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw){
-  NumericVector out = NumericVector(ni, NA_REAL);
+  NumericVector out(ni, NA_REAL);
   //Z = dX + eY + f
   
   //NEED AT LEAST 3 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
@@ -175,7 +156,7 @@ double C_TriArea (double a, double b, double c){
 //Surface Area
 // [[Rcpp::export]]
 NumericVector C_SurfaceArea (NumericVector z, double x_res, double y_res, size_t ni, size_t nw){
-  NumericVector out = NumericVector(ni, NA_REAL);
+  NumericVector out(ni, NA_REAL);
   double Lx2= pow(x_res, 2);
   double Ly2= pow(y_res, 2);
   double Ld2= Lx2 + Ly2;
@@ -217,7 +198,7 @@ NumericVector C_SurfaceArea (NumericVector z, double x_res, double y_res, size_t
 //Count values
 // [[Rcpp::export]]
 NumericVector C_CountVals (NumericVector z, size_t ni, size_t nw){
-  NumericVector out = NumericVector(ni, NA_REAL);
+  NumericVector out(ni, NA_REAL);
   for (size_t i=0; i< ni; i++) {
     size_t start = i*nw;
     size_t end = start+nw-1;
