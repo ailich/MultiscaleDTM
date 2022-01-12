@@ -26,11 +26,16 @@ convert_aspect<- function(aspect){
 #' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
 #' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster stack
 #' @importFrom raster writeRaster
 #' @return a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
+#' @examples
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
+#' plot(slp_asp)
 #' @details When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
 #' @references
 #' Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS data and DMA topographic data for forest cover type mapping (No. LARS Technical Report 062879). Laboratory for Applications of Remote Sensing, Purdue University, West Lafayette, Indiana.
@@ -45,7 +50,7 @@ convert_aspect<- function(aspect){
 #' @importFrom raster stack
 #' @export
 
-SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), include_scale=FALSE, mask_aspect=TRUE, filename=NULL, overwrite=FALSE){ 
+SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), include_scale=FALSE, mask_aspect=TRUE, filename=NULL, overwrite=FALSE, wopt=list()){ 
   og_class<- class(r)[1]
 
   if(og_class=="RasterLayer"){
@@ -130,11 +135,11 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     yb.mat <- cbind(yb.end, y.mids, yb.mid, y.mids, yb.end)
     
     #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=FALSE)
-    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=FALSE)
+    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=FALSE, wopt=wopt)
+    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=FALSE, wopt=wopt)
     
-    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=FALSE)
-    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE)
+    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=FALSE, wopt=wopt)
+    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE, wopt=wopt)
     
     #calculate dz/dx and dz/dy using the components. 8*j is the weighted run, or distance between ends: 4*j*2, or (4 values in each row)*(length of the side)*(2 sides)
     dz.dx <- (dz.dx.r-dz.dx.l)/(8*jx*terra::res(r)[1])
@@ -162,11 +167,11 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     yb.mat <- cbind(y.ends, yb.mid, y.ends)
     
     #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=FALSE)
-    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=FALSE)
+    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=FALSE, wopt=wopt)
+    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=FALSE, wopt=wopt)
     
-    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=FALSE)
-    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE)
+    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=FALSE, wopt=wopt)
+    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE, wopt=wopt)
     
     #calculate dz/dx and dz/dy using the components. 2*j is the run: (2 sides)*(length of each side)
     dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*terra::res(r)[1])
@@ -185,12 +190,12 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   }
   
   if("aspect" %in% needed_metrics){
-    aspect.k<- terra::app(atan2(dz.dy, -dz.dx), fun = convert_aspect) #aspect relative to North
+    aspect.k<- terra::app(atan2(dz.dy, -dz.dx), fun = convert_aspect, wopt=wopt) #aspect relative to North
     
     if("eastness" %in% needed_metrics){
       eastness.k<- sin(aspect.k)
       if(mask_aspect){
-        eastness.k<- terra::mask(eastness.k, mask= slope.k, maskvalues = 0, updatevalue = 0) #Set eastness to 0 where slope is zero
+        eastness.k<- terra::mask(eastness.k, mask= slope.k, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set eastness to 0 where slope is zero
         }
       names(eastness.k)<- "eastness"
       out<- c(out, eastness.k, warn=FALSE)
@@ -199,14 +204,14 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     if("northness" %in% needed_metrics){
       northness.k<- cos(aspect.k)
       if(mask_aspect){
-        northness.k<- terra::mask(northness.k, mask= slope.k, maskvalues = 0, updatevalue = 0) #Set northenss to 0 where slope is zero
+        northness.k<- terra::mask(northness.k, mask= slope.k, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set northenss to 0 where slope is zero
         }
       names(northness.k)<- "northness"
       out<- c(out, northness.k, warn=FALSE)
     }
     
     if(mask_aspect){
-      aspect.k<- terra::mask(aspect.k, mask= slope.k, maskvalues = 0, updatevalue = NA) #Set aspect to undefined where slope is zero
+      aspect.k<- terra::mask(aspect.k, mask= slope.k, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero
       }
     if(unit=="degrees"){
       aspect.k<- aspect.k * (180/pi)
@@ -215,7 +220,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     out<- c(out, aspect.k, warn=FALSE)
     }
   
-  if(!is.null(metrics)){out<- terra::subset(out, metrics)} #Subset needed metrics to requested metrics in proper order
+  if(!is.null(metrics)){out<- terra::subset(out, metrics, wopt=wopt)} #Subset needed metrics to requested metrics in proper order
   if(include_scale){names(out)<- paste0(names(out), "_", w[1], "x", w[2])}
   
   #Return
@@ -237,7 +242,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(out)
 }

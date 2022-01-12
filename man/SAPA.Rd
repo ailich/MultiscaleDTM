@@ -11,7 +11,8 @@ SAPA(
   include_scale = FALSE,
   slope_layer = NULL,
   filename = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  wopt = list()
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ SAPA(
 \item{filename}{character Output filename.}
 
 \item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \value{
 a SpatRaster or RasterLayer
@@ -37,6 +40,11 @@ Calculates surface area (Jenness, 2004) to planar area rugosity and by default c
 }
 \details{
 Planar area is calculated as the x_dis * y_dis if uncorrected for slope and (x_dis * y_dis)/cos(slope) if corrected for slope. When w=1, this is called "native" scale and is equivalent to what is presented in Du Preez (2015) and available in the ArcGIS Benthic Terrain Modeller add-on. In this case operations are performed on a per cell basis where x_dis is the resolution of the raster in the x direction (left/right) and y_dis is the resolution of the raster in the y direction (up/down) and slope is calculated using the Horn (1981) method. To expand this to multiple scales of analysis, at w > 1 slope is calculated based on Misiuk et al (2021) which provides a modification of the Horn method to extend the matric to multiple spatial scales. Planar area is calculated the same way as for w=1 except that now x_dis is the x resolution of the raster * the number of columns in the focal window, and y_dis is y resolution of the raster * the number of rows. For w > 1, surface area is calculated as the sum of surface areas within the focal window. Although the (modified) Horn slope is used by default to be consistent with Du Preez (2015), slope calculated using a different algorithm (e.g. Wood 1996) could be supplied using the slope_layer argument. Additionally, a slope raster can be supplied if you have already calculated it and do not wish to recalculate it. However, be careful to supply a slope layer measured in radians and calculated at the relevant scale (2 larger than the w of SAPA).
+}
+\examples{
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
+plot(sapa)
 }
 \references{
 Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for quantifying three-dimensional landscape structural complexity. Landscape Ecol 30, 181–192. https://doi.org/10.1007/s10980-014-0118-8

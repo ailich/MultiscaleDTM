@@ -13,7 +13,8 @@ SlpAsp(
   include_scale = FALSE,
   mask_aspect = TRUE,
   filename = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  wopt = list()
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ SlpAsp(
 \item{filename}{character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer}
 
 \item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \value{
 a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
@@ -43,6 +46,11 @@ Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm f
 }
 \details{
 When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
+}
+\examples{
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
+plot(slp_asp)
 }
 \references{
 Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS data and DMA topographic data for forest cover type mapping (No. LARS Technical Report 062879). Laboratory for Applications of Remote Sensing, Purdue University, West Lafayette, Indiana.

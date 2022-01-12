@@ -7,7 +7,12 @@
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a RasterLayer
+#' @examples 
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
+#' plot(vrm)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
@@ -17,7 +22,7 @@
 #' Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419-1426. https://doi.org/10.2193/2005-723
 #' @export
 
-VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
+VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -38,22 +43,22 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
   if(all(w<3)){
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
-  sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8) 					
-  sin.slp <- terra::app(sa[["slope"]], fun=sin)                 # xyRaster 
-  cos.slp <- terra::app(sa[["slope"]], fun=cos)                 # zRaster 
-  sin.asp <- terra::app(sa[["aspect"]], fun=sin) * sin.slp      # yRaster
-  cos.asp <- terra::app(sa[["aspect"]], fun=cos) * sin.slp      # xRaster  
-  x.sum <- terra::focal(sin.asp, w = w, fun=sum, na.rm=na.rm)
-  y.sum <- terra::focal(cos.asp, w = w, fun=sum, na.rm=na.rm) 
-  z.sum <- terra::focal(cos.slp, w = w, fun=sum, na.rm=na.rm)
+  sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
+  sin.slp <- sin(sa$slope) # xyRaster 
+  cos.slp <- cos(sa$slope) # zRaster 
+  sin.asp <- sin(sa$aspect) * sin.slp # yRaster
+  cos.asp <- cos(sa$aspect) * sin.slp # xRaster  
+  x.sum <- terra::focal(sin.asp, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
+  y.sum <- terra::focal(cos.asp, w = w, fun=sum, na.rm=na.rm, wopt=wopt) 
+  z.sum <- terra::focal(cos.slp, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
   vrm.fun <- function(x, y, z) { 
     sqrt( (x^2) + (y^2) + (z^2) ) 
   }
-  res_vect <- terra::lapp(c(x.sum, y.sum, z.sum), fun=vrm.fun) #resultant vector
+  res_vect <- terra::lapp(c(x.sum, y.sum, z.sum), fun=vrm.fun, wopt=wopt) #resultant vector
   if(!na.rm){
     scale.factor <- round(w[1] * w[2], 0) #Constant scale factor
     } else{
-      scale.factor<- terra::focalCpp(cos.slp, w= w, fun = C_CountVals)
+      scale.factor<- terra::focalCpp(cos.slp, w= w, fun = C_CountVals, wopt=wopt)
       } #If include na.rm option, adjust scale.factor to be number of non-NA cells in focal window
   out<- 1 - (res_vect / scale.factor) 
   names(out)<- "vrm"
@@ -67,7 +72,7 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(out)
   }

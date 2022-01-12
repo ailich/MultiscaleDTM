@@ -61,13 +61,21 @@ convert_aspect2<- function(aspect){
 #' @param as_derivs Logical indicating whether parameters should be formatted as partial derivatives instead of regression coefficients (default = FALSE) (Minár et al., 2020).
 #' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster (terra) or RasterStack/RasterLayer (raster)
+#' @examples
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", na.rm = TRUE)
+#' plot(qmetrics)
+#' 
+#' To get only the regression coefficients, set "metrics=c()" and "return_params=TRUE"
+#' reg_coefs<- Qfit(r, w = c(5,5), metrics=c(), unit = "degrees", na.rm = TRUE, return_params=TRUE)
+#' plot(reg_coefs)
 #' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster stack
 #' @importFrom raster writeRaster
-
 #' @references
 #' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
 #' 
@@ -78,7 +86,7 @@ convert_aspect2<- function(aspect){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE){
+Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   
   all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
@@ -165,17 +173,14 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   
   # Calculate Regression Parameters
   if(force_center){
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA)
-    mask_raster<- terra::app(params, fun= abs)
-    mask_raster<- terra::app(mask_raster, fun= sum, na.rm=FALSE) #If all parameters sum are 0, then all predicted values are the same (i.e. completely smooth flat surface)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
     } else{
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
     elev<- params$f
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept
-    mask_raster<- terra::app(params, fun= abs)
-    mask_raster<- terra::app(mask_raster, fun= sum, na.rm=FALSE) #If all parameters are 0, then all predicted values are the same (i.e. completely smooth flat surface)
     }
+  mask_raster<- prod(params==0) #Mask of when predicted values are all equal
   
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){
@@ -186,7 +191,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   if("qslope" %in% needed_metrics){
     slp<- atan(sqrt(params$d^2 + params$e^2))
     if(unit=="degrees"){
-      slp<- slp*180/pi
+      slp<- slp*(180/pi)
     } else{
       slope_tolerance<- slope_tolerance * (pi/180) #Convert slope tolerance to radians if unit is not degrees
       }
@@ -195,15 +200,15 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   }
   
   if("qaspect" %in% needed_metrics){
-    asp<- terra::app(atan2(params$e,params$d), fun = convert_aspect2) #Shift aspect so north is zero
+    asp<- terra::app(atan2(params$e,params$d), fun = convert_aspect2, wopt=wopt) #Shift aspect so north is zero
     if (mask_aspect){
-      asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA) #Set aspect to undefined where slope is zero
+      asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero
     }
     
     if("qeastness" %in% needed_metrics){
       eastness<- sin(asp)
       if (mask_aspect){
-        eastness<- terra::mask(eastness, mask= slp, maskvalues = 0, updatevalue = 0) #Set eastness to 0 where slope is zero
+        eastness<- terra::mask(eastness, mask= slp, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set eastness to 0 where slope is zero
         }
       names(eastness)<- "qeastness"
       out<- c(out, eastness, warn=FALSE)
@@ -212,7 +217,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     if("qnorthness" %in% needed_metrics){
       northness<- cos(asp)
       if (mask_aspect){
-        northness<- terra::mask(northness, mask= slp, maskvalues = 0, updatevalue = 0) #Set northness to 0 where slope is zero
+        northness<- terra::mask(northness, mask= slp, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set northness to 0 where slope is zero
         }
       names(northness)<- "qnorthness"
       out<- c(out, northness, warn=FALSE)
@@ -233,40 +238,40 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   #zy=e
   
   if("profc" %in% needed_metrics){
-    profc<- terra::lapp(params, fun = kns)
-    profc<- terra::mask(profc, mask= mask_raster, maskvalues = 0, updatevalue = 0) #Set curvature to 0 where all parameters are 0
+    profc<- terra::lapp(params, fun = kns, wopt=wopt)
+    profc<- terra::mask(profc, mask= mask_raster, maskvalues = 1, updatevalue = 0, wopt=wopt) #Set curvature to 0 where all parameters are 0
     names(profc)<- "profc"
     out<- c(out, profc, warn=FALSE)
   }
   
   if("planc" %in% needed_metrics){
-    planc<- terra::lapp(params, fun = knc)
-    planc<- terra::mask(planc, mask= mask_raster, maskvalues = 0, updatevalue = 0) #Set curvature to 0 where all parameters are 0
+    planc<- terra::lapp(params, fun = knc, wopt=wopt)
+    planc<- terra::mask(planc, mask= mask_raster, maskvalues = 1, updatevalue = 0, wopt=wopt) #Set curvature to 0 where all parameters are 0
     names(planc)<- "planc"
     out<- c(out, planc, warn=FALSE)
   }
   
   if("twistc" %in% needed_metrics){
-    twistc<- terra::lapp(params, fun = tgc)
-    twistc<- terra::mask(twistc, mask= mask_raster, maskvalues = 0, updatevalue = 0) #Set curvature to 0 where all parameters are 0
+    twistc<- terra::lapp(params, fun = tgc, wopt=wopt)
+    twistc<- terra::mask(twistc, mask= mask_raster, maskvalues = 1, updatevalue = 0, wopt=wopt) #Set curvature to 0 where all parameters are 0
     names(twistc)<- "twistc"
     out<- c(out, twistc, warn=FALSE)
     }
   
   if("maxc" %in% needed_metrics){
-    maxc<- terra::lapp(params, fun = kmax)
+    maxc<- terra::lapp(params, fun = kmax, wopt=wopt)
     names(maxc)<- "maxc"
     out<- c(out, maxc, warn=FALSE)
   }
   
   if("minc" %in% needed_metrics){
-    minc<- terra::lapp(params, fun = kmin)
+    minc<- terra::lapp(params, fun = kmin, wopt=wopt)
     names(minc)<- "minc"
     out<- c(out, minc, warn=FALSE)
     }
   
   if("meanc" %in% needed_metrics){
-    mean_curv<- terra::lapp(params, fun = kmean)
+    mean_curv<- terra::lapp(params, fun = kmean, wopt=wopt)
     names(mean_curv)<- "meanc"
     out<- c(out, mean_curv, warn=FALSE)
   }
@@ -274,13 +279,13 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   #Modified version of Morphometric Features (Wood 1996, Page 120)
   if("features" %in% needed_metrics){
     classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
-    features<- terra::lapp(c(slp, planc, maxc, minc), fun = classify_features)
+    features<- terra::lapp(c(slp, planc, maxc, minc), fun = classify_features, wopt=wopt)
     levels(features)<- data.frame(ID=1:6, features = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
     names(features)<- "features"
     out<- c(out, features, warn=FALSE)
   }
   
-  if(!is.null(metrics)){out<- terra::subset(out, metrics)} #Subset needed metrics to requested metrics in proper order
+  if(!is.null(metrics)){out<- terra::subset(out, metrics, wopt=wopt)} #Subset needed metrics to requested metrics in proper order
   if(as_derivs){
     params$a<- 2*params$a
     params$b<- 2*params$b
@@ -320,7 +325,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(out)
 }

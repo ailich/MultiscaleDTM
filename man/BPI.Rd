@@ -12,7 +12,8 @@ BPI(
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  wopt = list()
 )
 }
 \arguments{
@@ -31,12 +32,19 @@ BPI(
 \item{filename}{character Output filename.}
 
 \item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \value{
 a SpatRaster or RasterLayer
 }
 \description{
 Calculates Bathymetric Position Index (BPI). This is the value of the focal pixel minus the mean of the surrounding pixels contained within an annulus shaped window.
+}
+\examples{
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
+plot(bpi)
 }
 \references{
 Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111.

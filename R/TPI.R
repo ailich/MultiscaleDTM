@@ -7,7 +7,12 @@
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
+#' @examples 
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
+#' plot(tpi)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
@@ -16,7 +21,7 @@
 #' @export
 #' 
 
-TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
+TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -40,7 +45,7 @@ TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, ove
   w_mat <- matrix(1, nrow=w[1], ncol=w[2])
   center_idx<- ceiling(0.5 * length(w_mat))
   w_mat[center_idx] <- NA_real_
-  tpi<- r - terra::focal(x = r, w = w_mat, fun = mean, na.rm = na.rm)
+  tpi<- r - terra::focal(x = r, w = w_mat, fun = mean, na.rm = na.rm, wopt=wopt)
   names(tpi)<- "TPI"
   if(include_scale){names(tpi)<- paste0(names(tpi), "_", w[1],"x", w[2])} #Add scale to layer names
   
@@ -52,7 +57,7 @@ TPI<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, ove
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(tpi, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(tpi, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(tpi)
 }

@@ -7,14 +7,18 @@
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer of adjusted rugosity
+#' @examples
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' adjsd<- AdjSD(r, w=c(5,5), na.rm = TRUE)
+#' plot(adjsd)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
-
 #' @export
 
-AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
+AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -65,7 +69,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, o
   X<- cbind(x, y, 1) #Z = dx+ey+f
   
   #Fit Quadratic and Extract Residuals
-  out<- terra::focalCpp(r, w=w, fun = C_AdjSD, X_full= X, na_rm=na.rm, fillvalue=NA)
+  out<- terra::focalCpp(r, w=w, fun = C_AdjSD, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
   
   names(out)<- "adjSD"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
@@ -78,7 +82,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, o
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(out, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(out, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(out)
   }

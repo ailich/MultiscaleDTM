@@ -10,7 +10,8 @@ VRM(
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  wopt = list()
 )
 }
 \arguments{
@@ -25,12 +26,19 @@ VRM(
 \item{filename}{character Output filename.}
 
 \item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \value{
 a RasterLayer
 }
 \description{
 Implementation of the Sappington et al., (2007) vector ruggedness measure, modified from Evans (2021).
+}
+\examples{
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
+plot(vrm)
 }
 \references{
 Evans JS (2021). spatialEco. R package version 1.3-6, https://github.com/jeffreyevans/spatialEco.

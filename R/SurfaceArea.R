@@ -4,7 +4,12 @@
 #' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
+#' @examples 
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' sa<- SurfaceArea(r)
+#' plot(sa)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
@@ -12,7 +17,7 @@
 #' Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829-839.
 #' @export
 
-SurfaceArea<- function(r, filename=NULL, overwrite=FALSE){
+SurfaceArea<- function(r, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -30,7 +35,7 @@ SurfaceArea<- function(r, filename=NULL, overwrite=FALSE){
   if(terra::is.lonlat(r, perhaps=TRUE, warn=FALSE)){
     warning("Coordinate system may be Lat/Lon. Please ensure that the coordinate system is projected with elevation/depth units matching map units.")
   }
-  SA<- terra::focalCpp(r, w=c(3,3), fun = C_SurfaceArea,  x_res = terra::res(r)[1], y_res = terra::res(r)[2])
+  SA<- terra::focalCpp(r, w=c(3,3), fun = C_SurfaceArea,  x_res = terra::res(r)[1], y_res = terra::res(r)[2], fillvalue=NA, wopt=wopt)
   names(SA)<- "SA"
   #Return
   if(og_class =="RasterLayer"){
@@ -40,7 +45,7 @@ SurfaceArea<- function(r, filename=NULL, overwrite=FALSE){
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(SA, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(SA, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(SA)
   }

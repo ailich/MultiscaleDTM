@@ -19,7 +19,8 @@ Qfit(
   return_params = FALSE,
   as_derivs = FALSE,
   filename = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  wopt = list()
 )
 }
 \arguments{
@@ -50,6 +51,8 @@ Qfit(
 \item{filename}{character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer}
 
 \item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \value{
 a SpatRaster (terra) or RasterStack/RasterLayer (raster)
@@ -59,6 +62,15 @@ Calculates multiscale slope, aspect, curvature, and morphometric features of a D
 }
 \details{
 This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
+}
+\examples{
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", na.rm = TRUE)
+plot(qmetrics)
+
+To get only the regression coefficients, set "metrics=c()" and "return_params=TRUE"
+reg_coefs<- Qfit(r, w = c(5,5), metrics=c(), unit = "degrees", na.rm = TRUE, return_params=TRUE)
+plot(reg_coefs)
 }
 \references{
 Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.

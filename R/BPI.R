@@ -89,7 +89,12 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE). Only valid if radius is used.
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
+#' @examples
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
+#' plot(bpi)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
@@ -97,7 +102,7 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111.
 #' @export
 
-BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
+BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -125,7 +130,7 @@ BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=
     w<- annulus_window(radius = radius, unit = unit, resolution = resolution)
   }
   
-  bpi<- r - terra::focal(x = r, w = w, fun = mean, na.rm = na.rm)
+  bpi<- r - terra::focal(x = r, w = w, fun = mean, na.rm = na.rm, wopt=wopt)
   names(bpi)<- "BPI"
   if(include_scale & (!is.null(radius))){names(bpi)<- paste0(names(bpi), "_", radius[1],"x", radius[2])} #Add scale to layer names
   
@@ -137,7 +142,7 @@ BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(bpi, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(bpi, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(bpi)
 }

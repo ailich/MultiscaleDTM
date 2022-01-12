@@ -8,7 +8,12 @@
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
+#' @examples 
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
+#' plot(rdmv)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
@@ -16,7 +21,7 @@
 #' Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027
 #' @export
 
-RDMV<- function(r, w=c(3,3), method="range", na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE){
+RDMV<- function(r, w=c(3,3), method="range", na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -43,13 +48,13 @@ RDMV<- function(r, w=c(3,3), method="range", na.rm=FALSE, include_scale=FALSE, f
     stop("Error: method must be 'range' or 'sd'")
   }
   
-  localmean<- terra::focal(x = r, w= w, fun=mean, na.rm = na.rm)
+  localmean<- terra::focal(x = r, w= w, fun=mean, na.rm = na.rm, wopt=wopt)
   if(method=="range"){
-    localmax<- terra::focal(x = r, w= w, fun=max, na.rm = na.rm)
-    localmin<- terra::focal(x = r, w= w, fun=min, na.rm = na.rm)
+    localmax<- terra::focal(x = r, w= w, fun=max, na.rm = na.rm, wopt=wopt)
+    localmin<- terra::focal(x = r, w= w, fun=min, na.rm = na.rm, wopt=wopt)
     rdmv<- (r - localmean)/(localmax-localmin)
   } else{
-    localsd<- terra::focal(x = r, w= w, fun=sd, na.rm = na.rm)
+    localsd<- terra::focal(x = r, w= w, fun=sd, na.rm = na.rm, wopt=wopt)
     rdmv<- (r - localmean)/(localsd)
     }
   names(rdmv)<- "rdmv"
@@ -64,7 +69,7 @@ RDMV<- function(r, w=c(3,3), method="range", na.rm=FALSE, include_scale=FALSE, f
     }
   }
   if(!is.null(filename)){
-    return(terra::writeRaster(rdmv, filename=filename, overwrite=overwrite))
+    return(terra::writeRaster(rdmv, filename=filename, overwrite=overwrite, wopt=wopt))
   }
   return(rdmv)
 }

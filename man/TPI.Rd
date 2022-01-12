@@ -10,7 +10,8 @@ TPI(
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  wopt = list()
 )
 }
 \arguments{
@@ -25,12 +26,19 @@ TPI(
 \item{filename}{character Output filename.}
 
 \item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \value{
 a SpatRaster or RasterLayer
 }
 \description{
 Calculates Topographic Position Index (TPI). This is the value of the focal pixel minus the mean of the surrounding pixels (i.e. local mean but excluding the value of the focal pixel).
+}
+\examples{
+r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
+plot(tpi)
 }
 \references{
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.
