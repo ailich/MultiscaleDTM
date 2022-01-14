@@ -36,6 +36,7 @@ a SpatRaster or RasterLayer
 Calculates Topographic Position Index (TPI). This is the value of the focal pixel minus the mean of the surrounding pixels (i.e. local mean but excluding the value of the focal pixel).
 }
 \examples{
+library(terra)
 r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
 plot(tpi)

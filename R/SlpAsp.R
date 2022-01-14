@@ -33,6 +33,7 @@ convert_aspect<- function(aspect){
 #' @importFrom raster writeRaster
 #' @return a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
 #' @examples
+#' library(terra)
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 #' slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 #' plot(slp_asp)
