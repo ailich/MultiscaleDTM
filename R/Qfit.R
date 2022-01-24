@@ -184,7 +184,6 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   mask_raster<- prod(params==0) #Mask of when predicted values are all equal
   
   #identify extreme outliers that are less than Q1% - 100*IQR or greater than Q99% + 100*IQR, where IQR is the range of 1-99% quantiles
-  numeric_idx<- which(!terra::is.factor(out))
   quant<- terra::global(params, fun= quantile, probs=c(0, 0.01, 0.99, 1), na.rm=TRUE)
     iqr <- quant[ ,3] - quant[ ,2]
     outliers <- row.names(quant)[which(quant[ ,1] < (quant[ ,2] - 100*iqr)  | quant[ ,4] > (quant[ ,3] + 100*iqr))]
