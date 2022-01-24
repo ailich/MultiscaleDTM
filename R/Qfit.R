@@ -87,7 +87,7 @@ convert_aspect2<- function(aspect){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, outlier_quantile=c(0.01, 0.99), na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   
   all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
@@ -183,13 +183,26 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     }
   mask_raster<- prod(params==0) #Mask of when predicted values are all equal
   
-  #identify extreme outliers that are less than Q1% - 100*IQR or greater than Q99% + 100*IQR, where IQR is the range of 1-99% quantiles
-  quant<- terra::global(params, fun= quantile, probs=c(0, 0.01, 0.99, 1), na.rm=TRUE)
-    iqr <- quant[ ,3] - quant[ ,2]
-    outliers <- row.names(quant)[which(quant[ ,1] < (quant[ ,2] - 100*iqr)  | quant[ ,4] > (quant[ ,3] + 100*iqr))]
-    if(length(outliers) != 0){
-      warning("Extreme outliers detected in: ", paste(outliers, collapse=", "))
-      }
+  #filter extreme outliers that are outside than Q1 - 100*IQR or greater than Q2 + 100*IQR, where Q1 and Q2 are outlier_quantile[c(1,2)] and IQR is the range of quantiles Q1 to Q2
+  quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+  iqr <- quant[, 3] - quant[, 2]
+  outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
+  iq_lims <- matrix(
+  c(quant[, 2] - 100 * iqr, 
+    quant[, 3] + 100 * iqr), 
+    ncol = 2
+  )
+  
+  for (i in 1:nlyr(params)) {
+    reclass_mat <- rbind(
+      c(-Inf, iq_lims[i, 1], NA),
+      c(iq_lims[i, 2], Inf, NA)
+    )
+    params[[i]] <- classify(params[[i]], reclass_mat)
+  }
+  
+  if (length(outliers) != 0) 
+    warning("Outliers filtered")
   
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){
