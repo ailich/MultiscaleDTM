@@ -28,7 +28,7 @@ If you don’t already have remotes installed, use the code
 Then to install this package use the code
 `remotes::install_github("ailich/MultiscaleDEM")` (you may need to
 install Rtools using the instructions found
-[here](https://cran.r-project.org/bin/windows/Rtools/).
+[here](https://cran.r-project.org/bin/windows/Rtools/)).
 
 This package relies on the `terra` package for handling of spatial
 raster data. To install the development version of `terra`, use
