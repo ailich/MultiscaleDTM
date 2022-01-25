@@ -63,8 +63,6 @@ outlier_filter<- function(params, outlier_quantile){
     }
     warning("Extreme outliers were filtered)
   }
-  
-  
   return(p)
 }
 
