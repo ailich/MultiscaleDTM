@@ -48,22 +48,23 @@ convert_aspect2<- function(aspect){
 #' @param params regression parameters for fitted surface
 #' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
 
-outlier_filter<- function(params, outlier_quantile){
-  p<- params
-  quant <- terra::global(p, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+outlier_filter<- function(params, outlier_quantile){ 
+  quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
   iqr <- quant[, 3] - quant[, 2]
   outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
-    
+  
   if (length(outliers) != 0) {
     iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 100 * iqr), ncol = 2)
     
-    for (i in 1:nlyr(p)) {
-      reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 2], Inf, NA))
-      p[[i]] <- classify(p[[i]], reclass_mat)
+    outlier_mask<- rast(params)
+    for (i in 1:nlyr(params)) {
+      outlier_mask[[i]]<- ((params[[i]] >= iq_lims[i,1]) & (params[[i]] <= iq_lims[i,2])) #0 indicates an outlier
     }
+    outlier_mask<- prod(outlier_mask) #product of zero indicates an outlier location
+    params<- terra::mask(params, mask = outlier_mask, maskvalues=0, updatevalue=NA)
     warning("Outliers filtered")
   }
-  return(p)
+  return(params)
 }
 
 #' Calculates multiscale slope, aspect, curvature, and morphometric features using a local quadratic fit
