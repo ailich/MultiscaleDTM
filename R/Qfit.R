@@ -201,8 +201,9 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     params[[i]] <- classify(params[[i]], reclass_mat)
   }
   
-  if (length(outliers) != 0) 
-    warning("Outliers filtered")
+  if(length(outliers) != 0){
+      warning("Extreme outliers filtered in: ", paste(outliers, collapse=", "))
+      }
   
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){
