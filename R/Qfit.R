@@ -175,36 +175,48 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   # Calculate Regression Parameters
   if(force_center){
     params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
+    
+    quant <- terra::global(params, fun = quantile, probs = c(0, 
+                                                             outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+    iqr <- quant[, 3] - quant[, 2]
+    outliers <- row.names(quant)[which(quant[, 1] < (quant[, 
+                                                           2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
+    iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 
+                          100 * iqr), ncol = 2)
+    for (i in 1:nlyr(params)) {
+      reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 
+                                                                 2], Inf, NA))
+      params[[i]] <- classify(params[[i]], reclass_mat)
+    }
+    if (length(outliers) != 0) {
+      warning("Extreme outliers filtered in: ", paste(outliers, 
+                                                      collapse = ", "))
+    }
     } else{
     params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
+    
+    quant <- terra::global(params, fun = quantile, probs = c(0, 
+                                                             outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+    iqr <- quant[, 3] - quant[, 2]
+    outliers <- row.names(quant)[which(quant[, 1] < (quant[, 
+                                                           2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
+    iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 
+                          100 * iqr), ncol = 2)
+    for (i in 1:nlyr(params)) {
+      reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 
+                                                                 2], Inf, NA))
+      params[[i]] <- classify(params[[i]], reclass_mat)
+    }
+    if (length(outliers) != 0) {
+      warning("Extreme outliers filtered in: ", paste(outliers, 
+                                                      collapse = ", "))
+    }
     elev<- params$f
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept
     }
   mask_raster<- prod(params==0) #Mask of when predicted values are all equal
-  
-  #filter extreme outliers that are outside than Q1 - 100*IQR or greater than Q2 + 100*IQR, where Q1 and Q2 are outlier_quantile[c(1,2)] and IQR is the range of quantiles Q1 to Q2
-  quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
-  iqr <- quant[, 3] - quant[, 2]
-  outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
-  iq_lims <- matrix(
-  c(quant[, 2] - 100 * iqr, 
-    quant[, 3] + 100 * iqr), 
-    ncol = 2
-  )
-  
-  for (i in 1:nlyr(params)) {
-    reclass_mat <- rbind(
-      c(-Inf, iq_lims[i, 1], NA),
-      c(iq_lims[i, 2], Inf, NA)
-    )
-    params[[i]] <- classify(params[[i]], reclass_mat)
-  }
-  
-  if(length(outliers) != 0){
-      warning("Extreme outliers filtered in: ", paste(outliers, collapse=", "))
-      }
-  
+     
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){
     out<- c(out, elev, warn=FALSE)
