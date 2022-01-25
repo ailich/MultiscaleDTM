@@ -53,16 +53,18 @@ outlier_filter<- function(params, outlier_quantile){
   quant <- terra::global(p, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
   iqr <- quant[, 3] - quant[, 2]
   outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
-  iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 100 * iqr), ncol = 2)
-  
-  for (i in 1:nlyr(p)) {
-    reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 2], Inf, NA))
-    p[[i]] <- classify(p[[i]], reclass_mat)
     
-    if (length(outliers) != 0) {
-      warning("Extreme outliers filtered in: ", paste(outliers, collapse = ", "))
+  if (length(outliers) != 0) {
+    iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 100 * iqr), ncol = 2)
+    
+    for (i in 1:nlyr(p)) {
+      reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 2], Inf, NA))
+      p[[i]] <- classify(p[[i]], reclass_mat)
     }
+    warning("Extreme outliers filtered in: ", paste(outliers, collapse = ", "))
   }
+  
+  
   return(p)
 }
 
