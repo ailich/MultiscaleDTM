@@ -61,7 +61,7 @@ outlier_filter<- function(params, outlier_quantile){
       reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 2], Inf, NA))
       p[[i]] <- classify(p[[i]], reclass_mat)
     }
-    warning("Extreme outliers were filtered)
+    warning("Outliers filtered)
   }
   return(p)
 }
