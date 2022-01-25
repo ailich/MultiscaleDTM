@@ -44,6 +44,29 @@ convert_aspect2<- function(aspect){
   return(out)
 }
 
+#' Helper function to filter outliers from regression parameters using interquartile range
+#'
+#' @param params regression parameters for fitted surface
+#' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
+
+outlier_filter<- function(params, outlier_quantile){
+  p<- params
+  quant <- terra::global(p, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+  iqr <- quant[, 3] - quant[, 2]
+  outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
+  iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 100 * iqr), ncol = 2)
+  
+  for (i in 1:nlyr(p)) {
+    reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 2], Inf, NA))
+    p[[i]] <- classify(p[[i]], reclass_mat)
+    
+    if (length(outliers) != 0) {
+      warning("Extreme outliers filtered in: ", paste(outliers, collapse = ", "))
+    }
+  }
+  return(p)
+}
+
 #' Calculates multiscale slope, aspect, curvature, and morphometric features using a local quadratic fit
 #'
 #' Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
@@ -175,42 +198,10 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   # Calculate Regression Parameters
   if(force_center){
     params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
-    
-    quant <- terra::global(params, fun = quantile, probs = c(0, 
-                                                             outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
-    iqr <- quant[, 3] - quant[, 2]
-    outliers <- row.names(quant)[which(quant[, 1] < (quant[, 
-                                                           2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
-    iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 
-                          100 * iqr), ncol = 2)
-    for (i in 1:nlyr(params)) {
-      reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 
-                                                                 2], Inf, NA))
-      params[[i]] <- classify(params[[i]], reclass_mat)
-    }
-    if (length(outliers) != 0) {
-      warning("Extreme outliers filtered in: ", paste(outliers, 
-                                                      collapse = ", "))
-    }
+    params <- outlier_filter(params, outlier_quantile)
     } else{
     params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
-    
-    quant <- terra::global(params, fun = quantile, probs = c(0, 
-                                                             outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
-    iqr <- quant[, 3] - quant[, 2]
-    outliers <- row.names(quant)[which(quant[, 1] < (quant[, 
-                                                           2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
-    iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 
-                          100 * iqr), ncol = 2)
-    for (i in 1:nlyr(params)) {
-      reclass_mat <- rbind(c(-Inf, iq_lims[i, 1], NA), c(iq_lims[i, 
-                                                                 2], Inf, NA))
-      params[[i]] <- classify(params[[i]], reclass_mat)
-    }
-    if (length(outliers) != 0) {
-      warning("Extreme outliers filtered in: ", paste(outliers, 
-                                                      collapse = ", "))
-    }
+    params <- outlier_filter(params, outlier_quantile)
     elev<- params$f
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept
