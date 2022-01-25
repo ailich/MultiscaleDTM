@@ -32,7 +32,6 @@ classify_features_ff<- function(slope_tolerance=1, curvature_tolerance=0.0001){
 
 #' Helper function to convert aspect to clockwise distance from North
 #'
-#' #' Helper function to 
 #' @param aspect a number in radians representing aspect as calculated by atan2(e,d)
 #' @importFrom dplyr case_when
 #' @return aspect as to clockwise distance in radians from North
