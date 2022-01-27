@@ -154,7 +154,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   #Define local coordinate system of window
   x_mat<- matrix(data = seq(from = (-xres(r) * floor(w[2]/2)), to = (xres(r) * floor(w[2]/2)), length.out = w[2]), nrow = w[1], ncol=w[2], byrow=TRUE)
   x<- as.vector(t(x_mat)) #Transpose for focal
-  y_mat<- matrix(data = seq(from = (-yres(r) * floor(w[1]/2)), to = (yres(r) * floor(w[1]/2)), length.out = w[1]), nrow = w[1], ncol=w[2])
+  y_mat<- matrix(data = seq(from = (yres(r) * floor(w[1]/2)), to = (-yres(r) * floor(w[1]/2)), length.out = w[1]), nrow = w[1], ncol=w[2])
   y<- as.vector(t(y_mat)) #Transpose for focal
   
   #Explanatory Variable matrix X for quadratic fit
