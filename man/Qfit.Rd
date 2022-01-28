@@ -12,6 +12,7 @@ Qfit(
     "twistc", "meanc", "maxc", "minc", "features"),
   slope_tolerance = 1,
   curvature_tolerance = 1e-04,
+  outlier_quantile = c(0.01, 0.99),
   na.rm = FALSE,
   force_center = FALSE,
   include_scale = FALSE,
@@ -35,6 +36,8 @@ Qfit(
 \item{slope_tolerance}{Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.}
 
 \item{curvature_tolerance}{Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.}
+
+\item{outlier_quantile}{vector of length 2 specifying the quantiles used for filtering outliers}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 

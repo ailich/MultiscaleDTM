@@ -76,6 +76,7 @@ outlier_filter<- function(params, outlier_quantile){
 #' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'elev' is the predicted elevation at the central cell (i.e. the intercept term of the regression) and is only relevant when force_center=FALSE. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, and 'features' are morphometric features. See details.
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
+#' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
 #' @param force_center Logical specifying whether the constrain the model through the central cell of the focal window
@@ -189,10 +190,14 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   # Calculate Regression Parameters
   if(force_center){
     params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
-    params <- outlier_filter(params, outlier_quantile)
+    if(!all(outlier_quantile==c(0,1))){
+      params <- outlier_filter(params, outlier_quantile)
+      }
     } else{
     params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
-    params <- outlier_filter(params, outlier_quantile)
+    if(!all(outlier_quantile==c(0,1))){
+      params <- outlier_filter(params, outlier_quantile)
+    }
     elev<- params$f
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept

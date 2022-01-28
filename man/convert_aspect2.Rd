@@ -13,5 +13,5 @@ convert_aspect2(aspect)
 aspect as to clockwise distance in radians from North
 }
 \description{
-#' Helper function to
+Helper function to convert aspect to clockwise distance from North
 }
