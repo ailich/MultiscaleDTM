@@ -32,7 +32,6 @@ classify_features_ff<- function(slope_tolerance=1, curvature_tolerance=0.0001){
 
 #' Helper function to convert aspect to clockwise distance from North
 #'
-#' #' Helper function to 
 #' @param aspect a number in radians representing aspect as calculated by atan2(e,d)
 #' @importFrom dplyr case_when
 #' @return aspect as to clockwise distance in radians from North
@@ -42,6 +41,30 @@ convert_aspect2<- function(aspect){
                          aspect <= (-pi/2) ~ (-pi/2) - aspect,
                          TRUE ~ (-pi/2) - aspect + (2*pi))
   return(out)
+}
+
+#' Helper function to filter outliers from regression parameters using interquartile range
+#'
+#' @param params regression parameters for fitted surface
+#' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
+
+outlier_filter<- function(params, outlier_quantile){ 
+  quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+  iqr <- quant[, 3] - quant[, 2]
+  outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
+  
+  if (length(outliers) != 0) {
+    iq_lims <- matrix(c(quant[, 2] - 100 * iqr, quant[, 3] + 100 * iqr), ncol = 2)
+    
+    outlier_mask<- rast(params)
+    for (i in 1:nlyr(params)) {
+      outlier_mask[[i]]<- ((params[[i]] >= iq_lims[i,1]) & (params[[i]] <= iq_lims[i,2])) #0 indicates an outlier
+    }
+    outlier_mask<- prod(outlier_mask) #product of zero indicates an outlier location
+    params<- terra::mask(params, mask = outlier_mask, maskvalues=0, updatevalue=NA)
+    warning("Outliers filtered")
+  }
+  return(params)
 }
 
 #' Calculates multiscale slope, aspect, curvature, and morphometric features using a local quadratic fit
@@ -87,7 +110,7 @@ convert_aspect2<- function(aspect){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, outlier_quantile=c(0.01, 0.99), na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   
   all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
@@ -166,14 +189,16 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   # Calculate Regression Parameters
   if(force_center){
     params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
+    params <- outlier_filter(params, outlier_quantile)
     } else{
     params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
+    params <- outlier_filter(params, outlier_quantile)
     elev<- params$f
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept
     }
   mask_raster<- prod(params==0) #Mask of when predicted values are all equal
-  
+     
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){
     out<- c(out, elev, warn=FALSE)
@@ -286,18 +311,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   
   if(return_params){out<- c(out, params, warn=FALSE)}
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
-                             
-  #identify extreme outliers that are less than Q1% - 100*IQR or greater than Q99% + 100*IQR, where IQR is the range of 1-99% quantiles
-  numeric_idx<- which(!terra::is.factor(out))
-  if(length(numeric_idx)>0){
-    quant<- terra::global(out[[numeric_idx]], fun= quantile, probs=c(0, 0.01, 0.99, 1), na.rm=TRUE)
-    iqr <- quant[ ,3] - quant[ ,2]
-    outliers <- row.names(quant)[which(quant[ ,1] < (quant[ ,2] - 100*iqr)  | quant[ ,4] > (quant[ ,3] + 100*iqr))]
-    if(length(outliers) != 0){
-      warning("Extreme outliers detected in: ", paste(outliers, collapse=", "))
-      }
-  }
-  
+                               
   #Return
   if(og_class=="RasterLayer"){
     if(terra::nlyr(out) > 1){
