@@ -19,8 +19,8 @@ NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx) {
 NumericVector C_OLS_params(arma::mat X, arma::mat Y){
   arma::mat Xt = trans(X);
   arma::mat XtX = Xt * X;
-  double d = det(XtX);
-  if(d==0){
+  double rcf = rcond(XtX);
+  if(rcf <= std::numeric_limits<double>::epsilon()){
     NumericVector B2(X.n_cols, NA_REAL);
     return B2;
   } else{
@@ -34,8 +34,8 @@ NumericVector C_OLS_params(arma::mat X, arma::mat Y){
 NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
   arma::mat Xt = trans(X);
   arma::mat XtX = Xt * X;
-  double d = det(XtX);
-  if(d==0){
+  double rcf = rcond(XtX);
+  if(rcf <= std::numeric_limits<double>::epsilon()){
     NumericVector resid2(X.n_rows, NA_REAL);
     return resid2;
   } else{
