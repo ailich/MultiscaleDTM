@@ -16,11 +16,11 @@ NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx) {
 
 //Ordinary Least Squares (only returns parameters)
 // [[Rcpp::export]]
-NumericVector C_OLS_params(arma::mat X, arma::mat Y){
+NumericVector C_OLS_params(arma::mat X, arma::mat Y, double tol){
   arma::mat Xt = trans(X);
   arma::mat XtX = Xt * X;
   double rcf = rcond(XtX);
-  if(rcf <= std::numeric_limits<double>::epsilon()){
+  if(rcf <= tol){
     NumericVector B2(X.n_cols, NA_REAL);
     return B2;
   } else{
@@ -31,11 +31,11 @@ NumericVector C_OLS_params(arma::mat X, arma::mat Y){
 
 //Ordinary Least Squares (only returns residuals)
 // [[Rcpp::export]]
-NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
+NumericVector C_OLS_resid(arma::mat X, arma::mat Y, double tol){
   arma::mat Xt = trans(X);
   arma::mat XtX = Xt * X;
   double rcf = rcond(XtX);
-  if(rcf <= std::numeric_limits<double>::epsilon()){
+  if(rcf <= tol){
     NumericVector resid2(X.n_rows, NA_REAL);
     return resid2;
   } else{
@@ -51,6 +51,7 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
 // [[Rcpp::export]]
 NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
+  double tol = std::numeric_limits<double>::epsilon();
   size_t nlyr = X_full.ncol(); //Number of layers
   NumericMatrix out(ni, nlyr);
   out.fill(NA_REAL);
@@ -74,7 +75,7 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
         out(i, _) = rep(0, 6); //all zeros
         out(i, 5) = uni_Zvals[0]; //f
       } else{
-        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z), tol);
       }
     }}
   return out;
@@ -84,6 +85,7 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
 // [[Rcpp::export]]
 NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
   
+  double tol = std::numeric_limits<double>::epsilon();
   size_t nlyr = X_full.ncol(); //Number of layers
   NumericMatrix out(ni, nlyr);
   out.fill(NA_REAL);
@@ -108,7 +110,7 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
         //If all Z values are the same, all parameters are 0.
         out(i, _) = rep(0,5);
       } else{
-        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z), tol);
       }
     }}
   return out;
@@ -117,6 +119,7 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
 //SD of residuals from a planar fit
 // [[Rcpp::export]]
 NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw){
+  double tol = std::numeric_limits<double>::epsilon();
   NumericVector out(ni, NA_REAL);
   //Z = dX + eY + f
   
@@ -138,7 +141,7 @@ NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
       if(uni_Zvals.length() == 1){
         out[i] = 0; //If all Z values are the same residuals are 0
         } else{
-          NumericVector resid = C_OLS_resid(as<arma::mat>(X), as<arma::mat>(Z));
+          NumericVector resid = C_OLS_resid(as<arma::mat>(X), as<arma::mat>(Z), tol);
           out[i] =  sd(resid); //SD resid
           }
     }}

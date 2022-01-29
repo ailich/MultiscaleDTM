@@ -24,26 +24,28 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_OLS_params
-NumericVector C_OLS_params(arma::mat X, arma::mat Y);
-RcppExport SEXP _MultiscaleDEM_C_OLS_params(SEXP XSEXP, SEXP YSEXP) {
+NumericVector C_OLS_params(arma::mat X, arma::mat Y, double tol);
+RcppExport SEXP _MultiscaleDEM_C_OLS_params(SEXP XSEXP, SEXP YSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_OLS_params(X, Y));
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_OLS_params(X, Y, tol));
     return rcpp_result_gen;
 END_RCPP
 }
 // C_OLS_resid
-NumericVector C_OLS_resid(arma::mat X, arma::mat Y);
-RcppExport SEXP _MultiscaleDEM_C_OLS_resid(SEXP XSEXP, SEXP YSEXP) {
+NumericVector C_OLS_resid(arma::mat X, arma::mat Y, double tol);
+RcppExport SEXP _MultiscaleDEM_C_OLS_resid(SEXP XSEXP, SEXP YSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_OLS_resid(X, Y));
+    Rcpp::traits::input_parameter< double >::type tol(tolSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_OLS_resid(X, Y, tol));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -136,8 +138,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDEM_subset_mat_rows", (DL_FUNC) &_MultiscaleDEM_subset_mat_rows, 2},
-    {"_MultiscaleDEM_C_OLS_params", (DL_FUNC) &_MultiscaleDEM_C_OLS_params, 2},
-    {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 2},
+    {"_MultiscaleDEM_C_OLS_params", (DL_FUNC) &_MultiscaleDEM_C_OLS_params, 3},
+    {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 3},
     {"_MultiscaleDEM_C_Qfit1", (DL_FUNC) &_MultiscaleDEM_C_Qfit1, 5},
     {"_MultiscaleDEM_C_Qfit2", (DL_FUNC) &_MultiscaleDEM_C_Qfit2, 5},
     {"_MultiscaleDEM_C_AdjSD", (DL_FUNC) &_MultiscaleDEM_C_AdjSD, 5},
