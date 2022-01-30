@@ -5,12 +5,12 @@ subset_mat_rows <- function(x, idx) {
     .Call(`_MultiscaleDEM_subset_mat_rows`, x, idx)
 }
 
-C_OLS_params <- function(X, Y, tol) {
-    .Call(`_MultiscaleDEM_C_OLS_params`, X, Y, tol)
+C_OLS_params <- function(X, Y) {
+    .Call(`_MultiscaleDEM_C_OLS_params`, X, Y)
 }
 
-C_OLS_resid <- function(X, Y, tol) {
-    .Call(`_MultiscaleDEM_C_OLS_resid`, X, Y, tol)
+C_OLS_resid <- function(X, Y) {
+    .Call(`_MultiscaleDEM_C_OLS_resid`, X, Y)
 }
 
 C_Qfit1 <- function(z, X_full, na_rm, ni, nw) {
