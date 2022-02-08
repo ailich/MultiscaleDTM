@@ -4,12 +4,14 @@
 \alias{outlier_filter}
 \title{Helper function to filter outliers from regression parameters using interquartile range}
 \usage{
-outlier_filter(params, outlier_quantile)
+outlier_filter(params, outlier_quantile, wopt = list())
 }
 \arguments{
 \item{params}{regression parameters for fitted surface}
 
 \item{outlier_quantile}{vector of length 2 specifying the quantiles used for filtering outliers}
+
+\item{wopt}{list with named options for writing files as in writeRaster}
 }
 \description{
 Helper function to filter outliers from regression parameters using interquartile range

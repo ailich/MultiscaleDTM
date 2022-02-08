@@ -175,14 +175,14 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE, wopt=wopt)
     
     #calculate dz/dx and dz/dy using the components. 2*j is the run: (2 sides)*(length of each side)
-    dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*terra::res(r)[1])
-    dz.dy <- (dz.dy.b-dz.dy.t)/(2*jy*terra::res(r)[2])
+    dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*terra::xres(r))
+    dz.dy <- (dz.dy.b-dz.dy.t)/(2*jy*terra::yres(r))
   }
   
   out<- terra::rast() #initialize output
   
   if("slope" %in% needed_metrics){
-    slope.k<- (atan(sqrt((dz.dx^2)+(dz.dy^2))))
+    slope.k<- terra::math(terra::math(dz.dx^2 + dz.dy^2, fun= "sqrt", wopt=wopt), fun= "atan", wopt=wopt)
     if(unit=="degrees" & ("slope" %in% metrics)){
       slope.k<- slope.k * (180/pi)
       }
@@ -191,10 +191,10 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   }
   
   if("aspect" %in% needed_metrics){
-    aspect.k<- terra::app(atan2(dz.dy, -dz.dx), fun = convert_aspect, wopt=wopt) #aspect relative to North
+    aspect.k<- terra::app(terra::atan_2(dz.dy, -dz.dx, wopt=wopt), fun = convert_aspect, wopt=wopt) #aspect relative to North
     
     if("eastness" %in% needed_metrics){
-      eastness.k<- sin(aspect.k)
+      eastness.k<- terra::math(aspect.k, fun="sin", wopt=wopt)
       if(mask_aspect){
         eastness.k<- terra::mask(eastness.k, mask= slope.k, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set eastness to 0 where slope is zero
         }
@@ -203,7 +203,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     }
     
     if("northness" %in% needed_metrics){
-      northness.k<- cos(aspect.k)
+      northness.k<- terra::math(aspect.k, fun="cos", wopt=wopt)
       if(mask_aspect){
         northness.k<- terra::mask(northness.k, mask= slope.k, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set northenss to 0 where slope is zero
         }

@@ -57,8 +57,8 @@ SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_laye
     is_native<- TRUE} else{
       is_native<- FALSE} #Indicate whether SAPA is calculated at native scale
   
-  x_res<- terra::res(r)[1]
-  y_res<- terra::res(r)[2]
+  x_res<- terra::xres(r)
+  y_res<- terra::yres(r)
 
   SA<- SurfaceArea(r, wopt=wopt)
   
@@ -74,7 +74,7 @@ SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_laye
       }
     }
   PA<- (x_res*w[2]) * (y_res*w[1])
-  if(slope_correction){PA<- PA/cos(slope_layer)}#Planar area corrected for slope
+  if(slope_correction){PA<- PA/terra::math(slope_layer, fun="cos", wopt=wopt)}#Planar area corrected for slope
   
   sapa<- SA/PA
   names(sapa)<- "sapa"

@@ -9,23 +9,23 @@
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 
 classify_features_ff<- function(slope_tolerance=1, curvature_tolerance=0.0001){
-  #1=PLANAR (If add slope redefine to FLAT?)
-  #2=PIT
-  #3=CHANNEL
-  #4=PASS
-  #5=RIDGE
-  #6=PEAK
-  #7=SLOPE??? (add a new category?)
+  #1=PLANAR_FLAT
+  #2=PLANAR_SLOPE
+  #3=PIT
+  #4=CHANNEL
+  #5=PASS
+  #6=RIDGE
+  #7=PEAK
   out_fun<- function(slope, planc, maxc, minc){
     dplyr::case_when(is.na(slope) ~ NA_real_,
-                     (slope > slope_tolerance) & (planc > curvature_tolerance) ~ 5,
-                     (slope > slope_tolerance) & (planc < -curvature_tolerance) ~ 3,
-                     slope > slope_tolerance ~ 1, #Maybe make this 7 (slope, new category)
-                     (maxc > curvature_tolerance) & (minc > curvature_tolerance) ~ 6,
-                     (maxc > curvature_tolerance) & (minc < -curvature_tolerance) ~ 4,
-                     maxc > curvature_tolerance ~ 5,
-                     (minc < -curvature_tolerance) & (maxc < -curvature_tolerance) ~ 2,
-                     minc < -curvature_tolerance ~ 3,
+                     (slope > slope_tolerance) & (planc > curvature_tolerance) ~ 6,
+                     (slope > slope_tolerance) & (planc < -curvature_tolerance) ~ 4,
+                     slope > slope_tolerance ~ 2, 
+                     (maxc > curvature_tolerance) & (minc > curvature_tolerance) ~ 7,
+                     (maxc > curvature_tolerance) & (minc < -curvature_tolerance) ~ 5,
+                     maxc > curvature_tolerance ~ 6,
+                     (minc < -curvature_tolerance) & (maxc < -curvature_tolerance) ~ 3,
+                     minc < -curvature_tolerance ~ 4,
                      TRUE ~ 1)}
   return(out_fun)
 }
@@ -47,8 +47,9 @@ convert_aspect2<- function(aspect){
 #'
 #' @param params regression parameters for fitted surface
 #' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
+#' @param wopt list with named options for writing files as in writeRaster
 
-outlier_filter<- function(params, outlier_quantile){ 
+outlier_filter<- function(params, outlier_quantile, wopt=list()){ 
   quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
   iqr <- quant[, 3] - quant[, 2]
   outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
@@ -60,8 +61,8 @@ outlier_filter<- function(params, outlier_quantile){
     for (i in 1:nlyr(params)) {
       outlier_mask[[i]]<- ((params[[i]] >= iq_lims[i,1]) & (params[[i]] <= iq_lims[i,2])) #0 indicates an outlier
     }
-    outlier_mask<- prod(outlier_mask) #product of zero indicates an outlier location
-    params<- terra::mask(params, mask = outlier_mask, maskvalues=0, updatevalue=NA)
+    outlier_mask<- terra::prod(outlier_mask, wopt=wopt) #product of zero indicates an outlier location
+    params<- terra::mask(params, mask = outlier_mask, maskvalues=0, updatevalue=NA, wopt=wopt)
     warning("Outliers filtered")
   }
   return(params)
@@ -96,7 +97,7 @@ outlier_filter<- function(params, outlier_quantile){
 #' To get only the regression coefficients, set "metrics=c()" and "return_params=TRUE"
 #' reg_coefs<- Qfit(r, w = c(5,5), metrics=c(), unit = "degrees", na.rm = TRUE, return_params=TRUE)
 #' plot(reg_coefs)
-#' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020).
+#' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore all curvatures are reported in units of 1/length and have are reported according to a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive curvature values). Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020). Additionally, the planar feature from Wood (1996) was split into planar flat and slope depending on whether the slope threshold is exceeded or not.
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster stack
@@ -191,7 +192,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   if(force_center){
     params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
     if(!all(outlier_quantile==c(0,1))){
-      params <- outlier_filter(params, outlier_quantile)
+      params <- outlier_filter(params, outlier_quantile, wopt=wopt)
       }
     } else{
     params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
@@ -211,7 +212,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
 
   #Use regression parameters to calculate slope and aspect
   if("qslope" %in% needed_metrics){
-    slp<- atan(sqrt(params$d^2 + params$e^2))
+    slp<- terra::math(terra::math(params$d^2 + params$e^2, fun="sqrt", wopt=wopt), fun="atan", wopt=wopt)
     if(unit=="degrees"){
       slp<- slp*(180/pi)
     } else{
@@ -222,7 +223,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   }
   
   if("qaspect" %in% needed_metrics){
-    asp<- terra::app(atan2(params$e,params$d), fun = convert_aspect2, wopt=wopt) #Shift aspect so north is zero
+    asp<- terra::app(terra::atan_2(params$e,params$d, wopt=wopt), fun = convert_aspect2, wopt=wopt) #Shift aspect so north is zero
     if (mask_aspect){
       asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero
     }
@@ -302,7 +303,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   if("features" %in% needed_metrics){
     classify_features<- classify_features_ff(slope_tolerance, curvature_tolerance) #Define classification function based on slope and curvature tolerance
     features<- terra::lapp(c(slp, planc, maxc, minc), fun = classify_features, wopt=wopt)
-    levels(features)<- data.frame(ID=1:6, features = c("Planar", "Pit", "Channel", "Pass", "Ridge", "Peak"))
+    levels(features)<- data.frame(ID=1:7, features = c("Planar_Flat","Planar_Slope", "Pit", "Channel", "Pass", "Ridge", "Peak"))
     names(features)<- "features"
     out<- c(out, features, warn=FALSE)
   }

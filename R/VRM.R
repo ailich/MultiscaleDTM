@@ -45,10 +45,10 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
   sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
-  sin.slp <- sin(sa$slope) # xyRaster 
-  cos.slp <- cos(sa$slope) # zRaster 
-  sin.asp <- sin(sa$aspect) * sin.slp # yRaster
-  cos.asp <- cos(sa$aspect) * sin.slp # xRaster  
+  sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt) # xyRaster 
+  cos.slp <- terra::math(sa$slope, fun="cos", wopt=wopt) # zRaster 
+  sin.asp <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # yRaster
+  cos.asp <- terra::math(sa$aspect, fun="cos", wopt=wopt) * sin.slp # xRaster  
   x.sum <- terra::focal(sin.asp, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
   y.sum <- terra::focal(cos.asp, w = w, fun=sum, na.rm=na.rm, wopt=wopt) 
   z.sum <- terra::focal(cos.slp, w = w, fun=sum, na.rm=na.rm, wopt=wopt)

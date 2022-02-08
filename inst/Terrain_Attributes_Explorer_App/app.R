@@ -46,13 +46,13 @@ classify_features2<- function(slope, planc, maxc, minc) {
     dplyr::case_when(is.na(slope) ~ NA_character_,
                  (slope > slope_tolerance) & (planc > curvature_tolerance) ~ "Ridge",
                  (slope > slope_tolerance) & (planc < -curvature_tolerance) ~ "Channel",
-                 slope > slope_tolerance ~ "Planar", #Maybe make this 7 (slope, new category)
+                 slope > slope_tolerance ~ "Planar Slope",
                  (maxc > curvature_tolerance) & (minc > curvature_tolerance) ~ "Peak",
                  (maxc > curvature_tolerance) & (minc < -curvature_tolerance) ~ "Pass",
                  maxc > curvature_tolerance ~ "Ridge",
                  (minc < -curvature_tolerance) & (maxc < -curvature_tolerance) ~ "Pit",
                  minc < -curvature_tolerance ~ "Channel",
-                 TRUE ~ "Planar")
+                 TRUE ~ "Planar Flat")
     }
 
 nr<-3
