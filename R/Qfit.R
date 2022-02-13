@@ -61,7 +61,7 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
     for (i in 1:nlyr(params)) {
       outlier_mask[[i]]<- ((params[[i]] >= iq_lims[i,1]) & (params[[i]] <= iq_lims[i,2])) #0 indicates an outlier
     }
-    outlier_mask<- terra::prod(outlier_mask, wopt=wopt) #product of zero indicates an outlier location
+    outlier_mask<- prod(outlier_mask, wopt=wopt) #product of zero indicates an outlier location
     params<- terra::mask(params, mask = outlier_mask, maskvalues=0, updatevalue=NA, wopt=wopt)
     warning("Outliers filtered")
   }
