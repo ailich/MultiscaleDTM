@@ -72,7 +72,7 @@ r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478
 qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", na.rm = TRUE)
 plot(qmetrics)
 
-To get only the regression coefficients, set "metrics=c()" and "return_params=TRUE"
+# To get only the regression coefficients, set "metrics=c()" and "return_params=TRUE"
 reg_coefs<- Qfit(r, w = c(5,5), metrics=c(), unit = "degrees", na.rm = TRUE, return_params=TRUE)
 plot(reg_coefs)
 }

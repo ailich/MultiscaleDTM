@@ -55,7 +55,7 @@ RDMV<- function(r, w=c(3,3), method="range", na.rm=FALSE, include_scale=FALSE, f
     localmin<- terra::focal(x = r, w= w, fun=min, na.rm = na.rm, wopt=wopt)
     rdmv<- (r - localmean)/(localmax-localmin)
   } else{
-    localsd<- terra::focal(x = r, w= w, fun=sd, na.rm = na.rm, wopt=wopt)
+    localsd<- terra::focal(x = r, w= w, fun="sd", na.rm = na.rm, wopt=wopt)
     rdmv<- (r - localmean)/(localsd)
     }
   names(rdmv)<- "rdmv"
