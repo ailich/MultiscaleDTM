@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-February 14, 2022
+February 17, 2022
 
 # MultiscaleDEM
 
