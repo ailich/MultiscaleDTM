@@ -12,6 +12,6 @@
 #' Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
 #' @export
 explore_terrain<- function(){
-  appDir<- system.file("Terrain_Attributes_Explorer_App", package = "MultiscaleDEM")
+  appDir<- system.file("Terrain_Attributes_Explorer_App", package = "MultiscaleDTM")
   shiny::runApp(appDir, display.mode = "normal")
   }
