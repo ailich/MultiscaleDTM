@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // subset_mat_rows
 NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx);
-RcppExport SEXP _MultiscaleDEM_subset_mat_rows(SEXP xSEXP, SEXP idxSEXP) {
+RcppExport SEXP _MultiscaleDTM_subset_mat_rows(SEXP xSEXP, SEXP idxSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -25,7 +25,7 @@ END_RCPP
 }
 // C_OLS_params
 NumericVector C_OLS_params(arma::mat X, arma::mat Y);
-RcppExport SEXP _MultiscaleDEM_C_OLS_params(SEXP XSEXP, SEXP YSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_OLS_params(SEXP XSEXP, SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -37,7 +37,7 @@ END_RCPP
 }
 // C_OLS_resid
 NumericVector C_OLS_resid(arma::mat X, arma::mat Y);
-RcppExport SEXP _MultiscaleDEM_C_OLS_resid(SEXP XSEXP, SEXP YSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_OLS_resid(SEXP XSEXP, SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -49,7 +49,7 @@ END_RCPP
 }
 // C_Qfit1
 NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_Qfit1(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_Qfit1(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -64,7 +64,7 @@ END_RCPP
 }
 // C_Qfit2
 NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_Qfit2(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_Qfit2(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -79,7 +79,7 @@ END_RCPP
 }
 // C_AdjSD
 NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_AdjSD(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_AdjSD(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -94,7 +94,7 @@ END_RCPP
 }
 // C_TriArea
 double C_TriArea(double a, double b, double c);
-RcppExport SEXP _MultiscaleDEM_C_TriArea(SEXP aSEXP, SEXP bSEXP, SEXP cSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_TriArea(SEXP aSEXP, SEXP bSEXP, SEXP cSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -107,7 +107,7 @@ END_RCPP
 }
 // C_SurfaceArea
 NumericVector C_SurfaceArea(NumericVector z, double x_res, double y_res, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_SurfaceArea(SEXP zSEXP, SEXP x_resSEXP, SEXP y_resSEXP, SEXP niSEXP, SEXP nwSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_SurfaceArea(SEXP zSEXP, SEXP x_resSEXP, SEXP y_resSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -122,7 +122,7 @@ END_RCPP
 }
 // C_CountVals
 NumericVector C_CountVals(NumericVector z, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDEM_C_CountVals(SEXP zSEXP, SEXP niSEXP, SEXP nwSEXP) {
+RcppExport SEXP _MultiscaleDTM_C_CountVals(SEXP zSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -135,19 +135,19 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_MultiscaleDEM_subset_mat_rows", (DL_FUNC) &_MultiscaleDEM_subset_mat_rows, 2},
-    {"_MultiscaleDEM_C_OLS_params", (DL_FUNC) &_MultiscaleDEM_C_OLS_params, 2},
-    {"_MultiscaleDEM_C_OLS_resid", (DL_FUNC) &_MultiscaleDEM_C_OLS_resid, 2},
-    {"_MultiscaleDEM_C_Qfit1", (DL_FUNC) &_MultiscaleDEM_C_Qfit1, 5},
-    {"_MultiscaleDEM_C_Qfit2", (DL_FUNC) &_MultiscaleDEM_C_Qfit2, 5},
-    {"_MultiscaleDEM_C_AdjSD", (DL_FUNC) &_MultiscaleDEM_C_AdjSD, 5},
-    {"_MultiscaleDEM_C_TriArea", (DL_FUNC) &_MultiscaleDEM_C_TriArea, 3},
-    {"_MultiscaleDEM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDEM_C_SurfaceArea, 5},
-    {"_MultiscaleDEM_C_CountVals", (DL_FUNC) &_MultiscaleDEM_C_CountVals, 3},
+    {"_MultiscaleDTM_subset_mat_rows", (DL_FUNC) &_MultiscaleDTM_subset_mat_rows, 2},
+    {"_MultiscaleDTM_C_OLS_params", (DL_FUNC) &_MultiscaleDTM_C_OLS_params, 2},
+    {"_MultiscaleDTM_C_OLS_resid", (DL_FUNC) &_MultiscaleDTM_C_OLS_resid, 2},
+    {"_MultiscaleDTM_C_Qfit1", (DL_FUNC) &_MultiscaleDTM_C_Qfit1, 5},
+    {"_MultiscaleDTM_C_Qfit2", (DL_FUNC) &_MultiscaleDTM_C_Qfit2, 5},
+    {"_MultiscaleDTM_C_AdjSD", (DL_FUNC) &_MultiscaleDTM_C_AdjSD, 5},
+    {"_MultiscaleDTM_C_TriArea", (DL_FUNC) &_MultiscaleDTM_C_TriArea, 3},
+    {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 5},
+    {"_MultiscaleDTM_C_CountVals", (DL_FUNC) &_MultiscaleDTM_C_CountVals, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_MultiscaleDEM(DllInfo *dll) {
+RcppExport void R_init_MultiscaleDTM(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

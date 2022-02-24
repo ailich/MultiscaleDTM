@@ -2,38 +2,38 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 subset_mat_rows <- function(x, idx) {
-    .Call(`_MultiscaleDEM_subset_mat_rows`, x, idx)
+    .Call(`_MultiscaleDTM_subset_mat_rows`, x, idx)
 }
 
 C_OLS_params <- function(X, Y) {
-    .Call(`_MultiscaleDEM_C_OLS_params`, X, Y)
+    .Call(`_MultiscaleDTM_C_OLS_params`, X, Y)
 }
 
 C_OLS_resid <- function(X, Y) {
-    .Call(`_MultiscaleDEM_C_OLS_resid`, X, Y)
+    .Call(`_MultiscaleDTM_C_OLS_resid`, X, Y)
 }
 
 C_Qfit1 <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDEM_C_Qfit1`, z, X_full, na_rm, ni, nw)
+    .Call(`_MultiscaleDTM_C_Qfit1`, z, X_full, na_rm, ni, nw)
 }
 
 C_Qfit2 <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDEM_C_Qfit2`, z, X_full, na_rm, ni, nw)
+    .Call(`_MultiscaleDTM_C_Qfit2`, z, X_full, na_rm, ni, nw)
 }
 
 C_AdjSD <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDEM_C_AdjSD`, z, X_full, na_rm, ni, nw)
+    .Call(`_MultiscaleDTM_C_AdjSD`, z, X_full, na_rm, ni, nw)
 }
 
 C_TriArea <- function(a, b, c) {
-    .Call(`_MultiscaleDEM_C_TriArea`, a, b, c)
+    .Call(`_MultiscaleDTM_C_TriArea`, a, b, c)
 }
 
 C_SurfaceArea <- function(z, x_res, y_res, ni, nw) {
-    .Call(`_MultiscaleDEM_C_SurfaceArea`, z, x_res, y_res, ni, nw)
+    .Call(`_MultiscaleDTM_C_SurfaceArea`, z, x_res, y_res, ni, nw)
 }
 
 C_CountVals <- function(z, ni, nw) {
-    .Call(`_MultiscaleDEM_C_CountVals`, z, ni, nw)
+    .Call(`_MultiscaleDTM_C_CountVals`, z, ni, nw)
 }
 

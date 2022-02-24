@@ -1,22 +1,23 @@
 README
 ================
 Alexander Ilich
-February 17, 2022
+February 24, 2022
 
-# MultiscaleDEM
+# MultiscaleDTM
 
 [![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
 
 Please cite as
 
 Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski,
-Steven A.; 2021. “MultiscaleDEM”, <doi:10.5281/zenodo.5548338>.
-<https://github.com/ailich/MultiscaleDEM>.
+Steven A.; 2021. “MultiscaleDTM”, <doi:10.5281/zenodo.5548338>.
+<https://github.com/ailich/MultiscaleDTM>.
 
 ## Purpose
 
 This package calculates multi-scale geomorphometric terrain attributes
-from regularly gridded DEM/bathymetry rasters.
+from regularly gridded digital terrain models (DTM; i.e. elevation or
+bathymetry rasters).
 
 ## Install and Load Package
 
@@ -24,7 +25,7 @@ If you don’t already have remotes installed, use the code
 `install.packages("remotes")`
 
 Then to install this package use the code
-`remotes::install_github("ailich/MultiscaleDEM")` (If you are using
+`remotes::install_github("ailich/MultiscaleDTM")` (If you are using
 Windows, you may need to install Rtools using the instructions found
 [here](https://cran.r-project.org/bin/windows/Rtools/)).
 
@@ -110,13 +111,13 @@ radius of 4 cells.
 
 ``` r
 library(terra) #Load terra package for handling of raster data
-library(MultiscaleDEM) #Load MultiscaleDEM package
+library(MultiscaleDTM) #Load MultiscaleDTM package
 ```
 
 **See package help page**
 
 ``` r
-help(package="MultiscaleDEM")
+help(package="MultiscaleDTM")
 ```
 
 **Read in Data**

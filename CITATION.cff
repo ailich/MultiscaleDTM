@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: ' MultiscaleDEM'
+title: ' MultiscaleDTM'
 message: >-
   If you use this software, please cite it using the
   metadata from this file.
@@ -17,6 +17,6 @@ authors:
   - given-names: Steven A.
     family-names: Murawski
 doi: 10.5281/zenodo.5548338
-url: 'https://github.com/ailich/MultiscaleDEM'
+url: 'https://github.com/ailich/MultiscaleDTM'
 license: MIT
 date-released: '2021-10-04'

@@ -1,5 +1,5 @@
 ## usethis namespace: start
-#' @useDynLib MultiscaleDEM, .registration = TRUE
+#' @useDynLib MultiscaleDTM, .registration = TRUE
 ## usethis namespace: end
 NULL
 ## usethis namespace: start
