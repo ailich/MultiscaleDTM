@@ -121,7 +121,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     xr.mid <- matrix(c(rep(NA_real_, times=kx-1), 2), ncol=kx, nrow=1)
     
     xl.mat <- rbind(xl.end, x.mids, xl.mid, x.mids, xl.end)
-    xr.mat <- rbind(xr.end, x.mids, xr.mid, x.mids, xr.end) #When upgrade to terra have NA weights instead of zero in *.mat so that you don't get NA if a cell in window that isn't used in calculation is NA
+    xr.mat <- rbind(xr.end, x.mids, xr.mid, x.mids, xr.end)
     
     #create matrix weights for y-component
     yt.end <- matrix(c(1, rep(NA_real_, times=ky-1)), ncol=1, nrow=ky)
