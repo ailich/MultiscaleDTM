@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-February 24, 2022
+April 26, 2022
 
 # MultiscaleDTM
 
@@ -110,7 +110,6 @@ radius of 4 cells.
 **Load packages**
 
 ``` r
-library(terra) #Load terra package for handling of raster data
 library(MultiscaleDTM) #Load MultiscaleDTM package
 ```
 

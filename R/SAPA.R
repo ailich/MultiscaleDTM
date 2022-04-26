@@ -10,7 +10,6 @@
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
 #' @examples
-#' library(terra)
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 #' sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 #' plot(sapa)

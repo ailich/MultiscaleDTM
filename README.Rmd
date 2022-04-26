@@ -66,7 +66,6 @@ In this tutorial we will calculate various terrain attributes using a 5 x 5 cell
 **Load packages**
 
 ```{r message=FALSE}
-library(terra) #Load terra package for handling of raster data
 library(MultiscaleDTM) #Load MultiscaleDTM package
 ```
 

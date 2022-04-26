@@ -10,7 +10,6 @@
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a RasterLayer
 #' @examples
-#' library(terra)
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 #' vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 #' plot(vrm)
@@ -45,13 +44,14 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
   sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
-  sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt) # xyRaster 
-  cos.slp <- terra::math(sa$slope, fun="cos", wopt=wopt) # zRaster 
-  sin.asp <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # yRaster
-  cos.asp <- terra::math(sa$aspect, fun="cos", wopt=wopt) * sin.slp # xRaster  
-  x.sum <- terra::focal(sin.asp, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
-  y.sum <- terra::focal(cos.asp, w = w, fun=sum, na.rm=na.rm, wopt=wopt) 
-  z.sum <- terra::focal(cos.slp, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
+  #Decompose vectors into components 
+  sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt)
+  Xrast <- terra::math(sa$aspect, fun="cos", wopt=wopt) * sin.slp # xRaster
+  Yrast <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # yRaster
+  Zrast <- terra::math(sa$slope, fun="cos", wopt=wopt) # zRaster 
+  x.sum <- terra::focal(Xrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
+  y.sum <- terra::focal(Yrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt) 
+  z.sum <- terra::focal(Zrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
   vrm.fun <- function(x, y, z) { 
     sqrt( (x^2) + (y^2) + (z^2) ) 
   }
@@ -59,7 +59,7 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
   if(!na.rm){
     scale.factor <- round(w[1] * w[2], 0) #Constant scale factor
     } else{
-      scale.factor<- terra::focalCpp(cos.slp, w= w, fun = C_CountVals, wopt=wopt)
+      scale.factor<- terra::focalCpp(Zrast, w= w, fun = C_CountVals, wopt=wopt)
       } #If include na.rm option, adjust scale.factor to be number of non-NA cells in focal window
   out<- 1 - (res_vect / scale.factor) 
   names(out)<- "vrm"

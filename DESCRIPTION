@@ -1,6 +1,6 @@
 Package: MultiscaleDTM
 Title: Calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or depth rasters)
-Version: 0.4.2
+Version: 0.4.3
 Authors@R: 
      c(
     person(given = "Alexander",
@@ -23,12 +23,12 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
+Depends: terra
 LinkingTo: 
     Rcpp,
     RcppArmadillo
 Imports: 
     Rcpp,
-    terra,
     raster,
     dplyr,
     shiny,

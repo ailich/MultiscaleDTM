@@ -11,7 +11,6 @@
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
 #' @examples
-#' library(terra)
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 #' rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 #' plot(rdmv)
