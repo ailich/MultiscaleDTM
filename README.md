@@ -52,14 +52,18 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
     et al (2021) which is a modification of the traditional 3 x 3 slope
     and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
-    Ritter, 1987). <img src="images/SlpAsp.png" width="70%">
+    Ritter, 1987).
+
+<img src="images/SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
     ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood,
     1996). The morphometric features algorithm has been modified to use
     more robust measures of curvature based on the suggestions of Minár
-    et al. (2020). <img src="images/Qfit_annotated.png" width="70%">
+    et al. (2020).
+
+<img src="images/Qfit_annotated.png" width="70%">
 
 ### Rugosity
 
