@@ -21,7 +21,7 @@ bathymetry rasters) via a specified window size.
 
 <img src="images/kwindow.png" width="50%">
 
-Adapted from Wilson et al., 2007
+Adapted from Wilson et al. (2007)
 
 ## Install and Load Package
 

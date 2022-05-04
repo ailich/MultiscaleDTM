@@ -26,7 +26,7 @@ This package calculates multi-scale geomorphometric terrain attributes from regu
 
 <img src="images/kwindow.png" width="50%">
 
-Adapted from Wilson et al., 2007
+Adapted from Wilson et al. (2007)
 
 ## Install and Load Package
 If you don't already have remotes installed, use the code `install.packages("remotes")`
