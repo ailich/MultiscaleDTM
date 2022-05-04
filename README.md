@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-April 26, 2022
+May 04, 2022
 
 # MultiscaleDTM
 
@@ -17,7 +17,11 @@ Steven A.; 2021. “MultiscaleDTM”, <doi:10.5281/zenodo.5548338>.
 
 This package calculates multi-scale geomorphometric terrain attributes
 from regularly gridded digital terrain models (DTM; i.e. elevation or
-bathymetry rasters).
+bathymetry rasters) via a specified window size.
+
+<img src="images/kwindow.png" width="50%">
+
+Adapted from Wilson et al., 2007
 
 ## Install and Load Package
 
@@ -48,14 +52,14 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
     et al (2021) which is a modification of the traditional 3 x 3 slope
     and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
-    Ritter, 1987).
+    Ritter, 1987). <img src="images/SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
     ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood,
     1996). The morphometric features algorithm has been modified to use
     more robust measures of curvature based on the suggestions of Minár
-    et al. (2020).
+    et al. (2020). <img src="images/Qfit_annotated.png" width="70%">
 
 ### Rugosity
 
@@ -79,7 +83,7 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     ordinary least squares, and then extracting the residuals, and then
     calculating the standard deviation of the residuals.
 
-![](images/adj_sd.png)
+<img src="images/adj_sd.png" width="80%">
 
 ### Relative Position
 
@@ -94,18 +98,24 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 
 -   `BPI` - Bathymetric Position Index (Lundblad et al., 2006) is the
     difference between the value of a focal cell and the mean of the
-    surrounding cells contained within an annulus shaped window.
+    surrounding cells contained within an annulus shaped window. It is a
+    modification of TPI that uses an annulus shaped focal window and
+    therefore requires an inner and outer radius. For example, an
+    annulus window with an inner radius of 4 cells and an outer radius
+    of 6 cells would be
+
+<img src="images/BPI_Fig.png" width="70%">
 
 ## Tutorial
 
 In this tutorial we will calculate various terrain attributes using a 5
 x 5 cell rectangular window. Any rectangular odd numbered window size
-however could be used. Window sizes are specified with a vector of
-length 2 of `c(n_rows, n_cols)`. If a single number is provided it will
-be used for both the number of rows and columns. The only metric that
-does not follow this syntax is BPI which uses an annulus shaped focal
-window which we will calculate using an inner radius of 2 and an outer
-radius of 4 cells.
+however could be used (see figure directly below). Window sizes are
+specified with a vector of length 2 of `c(n_rows, n_cols)`. If a single
+number is provided it will be used for both the number of rows and
+columns. The only metric that does not follow this syntax is BPI which
+uses an annulus shaped focal window which we will calculate using an
+inner radius of 4 and an outer radius of 6 cells.
 
 **Load packages**
 
@@ -183,32 +193,35 @@ rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 ![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
-bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
+bpi<- BPI(r, radius = c(4,6), unit = "cell", na.rm = TRUE)
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
-BPI is a modification of TPI that uses an annulus shaped focal window
-and therefore requires an inner and outer radius. This can be specified
-in cell units (number of raster cells) or in map units (e.g. meters)
-which can be useful if your x and y resolutions are not equal. For
-example, an annulus window with an inner radius of 2 cells and an outer
-radius of 4 cells would be
+The annulus window for BPI can be specified in either cell units (number
+of raster cells) or in map units (e.g. meters) which can be useful if
+your x and y resolutions are not equal. Additionally, the function
+`annulus_window` can be used to verify that you are specifying your
+window correctly (NA’s are excluded cells and 1’s are included cells)
 
 ``` r
-annulus_window(radius = c(2,4), unit = "cell")
+annulus_window(radius = c(4,6), unit = "cell")
 ```
 
-    ##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9]
-    ##  [1,]   NA   NA   NA   NA    1   NA   NA   NA   NA
-    ##  [2,]   NA   NA    1    1    1    1    1   NA   NA
-    ##  [3,]   NA    1    1    1    1    1    1    1   NA
-    ##  [4,]   NA    1    1   NA   NA   NA    1    1   NA
-    ##  [5,]    1    1    1   NA   NA   NA    1    1    1
-    ##  [6,]   NA    1    1   NA   NA   NA    1    1   NA
-    ##  [7,]   NA    1    1    1    1    1    1    1   NA
-    ##  [8,]   NA   NA    1    1    1    1    1   NA   NA
-    ##  [9,]   NA   NA   NA   NA    1   NA   NA   NA   NA
+    ##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
+    ##  [1,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA
+    ##  [2,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA
+    ##  [3,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA
+    ##  [4,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA
+    ##  [5,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
+    ##  [6,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
+    ##  [7,]    1    1    1   NA   NA   NA   NA   NA   NA    NA     1     1     1
+    ##  [8,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
+    ##  [9,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
+    ## [10,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA
+    ## [11,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA
+    ## [12,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA
+    ## [13,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA
 
 # References
 
