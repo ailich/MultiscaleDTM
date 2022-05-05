@@ -43,15 +43,30 @@ This package relies on the `terra` package for handling of spatial raster data. 
 
 <img src="images/SlpAsp.png" width="70%">
 
--   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
+-   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters Z is the elevation/depth, and X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
+
+$$
+Z = aX^2 + bY^2 +cXY+ dx +eY +f
+$$
 
 <img src="images/Qfit_annotated.png" width="70%">
 
 ### Rugosity
 
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies terrain ruggedness by measuring the dispersion of vectors orthogonal to the terrain surface.
-
--   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Additionally, planar area can be corrected for slope (Du Preez 2015). Additionally, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
+$$
+\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}
+$$
+$$
+x = sin(\text{slope})*cos(\text{aspect})
+$$
+$$
+y=sin(\text{slope})*cos(\text{aspect})
+$$
+$$
+z=cos(\text{slope})
+$$
+-   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Additionally, planar area can be corrected for slope by divinding the product of the x and y resolution by the cosine of slope (Du Preez 2015). Additionally, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
 
     -   `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). Used within `SAPA`.
 

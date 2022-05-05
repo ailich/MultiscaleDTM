@@ -58,10 +58,16 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
-    ordinary least squares (Evans, 1980; Wilson et al., 2007; Wood,
+    ordinary least squares using the equation shown below where a-f are
+    regression parameters Z is the elevation/depth, and X is the
+    east/west coordinates in the focal window relative to the focal
+    cell, and Y is the north/south coordinates in the focal window
+    relative to the focal cell (Evans, 1980; Wilson et al., 2007; Wood,
     1996). The morphometric features algorithm has been modified to use
     more robust measures of curvature based on the suggestions of Minár
     et al. (2020).
+
+![Z = aX^2 + bY^2 +cXY+ dx +eY +f](https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dx%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dx +eY +f")
 
 <img src="images/Qfit_annotated.png" width="70%">
 
@@ -71,10 +77,19 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     quantifies terrain ruggedness by measuring the dispersion of vectors
     orthogonal to the terrain surface.
 
+    ![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
+
+    ![x = sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*cos(\text{aspect})")
+
+    ![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
+
+    ![z=cos(\text{slope})](https://latex.codecogs.com/png.latex?z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
+
 -   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004).
-    Additionally, planar area can be corrected for slope (Du Preez
-    2015). Additionally, a proposed extension to multiple scales is
-    provided by summing the surface areas within the focal window and
+    Additionally, planar area can be corrected for slope by divinding
+    the product of the x and y resolution by the cosine of slope (Du
+    Preez 2015). Additionally, a proposed extension to multiple scales
+    is provided by summing the surface areas within the focal window and
     adjusting the planar area of the focal window using multi-scale
     slope.
 
