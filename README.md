@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-May 05, 2022
+May 06, 2022
 
 # MultiscaleDTM
 
@@ -52,7 +52,11 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
     et al (2021) which is a modification of the traditional 3 x 3 slope
     and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
-    Ritter, 1987).
+    Ritter, 1987). This algorithm only considers a subset of cells
+    within the focal window, specifically the four cells on the edge of
+    the focal window directly up, down, left, and right of the focal
+    cell for the “rook” case and an additional four corner cells for the
+    “queen” case.
 
 <img src="images/SlpAsp.png" width="70%">
 
@@ -67,7 +71,7 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     more robust measures of curvature based on the suggestions of Minár
     et al. (2020).
 
-![Z = aX^2 + bY^2 +cXY+ dx +eY +f](https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dx%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dx +eY +f")
+![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
 
 <img src="images/Qfit_annotated.png" width="70%">
 
@@ -75,32 +79,33 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007)
     quantifies terrain ruggedness by measuring the dispersion of vectors
-    orthogonal to the terrain surface.
+    orthogonal to the terrain surface. This is accomplished by
+    calculating the local (3 x 3 cell) slope and aspect, and
+    constructing unit vectors perpendicular to each cell in the DTM.
+    These unit vectors are then decomposed into their corresponding x,
+    y, and z components and used in the following equation (note: n is
+    the number of cells in the window). VRM ranges from zero to one,
+    where zero represents a smooth surface and one represents a
+    “completely rugose” surface.
 
-    ![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
+![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
 
-    ![x = sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*cos(\text{aspect})")
+![x = sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*cos(\text{aspect})")
 
-    ![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
+![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
 
-    ![z=cos(\text{slope})](https://latex.codecogs.com/png.latex?z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
+![z=cos(\text{slope})](https://latex.codecogs.com/png.latex?z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
 
--   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004).
-    Additionally, planar area can be corrected for slope by divinding
-    the product of the x and y resolution by the cosine of slope (Du
-    Preez 2015). Additionally, a proposed extension to multiple scales
-    is provided by summing the surface areas within the focal window and
-    adjusting the planar area of the focal window using multi-scale
-    slope.
+ - `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004).
+More rugose surfaces will have a greater surface area to planar area
+ratio, and perfectly smooth surfaces will have a value of 1.
+Additionally, planar area can be corrected for slope by dividing the
+product of the x and y resolution by the cosine of slope (Du Preez
+2015). Additionally, a proposed extension to multiple scales is provided
+by summing the surface areas within the focal window and adjusting the
+planar area of the focal window using multi-scale slope.
 
-    -   `SurfaceArea` - Calculate the surface area of each grid cell
-        (Jenness, 2004). This is accomplished by connecting a focal cell
-        to its immediate neighbors to create 8 large triangles. These
-        large triangles are then trimmed back to the extent of the focal
-        cell using the principle of similar triangles, and then the area
-        of those 8 smaller triangles are calculated and summed to
-        estimate the surface area of the focal pixel. This is used
-        within `SAPA`.
+    -   `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
 <img src="images/SAPA_annotated.png" width="70%">
 
@@ -110,7 +115,8 @@ Figure adapted from Jenness (2004)
     deviation of elevation/bathymetry to account for slope. It does this
     by first fitting a plane to the data in the focal window using
     ordinary least squares, and then extracting the residuals, and then
-    calculating the standard deviation of the residuals.
+    calculating the standard deviation of the residuals within the focal
+    window.
 
 <img src="images/adj_sd.png" width="80%">
 
