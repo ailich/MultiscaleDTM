@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-May 04, 2022
+May 05, 2022
 
 # MultiscaleDTM
 
@@ -21,7 +21,7 @@ bathymetry rasters) via a specified window size.
 
 <img src="images/kwindow.png" width="50%">
 
-Adapted from Wilson et al. (2007)
+Figure adapted from Wilson et al. (2007)
 
 ## Install and Load Package
 
@@ -94,7 +94,17 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     slope.
 
     -   `SurfaceArea` - Calculate the surface area of each grid cell
-        (Jenness, 2004). Used within `SAPA`.
+        (Jenness, 2004). This is accomplished by connecting a focal cell
+        to its immediate neighbors to create 8 large triangles. These
+        large triangles are then trimmed back to the extent of the focal
+        cell using the principle of similar triangles, and then the area
+        of those 8 smaller triangles are calculated and summed to
+        estimate the surface area of the focal pixel. This is used
+        within `SAPA`.
+
+<img src="images/SAPA_annotated.png" width="70%">
+
+Figure adapted from Jenness (2004)
 
 -   `AdjSD`- This new proposed rugosity metric modifies the standard
     deviation of elevation/bathymetry to account for slope. It does this
@@ -222,6 +232,8 @@ of raster cells) or in map units (e.g. meters) which can be useful if
 your x and y resolutions are not equal. Additionally, the function
 `annulus_window` can be used to verify that you are specifying your
 window correctly (NA’s are excluded cells and 1’s are included cells)
+and can be directly supplied to the `w` argument in the `BPI` funtion
+instead of using `radius` and `unit` arguments.
 
 ``` r
 annulus_window(radius = c(4,6), unit = "cell")
