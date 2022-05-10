@@ -77,18 +77,21 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007)
     quantifies terrain ruggedness by measuring the dispersion of vectors
-    orthogonal to the terrain surface. This is accomplished by
-    calculating the local (3 x 3 cell) slope and aspect, and
-    constructing unit vectors perpendicular to each cell in the DTM.
-    These unit vectors are then decomposed into their corresponding x,
-    y, and z components and used in the following equation (note: n is
-    the number of cells in the window). VRM ranges from zero to one,
-    where zero represents a smooth surface and one represents a
-    “completely rugose” surface.
+    normal to the terrain surface. This is accomplished by calculating
+    the local (3 x 3 cell) slope and aspect, and constructing unit
+    vectors normal to each cell in the DTM. These unit vectors are then
+    decomposed into their corresponding x, y, and z components and used
+    in the following equation (note: n is the number of cells in the
+    window). VRM ranges from zero to one, where zero represents a smooth
+    surface and one represents a “completely rugose” surface.
 
 <img src="images/VRM_annotated.png" width="70%">
 
 Figure adapted from Sappington et al. (2007)
+
+<img src="images/VRM_focal.png" width="70%">
+
+Figure adapted from Habib (2021)
 
 ![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
 
@@ -275,6 +278,10 @@ Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS
 data and DMA topographic data for forest cover type mapping (No. LARS
 Technical Report 062879). Laboratory for Applications of Remote Sensing,
 Purdue University, West Lafayette, Indiana.
+
+Habib, M., 2021. Quantifying Topographic Ruggedness Using Principal
+Component Analysis. Advances in Civil Engineering 2021, e3311912.
+<https://doi.org/10.1155/2021/3311912>
 
 Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of
 the IEEE 69, 14–47.
