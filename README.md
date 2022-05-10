@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-May 06, 2022
+May 10, 2022
 
 # MultiscaleDTM
 
@@ -56,9 +56,7 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     within the focal window, specifically the four cells on the edge of
     the focal window directly up, down, left, and right of the focal
     cell for the “rook” case and an additional four corner cells for the
-    “queen” case.
-
-<img src="images/SlpAsp.png" width="70%">
+    “queen” case. <img src="images/SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
@@ -87,6 +85,10 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     the number of cells in the window). VRM ranges from zero to one,
     where zero represents a smooth surface and one represents a
     “completely rugose” surface.
+
+<img src="images/VRM_annotated.png" width="70%">
+
+Figure adapted from Sappington et al. (2007)
 
 ![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
 
