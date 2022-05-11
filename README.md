@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-May 10, 2022
+May 11, 2022
 
 # MultiscaleDTM
 
@@ -73,6 +73,8 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 
 <img src="images/Qfit_annotated.png" width="70%">
 
+Figure adapted from Walbridge et al., (2018)
+
 ### Rugosity
 
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007)
@@ -80,10 +82,12 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     normal to the terrain surface. This is accomplished by calculating
     the local (3 x 3 cell) slope and aspect, and constructing unit
     vectors normal to each cell in the DTM. These unit vectors are then
-    decomposed into their corresponding x, y, and z components and used
-    in the following equation (note: n is the number of cells in the
-    window). VRM ranges from zero to one, where zero represents a smooth
-    surface and one represents a “completely rugose” surface.
+    decomposed into their corresponding x, y, and z components (i.e. the
+    x, y, and z coordinates of the head of the vector relative to its
+    origin) and used in the following equation (note: n is the number of
+    cells in the window). VRM ranges from zero to one, where zero
+    represents a smooth surface and one represents a “completely rugose”
+    surface.
 
 <img src="images/VRM_annotated.png" width="70%">
 
@@ -145,6 +149,8 @@ Figure adapted from Jenness (2004)
     of 6 cells would be
 
 <img src="images/BPI_Fig.png" width="70%">
+
+Figure adapted from Lundblad et al., (2006)
 
 ## Tutorial
 
@@ -318,6 +324,10 @@ Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying
 Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using
 Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management
 71, 1419–1426. <https://doi.org/10.2193/2005-723>
+
+Walbridge, S., Slocum, N., Pobuda, M., Wright, D.J., 2018. Unified
+geomorphological analysis workflows with benthic terrain modeler.
+Geosciences 8, 94.
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented
 at the ESRI user conference, San Diego, CA.
