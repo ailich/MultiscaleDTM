@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-May 11, 2022
+May 30, 2022
 
 # MultiscaleDTM
 
@@ -61,13 +61,13 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
 -   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
     ordinary least squares using the equation shown below where a-f are
-    regression parameters Z is the elevation/depth, and X is the
-    east/west coordinates in the focal window relative to the focal
-    cell, and Y is the north/south coordinates in the focal window
-    relative to the focal cell (Evans, 1980; Wilson et al., 2007; Wood,
-    1996). The morphometric features algorithm has been modified to use
-    more robust measures of curvature based on the suggestions of Minár
-    et al. (2020).
+    regression parameters, Z is the elevation/depth, X is the east/west
+    coordinates in the focal window relative to the focal cell, and Y is
+    the north/south coordinates in the focal window relative to the
+    focal cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The
+    morphometric features algorithm has been modified to use more robust
+    measures of curvature based on the suggestions of Minár et
+    al. (2020).
 
 ![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
 
@@ -85,9 +85,8 @@ Figure adapted from Walbridge et al., (2018)
     decomposed into their corresponding x, y, and z components (i.e. the
     x, y, and z coordinates of the head of the vector relative to its
     origin) and used in the following equation (note: n is the number of
-    cells in the window). VRM ranges from zero to one, where zero
-    represents a smooth surface and one represents a “completely rugose”
-    surface.
+    cells in the window). VRM ranges from zero to one, representing
+    completely smooth to rugose surfaces, respectively. .
 
 <img src="images/VRM_annotated.png" width="70%">
 
@@ -128,6 +127,18 @@ Figure adapted from Jenness (2004)
     window.
 
 <img src="images/adj_sd.png" width="80%">
+
+-   `RIE` - Calculates the Roughness Index-Elevation which quantifies
+    the standard deviation of residual topography (Cavalli et al.,
+    2008). This measure is conceptually similar to `AdjSD` but rather
+    than fitting a plane and extracting residuals for the entire focal
+    window, residual topography is calculated as the focal pixel minus
+    the focal mean. Then the local standard deviation is calculated from
+    this residual topography using a focal filter.
+
+<img src="images/RIE.png" width="80%">
+
+Figure adapted from Cavalli et al. (2008)
 
 ### Relative Position
 
@@ -224,25 +235,31 @@ adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 
 ![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
 
+``` r
+rie<- RIE(r, w=c(5,5), na.rm = TRUE)
+```
+
+![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
 ### Relative Position
 
 ``` r
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 bpi<- BPI(r, radius = c(4,6), unit = "cell", na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
 
 The annulus window for BPI can be specified in either cell units (number
 of raster cells) or in map units (e.g. meters) which can be useful if
@@ -272,6 +289,11 @@ annulus_window(radius = c(4,6), unit = "cell")
     ## [13,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA
 
 # References
+
+Cavalli, M., Tarolli, P., Marchi, L., Dalla Fontana, G., 2008. The
+effectiveness of airborne LiDAR data in the recognition of channel-bed
+morphology. CATENA 73, 249–260.
+<https://doi.org/10.1016/j.catena.2007.11.001>
 
 Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for
 quantifying three-dimensional landscape structural complexity. Landscape

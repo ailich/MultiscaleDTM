@@ -42,7 +42,7 @@ This package relies on the `terra` package for handling of spatial raster data. 
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the "rook" case and an additional four corner cells for the "queen" case.
 <img src="images/SlpAsp.png" width="70%">
 
--   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters Z is the elevation/depth, and X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
+-   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
 $$
 Z = aX^2 + bY^2 +cXY+ dX +eY +f
@@ -54,7 +54,8 @@ Figure adapted from Walbridge et al., (2018)
 
 ### Rugosity
 
--   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies terrain ruggedness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: n is the number of cells in the window). VRM ranges from zero to one, where zero represents a smooth surface and one represents a "completely rugose" surface.
+-   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies terrain ruggedness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: n is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rugose surfaces, respectively.
+.
 
 <img src="images/VRM_annotated.png" width="70%">
 
@@ -91,6 +92,13 @@ Figure adapted from Jenness (2004)
 -   `AdjSD`- This new proposed rugosity metric modifies the standard deviation of elevation/bathymetry to account for slope. It does this by first fitting a plane to the data in the focal window using ordinary least squares, and then extracting the residuals, and then calculating the standard deviation of the residuals within the focal window.
 
 <img src="images/adj_sd.png" width="80%">
+
+- `RIE` - Calculates the Roughness Index-Elevation which quantifies the standard deviation of residual topography (Cavalli et al., 2008). This measure is conceptually similar to `AdjSD` but rather than fitting a plane and extracting residuals for the entire focal window, residual topography is calculated as the focal pixel minus the focal mean. Then the local standard deviation is calculated from this residual topography using a focal filter.
+
+<img src="images/RIE.png" width="80%">
+
+Figure adapted from Cavalli et al. (2008)
+
 
 ### Relative Position
 
@@ -247,6 +255,16 @@ tm_shape(adj_SD, raster.downsample = FALSE)+
   tm_layout(legend.outside = TRUE, main.title="Adjusted SD")
 ```
 
+```{r}
+rie<- RIE(r, w=c(5,5), na.rm = TRUE)
+```
+
+```{r echo=FALSE}
+tm_shape(rie, raster.downsample = FALSE)+
+  tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="Rugosity Index-Elevation")
+```
+
 ### Relative Position
 ```{r}
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
@@ -287,6 +305,8 @@ annulus_window(radius = c(4,6), unit = "cell")
 
 
 # References
+
+Cavalli, M., Tarolli, P., Marchi, L., Dalla Fontana, G., 2008. The effectiveness of airborne LiDAR data in the recognition of channel-bed morphology. CATENA 73, 249–260. https://doi.org/10.1016/j.catena.2007.11.001
 
 Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for quantifying three-dimensional landscape structural complexity. Landscape Ecol 30, 181–192. https://doi.org/10.1007/s10980-014-0118-8
 
