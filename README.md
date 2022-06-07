@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-May 30, 2022
+June 07, 2022
 
 # MultiscaleDTM
 
@@ -69,7 +69,7 @@ Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
     measures of curvature based on the suggestions of Minár et
     al. (2020).
 
-![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
+![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
 
 <img src="images/Qfit_annotated.png" width="70%">
 
@@ -96,13 +96,13 @@ Figure adapted from Sappington et al. (2007)
 
 Figure adapted from Habib (2021)
 
-![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
+![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
 
-![x = sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*cos(\text{aspect})")
+![x = sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*cos(\text{aspect})")
 
-![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
+![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
 
-![z=cos(\text{slope})](https://latex.codecogs.com/png.latex?z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
+![z=cos(\text{slope})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
 
  - `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004).
 More rugose surfaces will have a greater surface area to planar area
