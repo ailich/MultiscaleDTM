@@ -195,7 +195,7 @@ for (i in 1:length(qmetrics_list)) {
     midpoint<- 180
     style<- "cont"
     } else if(grepl(pattern = "^features", curr_var)) {
-    curr_pal<- c("gray", "black", "blue", "green", "yellow", "red")
+    curr_pal<- c("gray", "orange", "black", "blue", "green", "yellow", "red")
     midpoint<- NULL
     breaks<- NULL
     style<- "cat"
