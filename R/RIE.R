@@ -1,7 +1,7 @@
 #' Calculates Roughness Index-Elevation
 #'
 #' Calculates Roughness Index-Elevation. This is the standard deviation of residual topography in a focal window where residual topography is calculated as the focal pixel minus the focal mean.
-#' @param r DEM as a SpatRaster or RasterLayer
+#' @param r DTM as a SpatRaster or RasterLayer
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculation of SD
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)

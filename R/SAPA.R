@@ -1,7 +1,7 @@
 #' Calculates surface area to planar area rugosity
 #'
 #' Calculates surface area (Jenness, 2004) to planar area rugosity and by default corrects planar area for slope using the arc-chord ratio (Du Preez, 2015). Additionally, the method has been modified to allow for calculations at multiple different window sizes (see details).
-#' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
+#' @param r DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param w A single number or a vector of length 2 (row, column) specifying the dimensions of the rectangular window over which surface area will be summed. Window size must be an odd number. 1 refers to "native" scale and surface area and planar area will be calculated per cell (the traditional implementation).
 #' @param slope_correction Whether to use the arc-chord ratio to correct planar area for slope (default is TRUE)
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)

@@ -25,7 +25,7 @@ Qfit(
 )
 }
 \arguments{
-\item{r}{DEM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).}
+\item{r}{DTM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).}
 
 \item{w}{Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
@@ -61,7 +61,7 @@ Qfit(
 a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 }
 \description{
-Calculates multiscale slope, aspect, curvature, and morphometric features of a DEM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
+Calculates multiscale slope, aspect, curvature, and morphometric features of a DTM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
 }
 \details{
 This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore  all curvatures are measured in units of 1/length (e.g. m^-1) except twisting curvature which is measured in radians/length (i.e. change in angle per unit distance), and we adopt a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive. Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (τg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020). Additionally, the planar feature from Wood (1996) was split into planar flat and slope depending on whether the slope threshold is exceeded or not.

@@ -1,7 +1,7 @@
 #' Implementation of the Sappington et al., (2007) vector ruggedness measure
 #'
 #' Implementation of the Sappington et al., (2007) vector ruggedness measure, modified from Evans (2021). 
-#' @param r DEM as a SpatRaster or RasterLayer
+#' @param r DTM as a SpatRaster or RasterLayer
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)

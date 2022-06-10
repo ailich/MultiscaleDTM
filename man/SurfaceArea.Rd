@@ -2,12 +2,12 @@
 % Please edit documentation in R/SurfaceArea.R
 \name{SurfaceArea}
 \alias{SurfaceArea}
-\title{Calculates surface area of a DEM}
+\title{Calculates surface area of a DTM}
 \usage{
 SurfaceArea(r, filename = NULL, overwrite = FALSE, wopt = list())
 }
 \arguments{
-\item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
+\item{r}{DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
 
 \item{filename}{character Output filename.}
 
@@ -19,7 +19,7 @@ SurfaceArea(r, filename = NULL, overwrite = FALSE, wopt = list())
 a SpatRaster or RasterLayer
 }
 \description{
-Calculates surface area on a per cell basis of a DEM based on Jenness, 2004.
+Calculates surface area on a per cell basis of a DTM based on Jenness, 2004.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")

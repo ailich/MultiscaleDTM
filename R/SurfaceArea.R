@@ -1,7 +1,7 @@
-#' Calculates surface area of a DEM
+#' Calculates surface area of a DTM
 #'
-#' Calculates surface area on a per cell basis of a DEM based on Jenness, 2004.
-#' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
+#' Calculates surface area on a per cell basis of a DTM based on Jenness, 2004.
+#' @param r DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster

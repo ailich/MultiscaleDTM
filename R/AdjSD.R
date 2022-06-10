@@ -1,7 +1,7 @@
 #' Calculates standard deviation of bathymetry (a measure of rugosity) adjusted for slope
 #'
 #' Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated.
-#' @param r DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
+#' @param r DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)

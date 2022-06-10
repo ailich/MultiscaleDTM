@@ -17,17 +17,15 @@ BPI(
 )
 }
 \arguments{
-\item{r}{DEM as a SpatRaster or RasterLayer}
+\item{r}{DTM as a SpatRaster or RasterLayer}
 
 \item{radius}{a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer). This is ignored if w is provided.}
 
 \item{unit}{unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters). This is ignored if w is provided.}
 
-\item{w}{A focal weights matrix representing the annulus focal window created using MultiscaleDEM::annulus_window.}
-
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
-\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE). Only valid if radius is used.}
+\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE).}
 
 \item{filename}{character Output filename.}
 

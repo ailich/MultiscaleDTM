@@ -1,7 +1,7 @@
 #' Calculates Relative Difference from Mean Value (RDMV)
 #'
 #' Calculates Relative Difference from Mean Value (RDMV). RDMV = (focal_value - local_mean)/local_range or RDMV = (focal_value - local_mean)/local_sd.
-#' @param r DEM as a SpatRaster, RasterLayer, RasterStack, or RasterBrick
+#' @param r DTM as a SpatRaster, RasterLayer, RasterStack, or RasterBrick
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param method standardization method. Either "range" (the default) or "sd".
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations

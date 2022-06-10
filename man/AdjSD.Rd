@@ -15,7 +15,7 @@ AdjSD(
 )
 }
 \arguments{
-\item{r}{DEM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
+\item{r}{DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
 

@@ -37,6 +37,7 @@ circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE
   }
   w<- matrix(NA, nrow = nrow(dis_mat), ncol= ncol(dis_mat))
   w[dis_mat <= radius]<- 1
+  comment(w)<- paste0(radius,"x", radius)
   return(w)
 }
 
@@ -75,18 +76,18 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
   }
   w<- matrix(NA, nrow=nrow(dis_mat), ncol=ncol(dis_mat))
   w[(dis_mat >= radius[1]) & (dis_mat <= radius[2])]<- 1
+  comment(w)<- paste0(radius[1],"x", radius[2])
   return(w)
 }
 
 #' Calculates Bathymetric Position Index
 #'
 #' Calculates Bathymetric Position Index (BPI). This is the value of the focal pixel minus the mean of the surrounding pixels contained within an annulus shaped window.
-#' @param r DEM as a SpatRaster or RasterLayer
+#' @param r DTM as a SpatRaster or RasterLayer
 #' @param radius a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer). This is ignored if w is provided.
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters). This is ignored if w is provided.
-#' @param w A focal weights matrix representing the annulus focal window created using MultiscaleDEM::annulus_window.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
-#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE). Only valid if radius is used.
+#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE).
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
@@ -131,8 +132,8 @@ BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=
   }
   
   bpi<- r - terra::focal(x = r, w = w, fun = mean, na.rm = na.rm, wopt=wopt)
-  names(bpi)<- "BPI"
-  if(include_scale & (!is.null(radius))){names(bpi)<- paste0(names(bpi), "_", radius[1],"x", radius[2])} #Add scale to layer names
+  names(bpi)<- "bpi"
+  if(include_scale){names(bpi)<- paste0(names(bpi), "_", comment(w))} #Add scale to layer names
   
   #Return
   if(og_class =="RasterLayer"){
