@@ -1,6 +1,6 @@
 Package: MultiscaleDTM
 Title: Calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or depth rasters)
-Version: 0.4.5
+Version: 0.4.6
 Authors@R: 
      c(
     person(given = "Alexander",

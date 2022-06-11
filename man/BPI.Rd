@@ -25,7 +25,7 @@ BPI(
 
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
-\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE).}
+\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE). If unit="map" then window size will have "MU" after the number indicating that the number represents the window size in map units.}
 
 \item{filename}{character Output filename.}
 

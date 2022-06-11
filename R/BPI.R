@@ -37,7 +37,11 @@ circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE
   }
   w<- matrix(NA, nrow = nrow(dis_mat), ncol= ncol(dis_mat))
   w[dis_mat <= radius]<- 1
-  comment(w)<- paste0(radius,"x", radius)
+  if(unit=="map"){
+    comment(w)<- paste0(radius,"MUx", radius, "MU")
+    } else{
+      comment(w)<- paste0(radius,"x", radius)
+    }
   return(w)
 }
 
@@ -76,7 +80,11 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
   }
   w<- matrix(NA, nrow=nrow(dis_mat), ncol=ncol(dis_mat))
   w[(dis_mat >= radius[1]) & (dis_mat <= radius[2])]<- 1
-  comment(w)<- paste0(radius[1],"x", radius[2])
+  if(unit=="map"){
+    comment(w)<- paste0(radius[1],"MUx", radius[2], "MU")
+  } else{
+    comment(w)<- paste0(radius[1],"x", radius[2])
+  }
   return(w)
 }
 
@@ -87,7 +95,7 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @param radius a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer). This is ignored if w is provided.
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters). This is ignored if w is provided.
 #' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
-#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE).
+#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE). If unit="map" then window size will have "MU" after the number indicating that the number represents the window size in map units.
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
