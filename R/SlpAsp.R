@@ -1,18 +1,3 @@
-#' Helper function to convert aspect to clockwise distance from North
-#'
-#' #' Helper function to convert aspect to clockwise distance from North (0 to 2pi) from counterclockwise distance from east (-pi to pi)
-#' @param aspect a number in radians representing aspect as calculated by atan2(dz.dy, -dz.dx)
-#' @importFrom dplyr case_when
-#' @return aspect as to clockwise distance in radians from North
-#' @details Adapted from https://desktop.arcgis.com/en/arcmap/10.3/tools/spatial-analyst-toolbox/how-aspect-works.htm
-
-convert_aspect<- function(aspect){
-  out<- dplyr::case_when(is.na(aspect) ~ NA_real_,
-                         aspect > (pi/2) ~ (2*pi) - aspect + (pi/2),
-                         TRUE ~ (pi/2)- aspect)
-  return(out)
-}
-
 #' Multiscale Slope and Aspect
 #'
 #' Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows.
@@ -143,7 +128,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     
     #calculate dz/dx and dz/dy using the components. 8*j is the weighted run, or distance between ends: 4*j*2, or (4 values in each row)*(length of the side)*(2 sides)
     dz.dx <- (dz.dx.r-dz.dx.l)/(8*jx*terra::res(r)[1])
-    dz.dy <- (dz.dy.b-dz.dy.t)/(8*jy*terra::res(r)[2])
+    dz.dy <- (dz.dy.t-dz.dy.b)/(8*jy*terra::res(r)[2])
   }
   
   if(method=="rook"){
@@ -175,7 +160,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     
     #calculate dz/dx and dz/dy using the components. 2*j is the run: (2 sides)*(length of each side)
     dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*terra::xres(r))
-    dz.dy <- (dz.dy.b-dz.dy.t)/(2*jy*terra::yres(r))
+    dz.dy <- (dz.dy.t-dz.dy.b)/(2*jy*terra::yres(r))
   }
   
   out<- terra::rast() #initialize output
@@ -190,7 +175,8 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   }
   
   if("aspect" %in% needed_metrics){
-    aspect.k<- terra::app(terra::atan_2(dz.dy, -dz.dx, wopt=wopt), fun = convert_aspect, wopt=wopt) #aspect relative to North
+    aspect.k<- (-pi/2) - terra::atan_2(dz.dy, dz.dx, wopt=wopt) # aspect relative to North
+    aspect.k<- ifel(aspect.k < 0, yes = aspect.k+(2*pi), no= aspect.k, wopt=wopt) # Constrain range so between 0 and 2pi
     
     if("eastness" %in% needed_metrics){
       eastness.k<- terra::math(aspect.k, fun="sin", wopt=wopt)

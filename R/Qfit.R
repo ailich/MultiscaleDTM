@@ -30,19 +30,6 @@ classify_features_ff<- function(slope_tolerance=1, curvature_tolerance=0.0001){
   return(out_fun)
 }
 
-#' Helper function to convert aspect to clockwise distance from North
-#'
-#' @param aspect a number in radians representing aspect as calculated by atan2(e,d)
-#' @importFrom dplyr case_when
-#' @return aspect as to clockwise distance in radians from North
-
-convert_aspect2<- function(aspect){
-  out<- dplyr::case_when(is.na(aspect) ~ NA_real_,
-                         aspect <= (-pi/2) ~ (-pi/2) - aspect,
-                         TRUE ~ (-pi/2) - aspect + (2*pi))
-  return(out)
-}
-
 #' Helper function to filter outliers from regression parameters using interquartile range
 #'
 #' @param params regression parameters for fitted surface
@@ -222,7 +209,9 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   }
   
   if("qaspect" %in% needed_metrics){
-    asp<- terra::app(terra::atan_2(params$e,params$d, wopt=wopt), fun = convert_aspect2, wopt=wopt) #Shift aspect so north is zero
+    asp<- (-pi/2) - terra::atan_2(params$e,params$d, wopt=wopt) # aspect relative to North
+    asp<- ifel(asp < 0, yes = asp+(2*pi), no= asp, wopt=wopt) # Constrain range so between 0 and 2pi
+    
     if (mask_aspect){
       asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero
     }

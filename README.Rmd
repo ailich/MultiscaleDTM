@@ -33,7 +33,7 @@ If you don't already have remotes installed, use the code `install.packages("rem
 
 Then to install this package use the code `remotes::install_github("ailich/MultiscaleDTM")` (If you are using Windows, you may need to install Rtools using the instructions found [here](https://cran.r-project.org/bin/windows/Rtools/)).
 
-This package relies on the `terra` package for handling of spatial raster data. The CRAN version of `terra` may not have all necessary functions, so it is recommended to install the development version of `terra`. The easiest way to install the development version of `terra` on Windows or Mac is to use `install.packages('terra', repos='https://rspatial.r-universe.dev')`. For Linux, use `remotes::install_github("rspatial/terra")`. This package is also backwards compatible with the `raster` package. To install the development version of `raster` use `install.packages('raster', repos='https://rspatial.r-universe.dev')` on Windows or Mac or `remotes::install_github("rspatial/raster")` on Linux.
+This package relies on the `terra` package for handling of spatial raster data.
 
 ## Main Functions
 
@@ -80,7 +80,12 @@ $$
 $$
 z=cos(\text{slope})
 $$
--   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). More rugose surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Additionally, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
+-   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). More rugose surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical "chain-and-tape" method, which calculates rugosity as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
+
+<img src="images/chaintape.png" width="70%">
+
+Figure adapted from Friedman et al. (2012) and created created with BioRender.com
+
 
     -   `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
@@ -314,6 +319,8 @@ Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Z
 
 Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS data and DMA topographic data for forest cover type mapping (No. LARS Technical Report 062879). Laboratory for Applications of Remote Sensing, Purdue University, West Lafayette, Indiana.
 
+Friedman, A., Pizarro, O., Williams, S.B., Johnson-Roberson, M., 2012. Multi-Scale Measures of Rugosity, Slope and Aspect from Benthic Stereo Image Reconstructions. PLOS ONE 7, e50440. https://doi.org/10.1371/journal.pone.0050440
+
 Habib, M., 2021. Quantifying Topographic Ruggedness Using Principal Component Analysis. Advances in Civil Engineering 2021, e3311912. https://doi.org/10.1155/2021/3311912
 
 Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of the IEEE 69, 14–47.
@@ -327,6 +334,8 @@ Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F.
 Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
 
 Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the Suitability of Multi-Scale Terrain Attribute Calculation Approaches for Seabed Mapping Applications. Marine Geodesy 44, 327–385. https://doi.org/10.1080/01490419.2021.1925789
+
+Risk, M.J., 1972. Fish Diversity on a Coral Reef in the Virgin Islands. Atoll Research Bulletin 153, 1–4. https://doi.org/10.5479/si.00775630. 153.1
 
 Ritter, P., 1987. A vector-based slope and aspect generation algorithm. Photogrammetric Engineering and Remote Sensing 53, 1109–1111.
 
