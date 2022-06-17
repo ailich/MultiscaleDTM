@@ -107,12 +107,12 @@ proposed extension to multiple scales is provided by summing the surface
 areas within the focal window and adjusting the planar area of the focal
 window using multi-scale slope.
 
-<img src="images/chaintape.png" width="70%">
+    - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
-Figure adapted from Friedman et al. (2012) and created created with
-BioRender.com
+<img src="images/chaintape.png" width="90%">
 
-    -   `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
+Figure adapted from Friedman et al. (2012) and created with
+BioRender.com.
 
 <img src="images/SAPA_annotated.png" width="70%">
 
