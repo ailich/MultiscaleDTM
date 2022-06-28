@@ -134,9 +134,18 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   if((prod(w) < 5) & (force_center)){
     stop("Error: Window size must have at least 5 cells to fit surface")
   }
+  unit<- tolower(unit) #make lowercase
   if (!any(unit==c("degrees", "radians"))){
     stop("unit must be 'degrees' or 'radians'")
   }
+  
+  # Increase tolerance of inputs to metrics
+  metrics<- tolower(metrics) #Make all lowercase
+  metrics[metrics=="slope"]<- "qslope" #replace slope with qslope
+  metrics[metrics=="aspect"]<- "qaspect" #replace aspect with qaspect
+  metrics[metrics=="eastness"]<- "qeastness" #replace eastness with qeastness
+  metrics[metrics=="northness"]<- "qnorthness" #replace northness with qnorthness
+  
   if (any(!(metrics %in% all_metrics))){
     stop("Error: Invlaid metric. Valid metrics include 'elev', 'qslope', 'qaspect', 'qeastness', 'qnorthness', 'profc', 'planc', 'twistc', 'meanc', 'maxc', 'minc', and `features`.")
     }
@@ -189,7 +198,8 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept
     }
-  mask_raster<- prod(params==0) #Mask of when predicted values are all equal
+  mask_raster<- terra::app(terra::math(params, fun= "abs", wopt=wopt), fun= "sum", na.rm=FALSE, wopt=wopt) == 0 # Mask of when all params are 0
+
      
   out<- terra::rast() #Initialize output
   if("elev" %in% needed_metrics){

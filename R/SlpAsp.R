@@ -4,7 +4,7 @@
 #' @param r DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
-#' @param method "queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right).
+#' @param method "queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right). Alternatively, instead of "queen" or "rook", method can be specified as 8 and 4 respectively. 
 #' @param metrics a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
@@ -64,12 +64,18 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   if(any(w<3)){
     stop("Error: w must be greater or equal to 3")
   }
+  unit<- tolower(unit) #make lowercase
   if(!(unit %in% c("degrees", "radians"))){
     stop("unit must be `degrees` or `radians`")
   }
+  
+  if(method==4){method<- "rook"}
+  if(method==8){method<- "queen"}
+  
   if(!(method %in% c("queen", "rook"))){
-    stop("method must be `queen` or `rook`")
+    stop("method must be `queen`, `rook`, `8`, or `4`")
   }
+  metrics<- tolower(metrics) #Make all lowercase
   if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
     stop("metrics must be 'slope', 'aspect', 'northness', and/or 'eastness'")
   }

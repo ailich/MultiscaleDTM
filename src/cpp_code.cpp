@@ -5,14 +5,32 @@ using namespace Rcpp;
 using namespace arma;
 
 
-//Subsets rows in a numeric mattrix according to a logical vector
+//Subsets rows in a numeric matrix according to a logical vector
+//https://stackoverflow.com/questions/59284212/efficient-matrix-subsetting-with-rcpp
 // [[Rcpp::export]]
-NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx) {
-  NumericVector x2 = as<NumericVector>(x);
-  LogicalVector idx2 = rep(idx, x.ncol());
-  NumericVector out_vect = x2[idx2];
-  NumericMatrix out_mat(sum(idx), x.ncol(), out_vect.begin());
-  return out_mat;
+Rcpp::NumericMatrix subset_mat_rows(Rcpp::NumericMatrix Input_Matrix, 
+                                    Rcpp::LogicalVector Input_Log_Vec) { 
+  
+  // Get the number of rows and columns of "Input_Matrix"
+  int Mat_nrows = Input_Matrix.nrow();
+  int Mat_ncols = Input_Matrix.ncol();
+  
+  // Define matrix "Output_Mat" with the aimed for dimensions,
+  // i.e. with the number of rows corresponding to the length of "Input_Log_Vec"
+  Rcpp::NumericMatrix Output_Mat(sum(Input_Log_Vec), Mat_ncols);
+  
+  // Loop over the entries of "Input_Log_Vec" to see whether the
+  // corresponding row of "Input_Matrix" should be included in 
+  // the output matrix "Output_Mat"
+  for (int i = 0, j = 0; i < Mat_nrows; i++) {
+    if (Input_Log_Vec[i]) {
+      Output_Mat(j, _) = Input_Matrix(i, _);
+      j = j+1;
+    }
+  }
+  
+  // Return the output matrix "Output_Mat"
+  return(Output_Mat);
 }
 
 //Ordinary Least Squares (only returns parameters)

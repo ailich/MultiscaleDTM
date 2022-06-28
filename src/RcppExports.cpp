@@ -12,14 +12,14 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // subset_mat_rows
-NumericMatrix subset_mat_rows(NumericMatrix x, LogicalVector idx);
-RcppExport SEXP _MultiscaleDTM_subset_mat_rows(SEXP xSEXP, SEXP idxSEXP) {
+Rcpp::NumericMatrix subset_mat_rows(Rcpp::NumericMatrix Input_Matrix, Rcpp::LogicalVector Input_Log_Vec);
+RcppExport SEXP _MultiscaleDTM_subset_mat_rows(SEXP Input_MatrixSEXP, SEXP Input_Log_VecSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type x(xSEXP);
-    Rcpp::traits::input_parameter< LogicalVector >::type idx(idxSEXP);
-    rcpp_result_gen = Rcpp::wrap(subset_mat_rows(x, idx));
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type Input_Matrix(Input_MatrixSEXP);
+    Rcpp::traits::input_parameter< Rcpp::LogicalVector >::type Input_Log_Vec(Input_Log_VecSEXP);
+    rcpp_result_gen = Rcpp::wrap(subset_mat_rows(Input_Matrix, Input_Log_Vec));
     return rcpp_result_gen;
 END_RCPP
 }
