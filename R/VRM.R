@@ -43,6 +43,11 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
   if(all(w<3)){
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
+  
+  if((packageVersion("terra") < "1.5.49") & isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
+    warning("Distance calculations conducted using Haversine (spheroid) rather geodesic formulas since terra version is < 1.5.49")
+    }
+  
   sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
   #Decompose vectors into components 
   sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt)

@@ -306,7 +306,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     out<- c(out, features, warn=FALSE)
   }
   
-  if(!is.null(metrics)){out<- terra::subset(out, metrics, wopt=wopt)} #Subset needed metrics to requested metrics in proper order
+  if(length(metrics) > 0){out<- terra::subset(out, metrics, wopt=wopt)} #Subset needed metrics to requested metrics in proper order
   if(as_derivs){
     params$a<- 2*params$a
     params$b<- 2*params$b
