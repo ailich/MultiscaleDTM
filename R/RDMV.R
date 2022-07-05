@@ -26,6 +26,7 @@ RDMV<- function(r, w=c(3,3), method="range", na.rm=FALSE, include_scale=FALSE, f
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
   }
+  method<- tolower(method)
   #Input checks
   if(!(og_class %in% c("RasterLayer", "SpatRaster"))){
     stop("Error: Input must be a 'SpatRaster' or 'RasterLayer'")

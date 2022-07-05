@@ -7,6 +7,7 @@
 #' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal
 #' @export
 circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE){
+  unit<- tolower(unit)
   if (unit != "map" & unit != "cell"){
     stop("Error: unit must equal 'map' or 'cell'")
   }
@@ -54,6 +55,7 @@ circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE
 #' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal (default FALSE)
 #' @export
 annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE){
+  unit<- tolower(unit)
   if(length(radius)==1){radius<- rep(radius, 2)}
   if(length(radius) > 2){
     stop("Specified radius exceeds 2 dimensions")
@@ -116,6 +118,7 @@ BPI<- function(r, radius=NULL, unit= "cell", w=NULL, na.rm=FALSE, include_scale=
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
   }
+  unit<- tolower(unit)
   #Input checks
   if(!(og_class %in% c("RasterLayer", "SpatRaster"))){
     stop("Error: Input must be a 'SpatRaster' or 'RasterLayer'")
