@@ -34,3 +34,6 @@ Imports:
     rgl,
     stats,
     utils
+Suggests:
+  knitr,
+  rmarkdown

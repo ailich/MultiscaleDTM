@@ -1,9 +1,12 @@
-citEntry(entry = "software",
-  author = c(person("Alexander R.", "Ilich", "ailich@usf.edu", comment=c(ORCID="0000-0003-1758-8499")),
-  person("Benjamin", "Misiuk"),
-  person("Vincent", "Lecours"),
-  person("Steven A.", "Murawski"))
+citHeader("To cite MultiscaleDTM in publications use:")
+
+citEntry(entry = "misc",
+  author = c(person("Alexander R.", "Ilich"), 
+  person("Benjamin", "Misiuk"), 
+  person("Vincent", "Lecours"), 
+  person("Steven A.", "Murawski")),
   title = "MultiscaleDTM",
+  year= "2021",
   doi = "10.5281/zenodo.5548338",
   url = "https://github.com/ailich/MultiscaleDTM",
   textVersion = "Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 2021. “MultiscaleDTM”, doi:10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDTM."
