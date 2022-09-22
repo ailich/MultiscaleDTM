@@ -1,11 +1,16 @@
 README
 ================
 Alexander Ilich
-July 05, 2022
+September 22, 2022
 
 # MultiscaleDTM
 
+<!-- badges: start -->
+
+[![R-CMD-check](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml)
+
 [![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
+<!-- badges: end -->
 
 Please cite as
 
@@ -19,7 +24,7 @@ This package calculates multi-scale geomorphometric terrain attributes
 from regularly gridded digital terrain models (DTM; i.e. elevation or
 bathymetry rasters) via a specified window size.
 
-<img src="images/kwindow.png" width="50%">
+<img src="man/figures/kwindow.png" width="50%">
 
 Figure adapted from Wilson et al. (2007)
 
@@ -47,7 +52,7 @@ raster data.
     within the focal window, specifically the four cells on the edge of
     the focal window directly up, down, left, and right of the focal
     cell for the “rook” case and an additional four corner cells for the
-    “queen” case. <img src="images/SlpAsp.png" width="70%">
+    “queen” case. <img src="man/figures/SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric
     features by fitting a quadratic surface to the focal window using
@@ -62,7 +67,7 @@ raster data.
 
 ![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
 
-<img src="images/Qfit_annotated.png" width="70%">
+<img src="man/figures/Qfit_annotated.png" width="70%">
 
 Figure adapted from Walbridge et al., (2018)
 
@@ -79,11 +84,11 @@ Figure adapted from Walbridge et al., (2018)
     cells in the window). VRM ranges from zero to one, representing
     completely smooth to rugose surfaces, respectively. .
 
-<img src="images/VRM_annotated.png" width="70%">
+<img src="man/figures/VRM_annotated.png" width="70%">
 
 Figure adapted from Sappington et al. (2007)
 
-<img src="images/VRM_focal.png" width="70%">
+<img src="man/figures/VRM_focal.png" width="70%">
 
 Figure adapted from Habib (2021)
 
@@ -109,12 +114,12 @@ window using multi-scale slope.
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
-<img src="images/chaintape.png" width="90%">
+<img src="man/figures/chaintape.png" width="90%">
 
 Figure adapted from Friedman et al. (2012) and created with
 BioRender.com.
 
-<img src="images/SAPA_annotated.png" width="70%">
+<img src="man/figures/SAPA_annotated.png" width="70%">
 
 Figure adapted from Jenness (2004)
 
@@ -125,7 +130,7 @@ Figure adapted from Jenness (2004)
     calculating the standard deviation of the residuals within the focal
     window.
 
-<img src="images/adj_sd.png" width="80%">
+<img src="man/figures/adj_sd.png" width="80%">
 
 -   `RIE` - Calculates the Roughness Index-Elevation which quantifies
     the standard deviation of residual topography (Cavalli et al.,
@@ -135,7 +140,7 @@ Figure adapted from Jenness (2004)
     the focal mean. Then the local standard deviation is calculated from
     this residual topography using a focal filter.
 
-<img src="images/RIE.png" width="80%">
+<img src="man/figures/RIE.png" width="80%">
 
 Figure adapted from Cavalli et al. (2008)
 
@@ -158,7 +163,7 @@ Figure adapted from Cavalli et al. (2008)
     annulus window with an inner radius of 4 cells and an outer radius
     of 6 cells would be
 
-<img src="images/BPI_Fig.png" width="70%">
+<img src="man/figures/BPI_Fig.png" width="70%">
 
 Figure adapted from Lundblad et al., (2006)
 

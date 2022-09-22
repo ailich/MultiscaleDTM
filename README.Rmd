@@ -19,7 +19,7 @@ Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 20
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) #Default chunk options
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.path = "man/figures/README-") #Default chunk options
 ```
 
 ## Purpose
