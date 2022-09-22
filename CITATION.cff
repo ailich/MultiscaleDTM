@@ -9,6 +9,7 @@ type: software
 license: GPL-3.0-or-later
 title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
 version: 0.5.3
+doi: 10.5281/zenodo.5548338
 abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
   gridded digital terrain models.
 authors:
@@ -23,29 +24,20 @@ authors:
 - family-names: Murawski
   given-names: Steven
 preferred-citation:
-  type: manual
-  title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
+  type: generic
+  title: MultiscaleDTM
   authors:
   - family-names: Ilich
-    given-names: Alexander
-    email: ailich@usf.edu
-    orcid: https://orcid.org/0000-0003-1758-8499
-  - family-names: Lecours
-    given-names: Vincent
+    given-names: Alexander R.
   - family-names: Misiuk
     given-names: Benjamin
+  - family-names: Lecours
+    given-names: Vincent
   - family-names: Murawski
-    given-names: Steven
-  version: 0.5.3
-  abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
-    gridded digital terrain models.
-  contact:
-  - family-names: Ilich
-    given-names: Alexander
-    email: ailich@usf.edu
-    orcid: https://orcid.org/0000-0003-1758-8499
-  license: GPL-3.0-or-later
-  year: '2022'
+    given-names: Steven A.
+  year: '2021'
+  doi: 10.5281/zenodo.5548338
+  url: https://github.com/ailich/MultiscaleDTM
 contact:
 - family-names: Ilich
   given-names: Alexander
@@ -62,7 +54,7 @@ references:
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
   year: '2022'
-  url: https://rspatial.org/terra/
+  url: https://CRAN.R-project.org/package=terra
 - type: software
   title: Rcpp
   abstract: 'Rcpp: Seamless R and C++ Integration'
@@ -116,7 +108,7 @@ references:
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
   year: '2022'
-  url: https://rspatial.org/raster
+  url: https://CRAN.R-project.org/package=raster
 - type: software
   title: dplyr
   abstract: 'dplyr: A Grammar of Data Manipulation'
@@ -211,3 +203,53 @@ references:
   url: https://www.R-project.org/
   institution:
     name: R Foundation for Statistical Computing
+- type: software
+  title: knitr
+  abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
+  notes: Suggests
+  authors:
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  year: '2022'
+  url: https://CRAN.R-project.org/package=knitr
+- type: software
+  title: rmarkdown
+  abstract: 'rmarkdown: Dynamic Documents for R'
+  notes: Suggests
+  authors:
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@rstudio.com
+  - family-names: Xie
+    given-names: Yihui
+    email: xie@yihui.name
+    orcid: https://orcid.org/0000-0003-0645-5666
+  - family-names: McPherson
+    given-names: Jonathan
+    email: jonathan@rstudio.com
+  - family-names: Luraschi
+    given-names: Javier
+    email: javier@rstudio.com
+  - family-names: Ushey
+    given-names: Kevin
+    email: kevin@rstudio.com
+  - family-names: Atkins
+    given-names: Aron
+    email: aron@rstudio.com
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+  - family-names: Cheng
+    given-names: Joe
+    email: joe@rstudio.com
+  - family-names: Chang
+    given-names: Winston
+    email: winston@rstudio.com
+  - family-names: Iannone
+    given-names: Richard
+    email: rich@rstudio.com
+    orcid: https://orcid.org/0000-0003-3925-190X
+  year: '2022'
+  url: https://CRAN.R-project.org/package=rmarkdown
