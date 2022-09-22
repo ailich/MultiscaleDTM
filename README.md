@@ -7,7 +7,7 @@ September 22, 2022
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml)
 
 [![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
 <!-- badges: end -->
@@ -15,7 +15,8 @@ September 22, 2022
 Please cite as
 
 Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski,
-Steven A.; 2021. “MultiscaleDTM”, <doi:10.5281/zenodo.5548338>.
+Steven A.; 2021. “MultiscaleDTM”,
+<https://doi.org/10.5281/zenodo.5548338>.
 <https://github.com/ailich/MultiscaleDTM>.
 
 ## Purpose
@@ -335,7 +336,7 @@ Environmental Studies. Environmental Modelling & Software 89, 19–30.
 Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R.,
 Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic
 terrain classification scheme for American Samoa. Marine Geodesy 29,
-89–111.
+89–111. <https://doi.org/10.1080/01490410600738021>
 
 Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of
 definitions of land surface (topographic) curvatures, with implications
@@ -349,8 +350,8 @@ Seabed Mapping Applications. Marine Geodesy 44, 327–385.
 <https://doi.org/10.1080/01490419.2021.1925789>
 
 Risk, M.J., 1972. Fish Diversity on a Coral Reef in the Virgin Islands.
-Atoll Research Bulletin 153, 1–4. <https://doi.org/10.5479/si.00775630>.
-153.1
+Atoll Research Bulletin 153, 1–4.
+<https://doi.org/10.5479/si.00775630.153.1>
 
 Ritter, P., 1987. A vector-based slope and aspect generation algorithm.
 Photogrammetric Engineering and Remote Sensing 53, 1109–1111.
@@ -362,7 +363,7 @@ Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management
 
 Walbridge, S., Slocum, N., Pobuda, M., Wright, D.J., 2018. Unified
 geomorphological analysis workflows with benthic terrain modeler.
-Geosciences 8, 94.
+Geosciences 8, 94. <https://doi.org/10.3390/geosciences8030094>
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented
 at the ESRI user conference, San Diego, CA.

@@ -8,14 +8,14 @@ output:
 ---
 # MultiscaleDTM
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml)
 
 [![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
 <!-- badges: end -->
 
 Please cite as
 
-Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 2021. “MultiscaleDTM”, doi:10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDTM.
+Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 2021. “MultiscaleDTM”, https://doi.org/10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDTM.
 
 
 ```{r setup, include=FALSE}
@@ -313,7 +313,7 @@ annulus_window(radius = c(4,6), unit = "cell")
 
 # References
 
-Cavalli, M., Tarolli, P., Marchi, L., Dalla Fontana, G., 2008. The effectiveness of airborne LiDAR data in the recognition of channel-bed morphology. CATENA 73, 249–260. https://doi.org/10.1016/j.catena.2007.11.001
+Cavalli, M., Tarolli, P., Marchi, L., Dalla Fontana, G., 2008. The effectiveness of airborne LiDAR data in the recognition of channel-bed morphology. CATENA 73, 249–260. https://doi.org/10.1016/j.catena.2007.11.001 
 
 Du Preez, C., 2015. A new arc–chord ratio (ACR) rugosity index for quantifying three-dimensional landscape structural complexity. Landscape Ecol 30, 181–192. https://doi.org/10.1007/s10980-014-0118-8
 
@@ -331,19 +331,19 @@ Jenness, J.S., 2004. Calculating landscape surface area from digital elevation m
 
 Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19–30. https://doi.org/10.1016/j.envsoft.2016.11.027
 
-Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111.
+Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111. https://doi.org/10.1080/01490410600738021
 
 Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
 
 Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the Suitability of Multi-Scale Terrain Attribute Calculation Approaches for Seabed Mapping Applications. Marine Geodesy 44, 327–385. https://doi.org/10.1080/01490419.2021.1925789
 
-Risk, M.J., 1972. Fish Diversity on a Coral Reef in the Virgin Islands. Atoll Research Bulletin 153, 1–4. https://doi.org/10.5479/si.00775630. 153.1
+Risk, M.J., 1972. Fish Diversity on a Coral Reef in the Virgin Islands. Atoll Research Bulletin 153, 1–4. https://doi.org/10.5479/si.00775630.153.1
 
 Ritter, P., 1987. A vector-based slope and aspect generation algorithm. Photogrammetric Engineering and Remote Sensing 53, 1109–1111.
 
 Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419–1426. https://doi.org/10.2193/2005-723
 
-Walbridge, S., Slocum, N., Pobuda, M., Wright, D.J., 2018. Unified geomorphological analysis workflows with benthic terrain modeler. Geosciences 8, 94.
+Walbridge, S., Slocum, N., Pobuda, M., Wright, D.J., 2018. Unified geomorphological analysis workflows with benthic terrain modeler. Geosciences 8, 94. https://doi.org/10.3390/geosciences8030094
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.
 
