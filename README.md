@@ -196,7 +196,7 @@ help(package="MultiscaleDTM")
 r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
 
 ### Slope, Aspect, and Curvature
 
@@ -204,13 +204,13 @@ r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478
 slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
 
 To explore these measures in an interactive environment use
 `explore_terrain()` or go to this
@@ -222,7 +222,7 @@ To explore these measures in an interactive environment use
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
 
 Note: multi-scale SAPA is experimental. The established metric by De
 Preez (2015) would use `w=1`.
@@ -231,19 +231,19 @@ Preez (2015) would use `w=1`.
 sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
 
 ### Relative Position
 
@@ -251,19 +251,19 @@ rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
 bpi<- BPI(r, radius = c(4,6), unit = "cell", na.rm = TRUE)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
 The annulus window for BPI can be specified in either cell units (number
 of raster cells) or in map units (e.g. meters) which can be useful if
