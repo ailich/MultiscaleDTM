@@ -10,12 +10,15 @@
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a RasterLayer
 #' @examples
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
+#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+#' crs = "EPSG:27200")
 #' vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 #' plot(vrm)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
+#' @importFrom utils packageVersion
 #' @references
 #' Evans JS (2021). spatialEco. R package version 1.3-6, https://github.com/jeffreyevans/spatialEco.
 #' 

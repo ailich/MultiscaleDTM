@@ -1,22 +1,213 @@
+# -----------------------------------------------------------
+# CITATION file created with {cffr} R package, v0.2.3
+# See also: https://docs.ropensci.org/cffr/
+# -----------------------------------------------------------
+ 
 cff-version: 1.2.0
-title: ' MultiscaleDTM'
-message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
+message: 'To cite package "MultiscaleDTM" in publications use:'
 type: software
+license: GPL-3.0-or-later
+title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
+version: 0.5.3
+abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
+  gridded digital terrain models.
 authors:
-  - given-names: Alexander R.
-    family-names: Ilich
+- family-names: Ilich
+  given-names: Alexander
+  email: ailich@usf.edu
+  orcid: https://orcid.org/0000-0003-1758-8499
+- family-names: Lecours
+  given-names: Vincent
+- family-names: Misiuk
+  given-names: Benjamin
+- family-names: Murawski
+  given-names: Steven
+preferred-citation:
+  type: manual
+  title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
+  authors:
+  - family-names: Ilich
+    given-names: Alexander
     email: ailich@usf.edu
-    affiliation: University of South Florida
-    orcid: 'https://orcid.org/0000-0003-1758-8499'
-  - given-names: Benjamin
-    family-names: Misiuk
+    orcid: https://orcid.org/0000-0003-1758-8499
   - family-names: Lecours
     given-names: Vincent
-  - given-names: Steven A.
-    family-names: Murawski
-doi: 10.5281/zenodo.5548338
-url: 'https://github.com/ailich/MultiscaleDTM'
-license: MIT
-date-released: '2021-10-04'
+  - family-names: Misiuk
+    given-names: Benjamin
+  - family-names: Murawski
+    given-names: Steven
+  version: 0.5.3
+  abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
+    gridded digital terrain models.
+  contact:
+  - family-names: Ilich
+    given-names: Alexander
+    email: ailich@usf.edu
+    orcid: https://orcid.org/0000-0003-1758-8499
+  license: GPL-3.0-or-later
+  year: '2022'
+contact:
+- family-names: Ilich
+  given-names: Alexander
+  email: ailich@usf.edu
+  orcid: https://orcid.org/0000-0003-1758-8499
+references:
+- type: software
+  title: terra
+  abstract: 'terra: Spatial Data Analysis'
+  notes: Depends
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+    orcid: https://orcid.org/0000-0001-5872-2872
+  year: '2022'
+  url: https://rspatial.org/terra/
+- type: software
+  title: Rcpp
+  abstract: 'Rcpp: Seamless R and C++ Integration'
+  notes: LinkingTo
+  authors:
+  - family-names: Eddelbuettel
+    given-names: Dirk
+  - family-names: Francois
+    given-names: Romain
+  - family-names: Allaire
+    given-names: JJ
+  - family-names: Ushey
+    given-names: Kevin
+  - family-names: Kou
+    given-names: Qiang
+  - family-names: Russell
+    given-names: Nathan
+  - family-names: Ucar
+    given-names: Inaki
+  - family-names: Bates
+    given-names: Douglas
+  - family-names: Chambers
+    given-names: John
+  year: '2022'
+  url: https://CRAN.R-project.org/package=Rcpp
+- type: software
+  title: RcppArmadillo
+  abstract: 'RcppArmadillo: ''Rcpp'' Integration for the ''Armadillo'' Templated Linear
+    Algebra Library'
+  notes: LinkingTo
+  authors:
+  - family-names: Eddelbuettel
+    given-names: Dirk
+  - family-names: Francois
+    given-names: Romain
+  - family-names: Bates
+    given-names: Doug
+  - family-names: Ni
+    given-names: Binxiang
+  - family-names: Sanderson
+    given-names: Conrad
+  year: '2022'
+  url: https://CRAN.R-project.org/package=RcppArmadillo
+- type: software
+  title: raster
+  abstract: 'raster: Geographic Data Analysis and Modeling'
+  notes: Imports
+  authors:
+  - family-names: Hijmans
+    given-names: Robert J.
+    email: r.hijmans@gmail.com
+    orcid: https://orcid.org/0000-0001-5872-2872
+  year: '2022'
+  url: https://rspatial.org/raster
+- type: software
+  title: dplyr
+  abstract: 'dplyr: A Grammar of Data Manipulation'
+  notes: Imports
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@rstudio.com
+    orcid: https://orcid.org/0000-0003-4757-117X
+  - family-names: François
+    given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
+  - family-names: Henry
+    given-names: Lionel
+  - family-names: Müller
+    given-names: Kirill
+    orcid: https://orcid.org/0000-0002-1416-3412
+  year: '2022'
+  url: https://CRAN.R-project.org/package=dplyr
+- type: software
+  title: shiny
+  abstract: 'shiny: Web Application Framework for R'
+  notes: Imports
+  authors:
+  - family-names: Chang
+    given-names: Winston
+    email: winston@rstudio.com
+    orcid: https://orcid.org/0000-0002-1576-2126
+  - family-names: Cheng
+    given-names: Joe
+    email: joe@rstudio.com
+  - family-names: Allaire
+    given-names: JJ
+    email: jj@rstudio.com
+  - family-names: Sievert
+    given-names: Carson
+    email: carson@rstudio.com
+    orcid: https://orcid.org/0000-0002-4958-2844
+  - family-names: Schloerke
+    given-names: Barret
+    email: barret@rstudio.com
+    orcid: https://orcid.org/0000-0001-9986-114X
+  - family-names: Xie
+    given-names: Yihui
+    email: yihui@rstudio.com
+  - family-names: Allen
+    given-names: Jeff
+    email: jeff@rstudio.com
+  - family-names: McPherson
+    given-names: Jonathan
+    email: jonathan@rstudio.com
+  - family-names: Dipert
+    given-names: Alan
+  - family-names: Borges
+    given-names: Barbara
+  year: '2022'
+  url: https://CRAN.R-project.org/package=shiny
+- type: software
+  title: rgl
+  abstract: 'rgl: 3D Visualization Using OpenGL'
+  notes: Imports
+  authors:
+  - family-names: Murdoch
+    given-names: Duncan
+    email: murdoch.duncan@gmail.com
+  - family-names: Adler
+    given-names: Daniel
+    email: dadler@dyncall.org
+  year: '2022'
+  url: https://CRAN.R-project.org/package=rgl
+- type: software
+  title: stats
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2022'
+  url: https://www.R-project.org/
+  institution:
+    name: R Foundation for Statistical Computing
+- type: software
+  title: utils
+  abstract: 'R: A Language and Environment for Statistical Computing'
+  notes: Imports
+  authors:
+  - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2022'
+  url: https://www.R-project.org/
+  institution:
+    name: R Foundation for Statistical Computing

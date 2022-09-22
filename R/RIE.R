@@ -10,12 +10,15 @@
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
 #' @examples 
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
+#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+#' crs = "EPSG:27200")
 #' rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 #' plot(rie)
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
+#' @importFrom stats sd
 #' @details Note the original paper by Cavalli et al (2008) uses a fixed 5x5 window and uses 25 as the denominator indicating use of the population standard deviation. This implementation provides a flexible window size and istead calculates the sample standard deviation which uses a denominator of n-1.
 #' @references 
 #' Cavalli, M., Tarolli, P., Marchi, L., Dalla Fontana, G., 2008. The effectiveness of airborne LiDAR data in the recognition of channel-bed morphology. CATENA 73, 249–260. https://doi.org/10.1016/j.catena.2007.11.001

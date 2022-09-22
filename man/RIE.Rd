@@ -39,7 +39,9 @@ Calculates Roughness Index-Elevation. This is the standard deviation of residual
 Note the original paper by Cavalli et al (2008) uses a fixed 5x5 window and uses 25 as the denominator indicating use of the population standard deviation. This implementation provides a flexible window size and istead calculates the sample standard deviation which uses a denominator of n-1.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+r<- rast(volcano, extent= ext(2667400, 2667400 + 
+ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+crs = "EPSG:27200")
 rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 plot(rie)
 }

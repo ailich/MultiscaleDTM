@@ -76,7 +76,9 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 #' @examples
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
+#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+#' crs = "EPSG:27200")
 #' qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", na.rm = TRUE)
 #' plot(qmetrics)
 #' 

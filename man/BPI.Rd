@@ -23,6 +23,8 @@ BPI(
 
 \item{unit}{unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters). This is ignored if w is provided.}
 
+\item{w}{A focal weights matrix specifying which cells to include and exclude in the annulus focal window which can be created using MultiscaleDTM::annulus_window.}
+
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE). If unit="map" then window size will have "MU" after the number indicating that the number represents the window size in map units.}
@@ -40,7 +42,9 @@ a SpatRaster or RasterLayer
 Calculates Bathymetric Position Index (BPI). This is the value of the focal pixel minus the mean of the surrounding pixels contained within an annulus shaped window.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+r<- rast(volcano, extent= ext(2667400, 2667400 + 
+ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+crs = "EPSG:27200")
 bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
 plot(bpi)
 }

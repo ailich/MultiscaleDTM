@@ -1,3 +1,7 @@
-^MultiscaleDEM\.Rproj$
+^MultiscaleDTM\.Rproj$
 ^\.Rproj\.user$
 ^LICENSE\.md$
+inst/Terrain_Attributes_Explorer_App/rsconnect
+^CITATION\.cff$
+^\.github$
+^README\.Rmd$

@@ -7,9 +7,11 @@ output:
     pandoc_args: --webtex
 ---
 # MultiscaleDTM
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDEM/actions/workflows/R-CMD-check.yaml)
 
 [![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
-
+<!-- badges: end -->
 
 Please cite as
 
@@ -24,7 +26,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE) #Default ch
 
 This package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
 
-<img src="images/kwindow.png" width="50%">
+<img src="man/figures/kwindow.png" width="50%">
 
 Figure adapted from Wilson et al. (2007)
 
@@ -40,7 +42,7 @@ This package relies on the `terra` package for handling of spatial raster data.
 ### Slope, Aspect and Curvature
 
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the "rook" case and an additional four corner cells for the "queen" case.
-<img src="images/SlpAsp.png" width="70%">
+<img src="man/figures/SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
@@ -48,7 +50,7 @@ $$
 Z = aX^2 + bY^2 +cXY+ dX +eY +f
 $$
 
-<img src="images/Qfit_annotated.png" width="70%">
+<img src="man/figures/Qfit_annotated.png" width="70%">
 
 Figure adapted from Walbridge et al., (2018)
 
@@ -57,11 +59,11 @@ Figure adapted from Walbridge et al., (2018)
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies terrain ruggedness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: n is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rugose surfaces, respectively.
 .
 
-<img src="images/VRM_annotated.png" width="70%">
+<img src="man/figures/VRM_annotated.png" width="70%">
 
 Figure adapted from Sappington et al. (2007)
 
-<img src="images/VRM_focal.png" width="70%">
+<img src="man/figures/VRM_focal.png" width="70%">
 
 Figure adapted from Habib (2021)
 
@@ -84,23 +86,23 @@ $$
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
-<img src="images/chaintape.png" width="90%">
+<img src="man/figures/chaintape.png" width="90%">
 
 Figure adapted from Friedman et al. (2012) and created with BioRender.com.
 
 
-<img src="images/SAPA_annotated.png" width="70%">
+<img src="man/figures/SAPA_annotated.png" width="70%">
 
 Figure adapted from Jenness (2004)
 
 
 -   `AdjSD`- This new proposed rugosity metric modifies the standard deviation of elevation/bathymetry to account for slope. It does this by first fitting a plane to the data in the focal window using ordinary least squares, and then extracting the residuals, and then calculating the standard deviation of the residuals within the focal window.
 
-<img src="images/adj_sd.png" width="80%">
+<img src="man/figures/adj_sd.png" width="80%">
 
 - `RIE` - Calculates the Roughness Index-Elevation which quantifies the standard deviation of residual topography (Cavalli et al., 2008). This measure is conceptually similar to `AdjSD` but rather than fitting a plane and extracting residuals for the entire focal window, residual topography is calculated as the focal pixel minus the focal mean. Then the local standard deviation is calculated from this residual topography using a focal filter.
 
-<img src="images/RIE.png" width="80%">
+<img src="man/figures/RIE.png" width="80%">
 
 Figure adapted from Cavalli et al. (2008)
 
@@ -113,7 +115,7 @@ Figure adapted from Cavalli et al. (2008)
 
 -   `BPI` -  Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window. It is a modification of TPI that uses an annulus shaped focal window and therefore requires an inner and outer radius. For example, an annulus window with an inner radius of 4 cells and an outer radius of 6 cells would be
 
-<img src="images/BPI_Fig.png" width="70%">
+<img src="man/figures/BPI_Fig.png" width="70%">
 
 Figure adapted from Lundblad et al., (2006)
 

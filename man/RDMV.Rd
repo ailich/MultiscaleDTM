@@ -39,7 +39,9 @@ a SpatRaster or RasterLayer
 Calculates Relative Difference from Mean Value (RDMV). RDMV = (focal_value - local_mean)/local_range or RDMV = (focal_value - local_mean)/local_sd.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+r<- rast(volcano, extent= ext(2667400, 2667400 + 
+ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+crs = "EPSG:27200")
 rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
 plot(rdmv)
 }

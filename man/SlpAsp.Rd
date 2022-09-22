@@ -48,8 +48,12 @@ Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm f
 When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
-slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
+r<- rast(volcano, extent= ext(2667400, 2667400 + 
+ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
+crs = "EPSG:27200")
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", 
+method = "queen", metrics = c("slope", "aspect", 
+"eastness", "northness"))
 plot(slp_asp)
 }
 \references{
