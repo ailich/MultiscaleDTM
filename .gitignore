@@ -41,3 +41,4 @@ vignettes/*.pdf
 
 #Paths
 rsconnect
+^CRAN-SUBMISSION$
