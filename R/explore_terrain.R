@@ -4,6 +4,7 @@
 #' @import shiny
 #' @import rgl
 #' @importFrom dplyr case_when
+#' @return No return value, launches Shiny app.
 #' @references
 #' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
 #' 

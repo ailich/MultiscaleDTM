@@ -4,7 +4,8 @@
 #' @param radius radius of circular window
 #' @param resolution resolution of intended raster layer (one number or a vector of length 2). Only necessary if unit= "map"
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
-#' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal
+#' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal.
+#' @return if a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
 #' @export
 circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE){
   unit<- tolower(unit)
@@ -53,6 +54,7 @@ circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
 #' @param resolution resolution of intended raster layer (one number or a vector of length 2). Only necessary if unit= "map"
 #' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal (default FALSE)
+#' @return if a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
 #' @export
 annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE){
   unit<- tolower(unit)

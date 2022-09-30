@@ -6,6 +6,9 @@
 \usage{
 explore_terrain()
 }
+\value{
+No return value, launches Shiny app.
+}
 \description{
 Interactive Shiny app to look at terrain attributes based on a surface fit using a Wood/Evans Quadratic Equation: Z =ax^2+by^2+cxy+dx+ey(+f)
 }
