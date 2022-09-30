@@ -5,6 +5,6 @@ inst/Terrain_Attributes_Explorer_App/rsconnect
 ^CITATION\.cff$
 ^\.github$
 ^README\.Rmd$
-\^.Rhistory$
+^\.Rhistory$
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
