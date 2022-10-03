@@ -13,7 +13,7 @@ doi: 10.5281/zenodo.5548338
 abstract: 'Calculates multi-scale geomorphometric terrain attributes from regularly
   gridded digital terrain models using a variable focal windows size (Misiuk et al.
   (2021) <doi: 10.1080/01490419.2021.1925789>; Wilson et al. (2007) <doi:10.1080/01490410701295962>;
-  Wood (1996) <[https://hdl.handle.net/2381/34503]https://hdl.handle.net/2381/34503>).'
+  Wood (1996) <https://hdl.handle.net/2381/34503>).'
 authors:
 - family-names: Ilich
   given-names: Alexander
