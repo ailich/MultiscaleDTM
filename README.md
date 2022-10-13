@@ -1,14 +1,16 @@
 README
 ================
 Alexander Ilich
-October 04, 2022
+October 13, 2022
 
 # MultiscaleDTM
 
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml)
-
+[![CRAN](https://www.r-pkg.org/badges/version/MultiscaleDTM)](https://cran.r-project.org/package=MultiscaleDTM)
+[![License:
+GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
 <!-- badges: end -->
 
