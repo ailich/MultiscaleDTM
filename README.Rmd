@@ -53,9 +53,9 @@ $$
 
 Figure adapted from Walbridge et al., (2018)
 
-### Rugosity
+### Roughness
 
--   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies terrain ruggedness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: n is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rugose surfaces, respectively.
+-   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies roughness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: N is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rough surfaces, respectively.
 .
 
 <img src="man/figures/VRM_annotated.png" width="70%">
@@ -67,13 +67,12 @@ Figure adapted from Sappington et al. (2007)
 Figure adapted from Habib (2021)
 
 $$
-\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}
+\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{N}
 $$
 
 $$
-x = sin(\text{slope})*cos(\text{aspect})
+x = sin(\text{slope})*sin(\text{aspect})
 $$
-
 $$
 y=sin(\text{slope})*cos(\text{aspect})
 $$
@@ -81,7 +80,7 @@ $$
 $$
 z=cos(\text{slope})
 $$
--   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). More rugose surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical "chain-and-tape" method, which calculates rugosity as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
+-   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Rougher surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical "chain-and-tape" method, which calculates roughness as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
@@ -95,7 +94,7 @@ Figure adapted from Friedman et al. (2012) and created with BioRender.com.
 Figure adapted from Jenness (2004)
 
 
--   `AdjSD`- This new proposed rugosity metric modifies the standard deviation of elevation/bathymetry to account for slope. It does this by first fitting a plane to the data in the focal window using ordinary least squares, and then extracting the residuals, and then calculating the standard deviation of the residuals within the focal window.
+-   `AdjSD`- This new proposed roughness metric modifies the standard deviation of elevation/bathymetry to account for slope. It does this by first fitting a plane to the data in the focal window using ordinary least squares, and then extracting the residuals, and then calculating the standard deviation of the residuals within the focal window.
 
 <img src="man/figures/adj_sd.png" width="80%">
 
@@ -228,7 +227,7 @@ qmetrics_plot
 
 To explore these measures in an interactive environment use `explore_terrain()` or go to this [website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)
 
-### Rugosity
+### Roughness
 
 ```{r}
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
@@ -268,7 +267,7 @@ rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 ```{r echo=FALSE}
 tm_shape(rie, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
-  tm_layout(legend.outside = TRUE, main.title="Rugosity Index-Elevation")
+  tm_layout(legend.outside = TRUE, main.title="Roughness Index-Elevation")
 ```
 
 ### Relative Position

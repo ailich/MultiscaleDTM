@@ -2,7 +2,7 @@
 #'
 #' Implementation of the Sappington et al., (2007) vector ruggedness measure, modified from Evans (2021). 
 #' @param r DTM as a SpatRaster or RasterLayer
-#' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
+#' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename.
@@ -25,7 +25,7 @@
 #' Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419-1426. https://doi.org/10.2193/2005-723
 #' @export
 
-VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+VRM<- function(r, w=c(3,3), na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -54,8 +54,8 @@ VRM<- function(r, w, na.rm = FALSE, include_scale=FALSE, filename=NULL, overwrit
   sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
   #Decompose vectors into components 
   sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt)
-  Xrast <- terra::math(sa$aspect, fun="cos", wopt=wopt) * sin.slp # xRaster
-  Yrast <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # yRaster
+  Xrast <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # xRaster
+  Yrast <- terra::math(sa$aspect, fun="cos", wopt=wopt) * sin.slp # yRaster
   Zrast <- terra::math(sa$slope, fun="cos", wopt=wopt) # zRaster 
   x.sum <- terra::focal(Xrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
   y.sum <- terra::focal(Yrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt) 

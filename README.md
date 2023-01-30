@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-October 13, 2022
+January 30, 2023
 
 # MultiscaleDTM
 
@@ -49,44 +49,43 @@ raster data.
 
 ### Slope, Aspect and Curvature
 
--   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
-    et al (2021) which is a modification of the traditional 3 x 3 slope
-    and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
-    Ritter, 1987). This algorithm only considers a subset of cells
-    within the focal window, specifically the four cells on the edge of
-    the focal window directly up, down, left, and right of the focal
-    cell for the “rook” case and an additional four corner cells for the
-    “queen” case. <img src="man/figures/SlpAsp.png" width="70%">
+- `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
+  et al (2021) which is a modification of the traditional 3 x 3 slope
+  and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
+  Ritter, 1987). This algorithm only considers a subset of cells within
+  the focal window, specifically the four cells on the edge of the focal
+  window directly up, down, left, and right of the focal cell for the
+  “rook” case and an additional four corner cells for the “queen” case.
+  <img src="man/figures/SlpAsp.png" width="70%">
 
--   `Qfit` calculates slope, aspect, curvature, and morphometric
-    features by fitting a quadratic surface to the focal window using
-    ordinary least squares using the equation shown below where a-f are
-    regression parameters, Z is the elevation/depth, X is the east/west
-    coordinates in the focal window relative to the focal cell, and Y is
-    the north/south coordinates in the focal window relative to the
-    focal cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The
-    morphometric features algorithm has been modified to use more robust
-    measures of curvature based on the suggestions of Minár et
-    al. (2020).
+- `Qfit` calculates slope, aspect, curvature, and morphometric features
+  by fitting a quadratic surface to the focal window using ordinary
+  least squares using the equation shown below where a-f are regression
+  parameters, Z is the elevation/depth, X is the east/west coordinates
+  in the focal window relative to the focal cell, and Y is the
+  north/south coordinates in the focal window relative to the focal cell
+  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric
+  features algorithm has been modified to use more robust measures of
+  curvature based on the suggestions of Minár et al. (2020).
 
-![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
+![Z = aX^2 + bY^2 +cXY+ dX +eY +f](https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf "Z = aX^2 + bY^2 +cXY+ dX +eY +f")
 
 <img src="man/figures/Qfit_annotated.png" width="70%">
 
 Figure adapted from Walbridge et al., (2018)
 
-### Rugosity
+### Roughness
 
--   `VRM` - Vector ruggedness measure (Sappington et al. 2007)
-    quantifies terrain ruggedness by measuring the dispersion of vectors
-    normal to the terrain surface. This is accomplished by calculating
-    the local (3 x 3 cell) slope and aspect, and constructing unit
-    vectors normal to each cell in the DTM. These unit vectors are then
-    decomposed into their corresponding x, y, and z components (i.e. the
-    x, y, and z coordinates of the head of the vector relative to its
-    origin) and used in the following equation (note: n is the number of
-    cells in the window). VRM ranges from zero to one, representing
-    completely smooth to rugose surfaces, respectively. .
+- `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies
+  roughness by measuring the dispersion of vectors normal to the terrain
+  surface. This is accomplished by calculating the local (3 x 3 cell)
+  slope and aspect, and constructing unit vectors normal to each cell in
+  the DTM. These unit vectors are then decomposed into their
+  corresponding x, y, and z components (i.e. the x, y, and z coordinates
+  of the head of the vector relative to its origin) and used in the
+  following equation (note: N is the number of cells in the window). VRM
+  ranges from zero to one, representing completely smooth to rough
+  surfaces, respectively. .
 
 <img src="man/figures/VRM_annotated.png" width="70%">
 
@@ -96,19 +95,19 @@ Figure adapted from Sappington et al. (2007)
 
 Figure adapted from Habib (2021)
 
-![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7Bn%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{n}")
+![\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{N}](https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7BN%7D "\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{N}")
 
-![x = sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*cos(\text{aspect})")
+![x = sin(\text{slope})\*sin(\text{aspect})](https://latex.codecogs.com/png.latex?x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Asin%28%5Ctext%7Baspect%7D%29 "x = sin(\text{slope})*sin(\text{aspect})")
 
-![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
+![y=sin(\text{slope})\*cos(\text{aspect})](https://latex.codecogs.com/png.latex?y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29 "y=sin(\text{slope})*cos(\text{aspect})")
 
-![z=cos(\text{slope})](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
+![z=cos(\text{slope})](https://latex.codecogs.com/png.latex?z%3Dcos%28%5Ctext%7Bslope%7D%29 "z=cos(\text{slope})")
 
  - `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004).
-More rugose surfaces will have a greater surface area to planar area
-ratio, and perfectly smooth surfaces will have a value of 1. This is a
-3D analog to the classical “chain-and-tape” method, which calculates
-rugosity as the ratio of the contoured distance (chain length) and
+Rougher surfaces will have a greater surface area to planar area ratio,
+and perfectly smooth surfaces will have a value of 1. This is a 3D
+analog to the classical “chain-and-tape” method, which calculates
+roughness as the ratio of the contoured distance (chain length) and
 linear distance (tape measure distance; Risk, 1972). Additionally,
 planar area can be corrected for slope by dividing the product of the x
 and y resolution by the cosine of slope (Du Preez 2015). Moreover, a
@@ -127,22 +126,22 @@ BioRender.com.
 
 Figure adapted from Jenness (2004)
 
--   `AdjSD`- This new proposed rugosity metric modifies the standard
-    deviation of elevation/bathymetry to account for slope. It does this
-    by first fitting a plane to the data in the focal window using
-    ordinary least squares, and then extracting the residuals, and then
-    calculating the standard deviation of the residuals within the focal
-    window.
+- `AdjSD`- This new proposed roughness metric modifies the standard
+  deviation of elevation/bathymetry to account for slope. It does this
+  by first fitting a plane to the data in the focal window using
+  ordinary least squares, and then extracting the residuals, and then
+  calculating the standard deviation of the residuals within the focal
+  window.
 
 <img src="man/figures/adj_sd.png" width="80%">
 
--   `RIE` - Calculates the Roughness Index-Elevation which quantifies
-    the standard deviation of residual topography (Cavalli et al.,
-    2008). This measure is conceptually similar to `AdjSD` but rather
-    than fitting a plane and extracting residuals for the entire focal
-    window, residual topography is calculated as the focal pixel minus
-    the focal mean. Then the local standard deviation is calculated from
-    this residual topography using a focal filter.
+- `RIE` - Calculates the Roughness Index-Elevation which quantifies the
+  standard deviation of residual topography (Cavalli et al., 2008). This
+  measure is conceptually similar to `AdjSD` but rather than fitting a
+  plane and extracting residuals for the entire focal window, residual
+  topography is calculated as the focal pixel minus the focal mean. Then
+  the local standard deviation is calculated from this residual
+  topography using a focal filter.
 
 <img src="man/figures/RIE.png" width="80%">
 
@@ -150,22 +149,22 @@ Figure adapted from Cavalli et al. (2008)
 
 ### Relative Position
 
--   `TPI` - Topographic Position Index (Weiss, 2001) is the difference
-    between the value of a focal cell and the mean of the surrounding
-    cells.
+- `TPI` - Topographic Position Index (Weiss, 2001) is the difference
+  between the value of a focal cell and the mean of the surrounding
+  cells.
 
--   `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017)
-    is the difference between the value of a focal cell and the mean of
-    the cells in the focal window divided by the range or standard
-    deviation of the values in the focal window.
+- `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017) is
+  the difference between the value of a focal cell and the mean of the
+  cells in the focal window divided by the range or standard deviation
+  of the values in the focal window.
 
--   `BPI` - Bathymetric Position Index (Lundblad et al., 2006) is the
-    difference between the value of a focal cell and the mean of the
-    surrounding cells contained within an annulus shaped window. It is a
-    modification of TPI that uses an annulus shaped focal window and
-    therefore requires an inner and outer radius. For example, an
-    annulus window with an inner radius of 4 cells and an outer radius
-    of 6 cells would be
+- `BPI` - Bathymetric Position Index (Lundblad et al., 2006) is the
+  difference between the value of a focal cell and the mean of the
+  surrounding cells contained within an annulus shaped window. It is a
+  modification of TPI that uses an annulus shaped focal window and
+  therefore requires an inner and outer radius. For example, an annulus
+  window with an inner radius of 4 cells and an outer radius of 6 cells
+  would be
 
 <img src="man/figures/BPI_Fig.png" width="70%">
 
@@ -220,7 +219,7 @@ To explore these measures in an interactive environment use
 `explore_terrain()` or go to this
 [website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)
 
-### Rugosity
+### Roughness
 
 ``` r
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)

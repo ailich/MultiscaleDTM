@@ -6,7 +6,7 @@
 \usage{
 VRM(
   r,
-  w,
+  w = c(3, 3),
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -17,7 +17,7 @@ VRM(
 \arguments{
 \item{r}{DTM as a SpatRaster or RasterLayer}
 
-\item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.}
+\item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
 \item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
