@@ -24,6 +24,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 BugReports: https://github.com/ailich/MultiscaleDTM/issues
 Depends: terra
+SystemRequirements: C++17
 LinkingTo: 
     Rcpp,
     RcppArmadillo
