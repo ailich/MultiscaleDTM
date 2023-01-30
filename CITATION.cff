@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.3.0
+# CITATION file created with {cffr} R package, v0.4.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
  
@@ -8,7 +8,7 @@ message: 'To cite package "MultiscaleDTM" in publications use:'
 type: software
 license: GPL-3.0-or-later
 title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
-version: 0.5.4
+version: 0.5.5
 doi: 10.5281/zenodo.5548338
 abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
   gridded digital terrain models using a variable focal windows size (Misiuk et al.
@@ -53,17 +53,20 @@ references:
   title: terra
   abstract: 'terra: Spatial Data Analysis'
   notes: Depends
+  url: https://rspatial.org/terra/
+  repository: https://CRAN.R-project.org/package=terra
   authors:
   - family-names: Hijmans
     given-names: Robert J.
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
-  year: '2022'
-  url: https://CRAN.R-project.org/package=terra
+  year: '2023'
 - type: software
   title: Rcpp
   abstract: 'Rcpp: Seamless R and C++ Integration'
   notes: LinkingTo
+  url: https://www.rcpp.org
+  repository: https://CRAN.R-project.org/package=Rcpp
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
@@ -83,13 +86,14 @@ references:
     given-names: Douglas
   - family-names: Chambers
     given-names: John
-  year: '2022'
-  url: https://CRAN.R-project.org/package=Rcpp
+  year: '2023'
 - type: software
   title: RcppArmadillo
   abstract: 'RcppArmadillo: ''Rcpp'' Integration for the ''Armadillo'' Templated Linear
     Algebra Library'
   notes: LinkingTo
+  url: https://dirk.eddelbuettel.com/code/rcpp.armadillo.html
+  repository: https://CRAN.R-project.org/package=RcppArmadillo
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
@@ -101,23 +105,25 @@ references:
     given-names: Binxiang
   - family-names: Sanderson
     given-names: Conrad
-  year: '2022'
-  url: https://CRAN.R-project.org/package=RcppArmadillo
+  year: '2023'
 - type: software
   title: raster
   abstract: 'raster: Geographic Data Analysis and Modeling'
   notes: Imports
+  url: https://rspatial.org/raster
+  repository: https://CRAN.R-project.org/package=raster
   authors:
   - family-names: Hijmans
     given-names: Robert J.
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
-  year: '2022'
-  url: https://CRAN.R-project.org/package=raster
+  year: '2023'
 - type: software
   title: dplyr
   abstract: 'dplyr: A Grammar of Data Manipulation'
   notes: Imports
+  url: https://dplyr.tidyverse.org
+  repository: https://CRAN.R-project.org/package=dplyr
   authors:
   - family-names: Wickham
     given-names: Hadley
@@ -131,12 +137,13 @@ references:
   - family-names: Müller
     given-names: Kirill
     orcid: https://orcid.org/0000-0002-1416-3412
-  year: '2022'
-  url: https://CRAN.R-project.org/package=dplyr
+  year: '2023'
 - type: software
   title: shiny
   abstract: 'shiny: Web Application Framework for R'
   notes: Imports
+  url: https://shiny.rstudio.com/
+  repository: https://CRAN.R-project.org/package=shiny
   authors:
   - family-names: Chang
     given-names: Winston
@@ -169,12 +176,13 @@ references:
     given-names: Alan
   - family-names: Borges
     given-names: Barbara
-  year: '2022'
-  url: https://CRAN.R-project.org/package=shiny
+  year: '2023'
 - type: software
   title: rgl
   abstract: 'rgl: 3D Visualization Using OpenGL'
   notes: Imports
+  url: https://dmurdoch.github.io/rgl/
+  repository: https://CRAN.R-project.org/package=rgl
   authors:
   - family-names: Murdoch
     given-names: Duncan
@@ -182,8 +190,7 @@ references:
   - family-names: Adler
     given-names: Daniel
     email: dadler@dyncall.org
-  year: '2022'
-  url: https://CRAN.R-project.org/package=rgl
+  year: '2023'
 - type: software
   title: stats
   abstract: 'R: A Language and Environment for Statistical Computing'
@@ -192,8 +199,7 @@ references:
   - name: R Core Team
   location:
     name: Vienna, Austria
-  year: '2022'
-  url: https://www.R-project.org/
+  year: '2023'
   institution:
     name: R Foundation for Statistical Computing
 - type: software
@@ -204,25 +210,27 @@ references:
   - name: R Core Team
   location:
     name: Vienna, Austria
-  year: '2022'
-  url: https://www.R-project.org/
+  year: '2023'
   institution:
     name: R Foundation for Statistical Computing
 - type: software
   title: knitr
   abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
   notes: Suggests
+  url: https://yihui.org/knitr/
+  repository: https://CRAN.R-project.org/package=knitr
   authors:
   - family-names: Xie
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2022'
-  url: https://CRAN.R-project.org/package=knitr
+  year: '2023'
 - type: software
   title: rmarkdown
   abstract: 'rmarkdown: Dynamic Documents for R'
   notes: Suggests
+  url: https://pkgs.rstudio.com/rmarkdown/
+  repository: https://CRAN.R-project.org/package=rmarkdown
   authors:
   - family-names: Allaire
     given-names: JJ
@@ -256,5 +264,4 @@ references:
     given-names: Richard
     email: rich@rstudio.com
     orcid: https://orcid.org/0000-0003-3925-190X
-  year: '2022'
-  url: https://CRAN.R-project.org/package=rmarkdown
+  year: '2023'
