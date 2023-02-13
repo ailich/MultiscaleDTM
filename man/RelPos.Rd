@@ -24,11 +24,11 @@ RelPos(
 \arguments{
 \item{r}{DTM as a SpatRaster or RasterLayer}
 
-\item{w}{For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window . If a "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.}
+\item{w}{For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window. If "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.}
 
-\item{shape}{character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix. If a "custom" shape focal window is used, For more information on custom focal window creation, see details.}
+\item{shape}{character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix.}
 
-\item{radius}{For "circle" or "annulus" shaped focal windows, a single integer representing the radius of the circle or a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer) in "cell" or "map" units. This is ignored if w is not NA/NULL. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".}
+\item{radius}{For "circle" shaped focal windows, a single integer representing the radius of the circle. For "annulus" shaped focal windows a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer) in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.}
 
 \item{stand}{standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be rpos, otherwise it will be sros to indicate that the layer has been standardized.}
 
@@ -50,7 +50,7 @@ RelPos(
 a SpatRaster or RasterLayer
 }
 \description{
-Calculates Relative Position of a focal cell which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
+Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 

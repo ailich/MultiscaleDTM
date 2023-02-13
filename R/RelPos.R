@@ -5,7 +5,7 @@
 #' @param resolution resolution of intended raster layer (one number or a vector of length 2). Only necessary if unit= "map"
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
 #' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal.
-#' @return if a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
+#' @return a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
 #' @export
 circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE){
   unit<- tolower(unit)
@@ -51,17 +51,16 @@ circle_window<- function(radius, unit= "cell", resolution, return_dismat = FALSE
 #' Creates annulus focal window
 #'
 #' Creates annulus focal window around central pixel.
-#' @param radius radius of inner annulus c(inner,outer)
+#' @param radius radius of inner annulus c(inner,outer). Inner radius must be less than or equal to outer radius.
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
 #' @param resolution resolution of intended raster layer (one number or a vector of length 2). Only necessary if unit= "map"
 #' @param return_dismat logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal (default FALSE)
-#' @return if a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
+#' @return a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
 #' @export
 annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE){
   unit<- tolower(unit)
-  if(length(radius)==1){radius<- rep(radius, 2)}
-  if(length(radius) > 2){
-    stop("Specified radius exceeds 2 dimensions")
+  if(length(radius) != 2){
+    stop("radius must be a vector of length 2")
   }
   if(radius[1] > radius[2]){
     stop("Error: inner radius must be less than or equal to outer radius")
@@ -96,11 +95,11 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 
 #' Calculates Relative Position of a focal cell
 #'
-#' Calculates Relative Position of a focal cell which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
+#' Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
 #' @param r DTM as a SpatRaster or RasterLayer
-#' @param w For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window . If a "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.
-#' @param shape character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix. If a "custom" shape focal window is used, For more information on custom focal window creation, see details.
-#' @param radius For "circle" or "annulus" shaped focal windows, a single integer representing the radius of the circle or a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer) in "cell" or "map" units. This is ignored if w is not NA/NULL. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".
+#' @param w For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window. If "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.
+#' @param shape character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix.
+#' @param radius For "circle" shaped focal windows, a single integer representing the radius of the circle. For "annulus" shaped focal windows a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer) in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.
 #' @param stand standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be rpos, otherwise it will be sros to indicate that the layer has been standardized.
 #' @param exclude_center logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
 #' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
@@ -235,12 +234,12 @@ names(rpos)<- "rpos"
 # standardize
 if(stand!="none"){
   if(stand=="range"){
-    localmax<- terra::focal(x = r, w= w, fun=max, na.rm = na.rm, wopt=wopt)
-    localmin<- terra::focal(x = r, w= w, fun=min, na.rm = na.rm, wopt=wopt)
+    localmax<- terra::focal(x = r, w= w_mat, fun=max, na.rm = na.rm, wopt=wopt)
+    localmin<- terra::focal(x = r, w= w_mat, fun=min, na.rm = na.rm, wopt=wopt)
     rpos<- (rpos)/(localmax-localmin)
     names(rpos)<- "srpos"
     } else if(stand=="sd"){
-      localsd<- terra::focal(x = r, w= w, fun="sd", na.rm = na.rm, wopt=wopt)
+      localsd<- terra::focal(x = r, w= w_mat, fun="sd", na.rm = na.rm, wopt=wopt)
       rpos<- rpos/(localsd)
       names(rpos)<- "srpos"
     }

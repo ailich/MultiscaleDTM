@@ -16,7 +16,7 @@ circle_window(radius, unit = "cell", resolution, return_dismat = FALSE)
 \item{return_dismat}{logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal.}
 }
 \value{
-if a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
+a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
 }
 \description{
 Creates circular focal window around central pixel.
