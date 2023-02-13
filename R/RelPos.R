@@ -97,19 +97,19 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' Calculates Relative Position of a focal cell
 #'
 #' Calculates Relative Position of a focal cell which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
-#' @param r DTM as a SpatRaster or RasterLayer
-#' @param w For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window . If a "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.
-#' @param shape character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix. If a "custom" shape focal window is used, For more information on custom focal window creation, see details.
-#' @param radius For "circle" or "annulus" shaped focal windows, a single integer representing the radius of the circle or a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer) in "cell" or "map" units. This is ignored if w is not NA/NULL. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".
-#' @param stand standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be rpos, otherwise it will be sros to indicate that the layer has been standardized.
-#' @param exclude_center logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
-#' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
-#' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
-#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
-#' @param filename character Output filename.
-#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
-#' @param wopt list with named options for writing files as in writeRaster
-#' @return a SpatRaster or RasterLayer
+#' @param r DTM as a SpatRaster or RasterLayer.
+#' @param w For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window. If a "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.
+#' @param shape Character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix. For more information on custom focal window creation, see details.
+#' @param radius For "circle" shaped focal windows, a single integer representing the radius.  For "annulus" focal windows, a vector of length 2 specifying c(inner,outer) radii in "cell" or "map" units. This is ignored if w is not NA/NULL. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".
+#' @param stand Standardization method. Either "none" (the default), "range", or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be named "rpos", otherwise it will be named "srpos" to indicate that the layer has been standardized.
+#' @param exclude_center Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
+#' @param unit Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
+#' @param na.rm A logical vector indicating whether or not to remove NA values before calculations.
+#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
+#' @param filename Character. Output filename.
+#' @param overwrite Logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt List with named options for writing files as in writeRaster.
+#' @return A SpatRaster or RasterLayer
 #' @examples
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + 
 #' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
@@ -122,8 +122,11 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @importFrom dplyr case_when
 #' @references 
 #' Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027
+#'
 #' Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111. https://doi.org/10.1080/01490410600738021
+#'
 #' Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.
+#'
 #' Wilson, J.P., Gallant, J.C. (Eds.), 2000. Terrain Analysis: Principles and Applications. John Wiley & Sons, Inc.
 #' @export
 #' 
