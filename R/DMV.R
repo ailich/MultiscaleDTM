@@ -1,23 +1,23 @@
 #' Calculates Difference from Mean Value (DMV)
 #'
-#' Calculates Difference from Mean Value (DMV) which is a measure of relative position. DMV calculates the difference between the focal cell and the mean of all cells in a rectangular or circular neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). DMV can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of elevation values in the focal window. 
-#' @param r DTM as a SpatRaster or RasterLayer
-#' @param w For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. w can also be a focal weights matrix. Circular windows this can be created using MultiscaleDTM::circle_window or w can be set to NULL and radius can be used instead.
-#' @param shape character representing the shape of the focal window. Either "rectangle" (default), or "circle".
-#' @param radius A single integer representing the radius of the circle or a vector in "cell" or "map" units. This is ignored if w is not NULL.
-#' @param stand standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by the standard deviation or range of values in the focal window. If stand is 'none' the layer name will be dmv, otherwise it will be sdmv to indicate that the layer has been standardized.
-#' @param unit unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
-#' @param na.rm A logical vector indicating whether or not to remove NA values before calculations
-#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE). If unit="map" then window size will have "MU" after the number indicating that the number represents the window size in map units if a circular window is used.
-#' @param filename character Output filename.
-#' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
-#' @param wopt list with named options for writing files as in writeRaster
-#' @return a SpatRaster or RasterLayer
+#' Calculates Difference from Mean Value (DMV). DMV is a measure of relative position that calculates the difference between the value of the focal cell and the mean of all cells in a rectangular or circular neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). DMV can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of elevation values in the focal window. 
+#' @param r DTM as a SpatRaster or RasterLayer.
+#' @param w For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window.
+#' @param shape Character representing the shape of the focal window. Either "rectangle" (default) or "circle".
+#' @param radius For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".
+#' @param stand Standardization method. Either "none" (the default), "range" or "sd" indicating whether the TPI should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "dmv", otherwise it will be "sdmv" to indicate that the layer has been standardized.
+#' @param unit Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
+#' @param na.rm Logical indicating whether or not to remove NA values before calculations.
+#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
+#' @param filename character output filename.
+#' @param overwrite Logical. If TRUE, filename is overwritten (default is FALSE).
+#' @param wopt List with named options for writing files as in writeRaster.
+#' @return a SpatRaster or RasterLayer.
 #' @examples
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + 
 #' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
 #' crs = "EPSG:27200")
-#' dmv<- DMV(r, w=c(5,5), shape= "rectangle", na.rm = TRUE, stand="range")
+#' dmv<- DMV(r, w=c(5,5), shape= "rectangle", stand="range", na.rm = TRUE)
 #' plot(dmv)
 #' @import terra
 #' @importFrom raster raster
@@ -33,11 +33,30 @@ DMV<- function(r, w = ifelse(tolower(shape)=="rectangle", c(3,3), NA_real_), sha
                                        tolower(shape)=="circle" & tolower(unit)=="map" ~ max(terra::res(r)),
                                        TRUE ~ NA_real_), 
                unit="cell", stand="none", na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
-  ## shape check
+  og_class<- class(r)[1]
+  if(og_class=="RasterLayer"){
+    r<- terra::rast(r) #Convert to SpatRaster
+  }
+  #Input checks
+  if(!(og_class %in% c("RasterLayer", "SpatRaster"))){
+    stop("Error: Input must be a 'SpatRaster' or 'RasterLayer'")
+  }
   if (!(shape %in% c("rectangle", "circle"))){
     stop("Error: shape must be 'rectangle' or 'circle'")
   }
-  dmv<- RelPos(r, w=w, shape= shape, radius=radius, stand=stand, exclude_center= FALSE, 
+  dmv<- MultiscaleDTM::RelPos(r, w=w, shape= shape, radius=radius, stand=stand, exclude_center= FALSE, 
                unit=unit, na.rm=na.rm, include_scale =include_scale, filename=filename, overwrite=overwrite, wopt=wopt)
+  names(dmv)<- gsub(pattern = "rpos", replacement = "dmv", names(dmv))
+  
+  #Return
+  if(og_class =="RasterLayer"){
+    dmv<- raster::raster(dmv)
+    if(!is.null(filename)){
+      return(raster::writeRaster(dmv, filename=filename, overwrite=overwrite))
+    }
+  }
+  if(!is.null(filename)){
+    return(terra::writeRaster(dmv, filename=filename, overwrite=overwrite, wopt=wopt))
+  }
   return(dmv)
 }

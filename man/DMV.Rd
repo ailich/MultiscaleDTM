@@ -21,39 +21,39 @@ DMV(
 )
 }
 \arguments{
-\item{r}{DTM as a SpatRaster or RasterLayer}
+\item{r}{DTM as a SpatRaster or RasterLayer.}
 
-\item{w}{For a "rectangle" focal window, a vector of length 2 specifying the dimensions where the first number is the number of rows and the second number is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. w can also be a focal weights matrix. Circular windows this can be created using MultiscaleDTM::circle_window or w can be set to NULL and radius can be used instead.}
+\item{w}{For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window.}
 
-\item{shape}{character representing the shape of the focal window. Either "rectangle" (default), or "circle".}
+\item{shape}{Character representing the shape of the focal window. Either "rectangle" (default) or "circle".}
 
-\item{radius}{A single integer representing the radius of the circle or a vector in "cell" or "map" units. This is ignored if w is not NULL.}
+\item{radius}{For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".}
 
-\item{unit}{unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
+\item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
 
-\item{stand}{standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by the standard deviation or range of values in the focal window. If stand is 'none' the layer name will be dmv, otherwise it will be sdmv to indicate that the layer has been standardized.}
+\item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the TPI should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "dmv", otherwise it will be "sdmv" to indicate that the layer has been standardized.}
 
-\item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
-\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE). If unit="map" then window size will have "MU" after the number indicating that the number represents the window size in map units if a circular window is used.}
+\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
 
-\item{filename}{character Output filename.}
+\item{filename}{character output filename.}
 
-\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+\item{overwrite}{Logical. If TRUE, filename is overwritten (default is FALSE).}
 
-\item{wopt}{list with named options for writing files as in writeRaster}
+\item{wopt}{List with named options for writing files as in writeRaster.}
 }
 \value{
-a SpatRaster or RasterLayer
+a SpatRaster or RasterLayer.
 }
 \description{
-Calculates Difference from Mean Value (DMV) which is a measure of relative position. DMV calculates the difference between the focal cell and the mean of all cells in a rectangular or circular neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). DMV can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of elevation values in the focal window.
+Calculates Difference from Mean Value (DMV). DMV is a measure of relative position that calculates the difference between the value of the focal cell and the mean of all cells in a rectangular or circular neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). DMV can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of elevation values in the focal window.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 
 ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
 crs = "EPSG:27200")
-dmv<- DMV(r, w=c(5,5), shape= "rectangle", na.rm = TRUE, stand="range")
+dmv<- DMV(r, w=c(5,5), shape= "rectangle", stand="range", na.rm = TRUE)
 plot(dmv)
 }
 \references{

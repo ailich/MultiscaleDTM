@@ -6,7 +6,13 @@
 \usage{
 TPI(
   r,
-  w = c(3, 3),
+  w = ifelse(tolower(shape) == "rectangle", c(3, 3), NA_real_),
+  shape = "rectangle",
+  radius = dplyr::case_when(is.matrix(w) ~ NA_real_, tolower(shape) == "circle" &
+    tolower(unit) == "cell" ~ 1, tolower(shape) == "circle" & tolower(unit) == "map" ~
+    max(terra::res(r)), TRUE ~ NA_real_),
+  stand = "none",
+  unit = "cell",
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -15,31 +21,39 @@ TPI(
 )
 }
 \arguments{
-\item{r}{DTM as a SpatRaster or RasterLayer}
+\item{r}{DTM as a SpatRaster or RasterLayer.}
 
-\item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
+\item{w}{For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window.}
 
-\item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
+\item{shape}{Character representing the shape of the focal window. Either "rectangle" (default) or "circle".}
 
-\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+\item{radius}{For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".}
 
-\item{filename}{character Output filename.}
+\item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the TPI should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "tpi", otherwise it will be "stpi" to indicate that the layer has been standardized.}
 
-\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+\item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
 
-\item{wopt}{list with named options for writing files as in writeRaster}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
+
+\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
+
+\item{filename}{Character output filename.}
+
+\item{overwrite}{Logical. If TRUE, filename is overwritten (default is FALSE).}
+
+\item{wopt}{List with named options for writing files as in writeRaster.}
 }
 \value{
-a SpatRaster or RasterLayer
+SpatRaster or RasterLayer.
 }
 \description{
-Calculates Topographic Position Index (TPI). This is the value of the focal pixel minus the mean of the surrounding pixels (i.e. local mean but excluding the value of the focal pixel).
+Calculates Topographic Position Index (TPI). TPI is a measure of relative position that calculates the the difference between the value of the focal cell and the mean of mean of the surrounding cells (i.e. local mean but excluding the value of the focal cell).Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). TPI can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation  values in the focal window.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 
 ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
 crs = "EPSG:27200")
-tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
+tpi<- TPI(r, w=c(5,5), shape="rectangle", stand="none", na.rm = TRUE)
 plot(tpi)
 }
 \references{

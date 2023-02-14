@@ -103,9 +103,9 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @param stand Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "rpos", otherwise it will be "srpos" to indicate that the layer has been standardized.
 #' @param exclude_center Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
 #' @param unit Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
-#' @param na.rm A logical vector indicating whether or not to remove NA values before calculations.
+#' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
-#' @param filename Character Output filename.
+#' @param filename Character output filename.
 #' @param overwrite Logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt List with named options for writing files as in writeRaster.
 #' @return A SpatRaster or RasterLayer.

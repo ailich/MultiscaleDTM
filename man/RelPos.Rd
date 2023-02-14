@@ -36,11 +36,11 @@ RelPos(
 
 \item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
 
-\item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations.}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
 \item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
 
-\item{filename}{Character Output filename.}
+\item{filename}{Character output filename.}
 
 \item{overwrite}{Logical. If TRUE, filename is overwritten (default is FALSE).}
 

@@ -6,7 +6,8 @@
 \usage{
 BPI(
   r,
-  radius = NULL,
+  radius,
+  stand = "none",
   unit = "cell",
   w = NULL,
   na.rm = FALSE,
@@ -17,35 +18,37 @@ BPI(
 )
 }
 \arguments{
-\item{r}{DTM as a SpatRaster or RasterLayer}
+\item{r}{r DTM as a SpatRaster or RasterLayer.}
 
-\item{radius}{a vector of length 2 specifying the inner and outer radii of the annulus c(inner,outer). This is ignored if w is provided.}
+\item{radius}{Vector of length 2 specifying c(inner, outer) radii of the annulus c(inner,outer) in "cell" or "map" units. Inner radius must be less than or equal to outer radius.}
 
-\item{unit}{unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters). This is ignored if w is provided.}
+\item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "bpi", otherwise it will be "sbpi" to indicate that the layer has been standardized.}
 
-\item{w}{A focal weights matrix specifying which cells to include and exclude in the annulus focal window which can be created using MultiscaleDTM::annulus_window.}
+\item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
+
+\item{w}{A focal weights matrix created MultiscaleDTM::annulus_window or w can be set to NA or NULL and radius can be used instead.}
 
 \item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
 
-\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE). If unit="map" then window size will have "MU" after the number indicating that the number represents the window size in map units.}
+\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the inner and outer radius will be appended to the layer name. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
 
-\item{filename}{character Output filename.}
+\item{filename}{Character output filename.}
 
-\item{overwrite}{logical. If TRUE, filename is overwritten (default is FALSE).}
+\item{overwrite}{Logical. If TRUE, filename is overwritten (default is FALSE).}
 
-\item{wopt}{list with named options for writing files as in writeRaster}
+\item{wopt}{List with named options for writing files as in writeRaster.}
 }
 \value{
-a SpatRaster or RasterLayer
+A SpatRaster or RasterLayer.
 }
 \description{
-Calculates Bathymetric Position Index (BPI). This is the value of the focal pixel minus the mean of the surrounding pixels contained within an annulus shaped window.
+Calculates Bathymetric Position Index (BPI). BPI is a measure of relative position that calculates the difference between the value of the focal cell and the mean of cells contained within an annulus shaped neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). BPI can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 
 ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
 crs = "EPSG:27200")
-bpi<- BPI(r, radius = c(2,4), unit = "cell", na.rm = TRUE)
+bpi<- BPI(r, radius = c(2,4), stand= "none", unit = "cell", na.rm = TRUE)
 plot(bpi)
 }
 \references{
