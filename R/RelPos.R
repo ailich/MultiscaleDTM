@@ -87,7 +87,7 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
   if(unit=="map"){
     attributes(w)<- append(attributes(w), list(scale=paste0(radius[1],"MUx", radius[2], "MU")))
   } else{
-    attributes(w)<- append(attributes(w), list(scale=as.character(radius[1])))
+    attributes(w)<- append(attributes(w), list(scale=paste0(radius[1],"x", radius[2])))
   }
   attributes(w)<- append(attributes(w), list(shape="annulus"))
   return(w)

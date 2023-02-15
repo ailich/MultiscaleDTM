@@ -28,7 +28,7 @@ RelPos(
 
 \item{shape}{Character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix.}
 
-\item{radius}{For "circle" shaped focal windows, a single integer representing the radius. For "annulus" shaped focal windows, a vector of length 2 specifying c(inner, outer) radii of the annulus c(inner,outer) in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.}
+\item{radius}{For "circle" shaped focal windows, a single integer representing the radius. For "annulus" shaped focal windows, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.}
 
 \item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "rpos", otherwise it will be "srpos" to indicate that the layer has been standardized.}
 
