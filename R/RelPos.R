@@ -99,12 +99,12 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @param r DTM as a SpatRaster or RasterLayer.
 #' @param w For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window. If "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.
 #' @param shape Character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix.
-#' @param radius For "circle" shaped focal windows, a single integer representing the radius. For "annulus" shaped focal windows, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.
+#' @param radius For "circle" shaped focal windows, a single integer representing the radius. For "annulus" shaped focal windows, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if unit= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.
 #' @param stand Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "rpos", otherwise it will be "srpos" to indicate that the layer has been standardized.
 #' @param exclude_center Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
 #' @param unit Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
-#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
+#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
 #' @param filename Character output filename.
 #' @param overwrite Logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt List with named options for writing files as in writeRaster.
@@ -259,7 +259,21 @@ if(is.character(include_scale)){
 if(is.null(spatial_scale) & shape=="custom"){
   spatial_scale<- paste0(nrow(w_mat), "x", ncol(w_mat))
 }
-if(isTRUE(include_scale) | is.character(include_scale)){names(rpos)<- paste0(names(rpos), "_", spatial_scale)} #Add scale to layer names
+if(is.numeric(include_scale)){ 
+  matches<- unlist(regmatches(spatial_scale, gregexpr(pattern = "\\d+\\.?\\d*e?-?\\d*", text = spatial_scale)))
+  replacement<- as.character(signif(as.numeric(matches), include_scale))
+  if(unit=="map"){
+    replacement<- paste0(replacement,"MU")
+  }
+  if(length(replacement)==1){
+    spatial_scale<- replacement
+    } else if(length(replacement)==2){
+      spatial_scale<- paste0(replacement[1], "x", replacement[2])
+      } else{
+        stop("Error: Something went wrong in extracting spatial scale")
+      }
+}
+if(isTRUE(include_scale) | is.character(include_scale) | is.numeric(include_scale)){names(rpos)<- paste0(names(rpos), "_", spatial_scale)} #Add scale to layer names
 
 #Return
 if(og_class =="RasterLayer"){

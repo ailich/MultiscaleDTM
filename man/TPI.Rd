@@ -21,7 +21,7 @@ TPI(
 )
 }
 \arguments{
-\item{r}{DTM as a SpatRaster or RasterLayer.}
+\item{r}{DTM as a SpatRaster or RasterLayer. TPI calls the function RelPos internally which serves as a general purpose and more flexible function for calculating relative position.}
 
 \item{w}{For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window.}
 

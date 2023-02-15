@@ -47,7 +47,7 @@ DMV(
 a SpatRaster or RasterLayer.
 }
 \description{
-Calculates Difference from Mean Value (DMV). DMV is a measure of relative position that calculates the difference between the value of the focal cell and the mean of all cells in a rectangular or circular neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). DMV can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of elevation values in the focal window.
+Calculates Difference from Mean Value (DMV). DMV is a measure of relative position that calculates the difference between the value of the focal cell and the mean of all cells in a rectangular or circular neighborhood. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). DMV can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of elevation values in the focal window. DMV calls the function RelPos internally which serves as a general purpose and more flexible function for calculating relative position.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 

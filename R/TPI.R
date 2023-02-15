@@ -1,7 +1,7 @@
 #' Calculates Topographic Position Index
 #'
 #' Calculates Topographic Position Index (TPI). TPI is a measure of relative position that calculates the the difference between the value of the focal cell and the mean of mean of the surrounding cells (i.e. local mean but excluding the value of the focal cell).Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). TPI can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation  values in the focal window. 
-#' @param r DTM as a SpatRaster or RasterLayer.
+#' @param r DTM as a SpatRaster or RasterLayer. TPI calls the function RelPos internally which serves as a general purpose and more flexible function for calculating relative position.
 #' @param w For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window.
 #' @param shape Character representing the shape of the focal window. Either "rectangle" (default) or "circle".
 #' @param radius For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".
