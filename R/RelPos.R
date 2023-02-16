@@ -102,9 +102,9 @@ annulus_window<- function(radius, unit= "cell", resolution, return_dismat=FALSE)
 #' @param radius For "circle" shaped focal windows, a single integer representing the radius. For "annulus" shaped focal windows, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if unit= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.
 #' @param stand Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "rpos", otherwise it will be "srpos" to indicate that the layer has been standardized.
 #' @param exclude_center Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
-#' @param unit Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
+#' @param unit Unit for radius. If a circle or annulus shaped window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell", otherwise if w is specified, the default is NA.
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
-#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
+#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window and MultiscaleDTM::annulus_window).
 #' @param filename Character output filename.
 #' @param overwrite Logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt List with named options for writing files as in writeRaster.
@@ -134,8 +134,9 @@ RelPos<- function(r, w=ifelse(tolower(shape)=="rectangle", c(3,3), NA_real_), sh
                                           tolower(shape)=="circle" & tolower(unit)=="cell" ~ 1,
                                           tolower(shape)=="circle" & tolower(unit)=="map" ~ max(terra::res(r)),
                                           TRUE ~ NA_real_),
-                  stand="none", exclude_center= FALSE, unit="cell", na.rm=FALSE, 
-                  include_scale =FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+                  stand="none", exclude_center= FALSE, 
+                  unit=ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_), 
+                  na.rm=FALSE, include_scale =FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
 #Input checks
 og_class<- class(r)[1]
 if(og_class=="RasterLayer"){
@@ -153,7 +154,8 @@ resolution<- terra::res(r)
 
 ## Focal Window Checks
 w[is.null(w)]<- NA_real_
-radius[is.null(radius)]<- NA_real_ #Change NULL values to NA for consistency
+radius[is.null(radius)]<- NA_real_ 
+unit[is.null(unit)]<- NA_character_ #Change NULL values to NA for consistency
 
 if (!(shape %in% c("rectangle", "circle", "annulus", "custom"))){
   stop("Error: shape must be 'rectangle', 'circle', 'annulus', or 'custom'")
@@ -196,7 +198,13 @@ if(is.vector(w) & any(!is.na(w))){
 ## unit check
 if(unit=="map" & (!shape %in% c("circle", "annulus"))){
   stop("Error: unit can only be 'map' if shape is circle or annulus")
-  }
+}
+
+if(is.na(radius) & !is.na(unit)){
+  stop("Error: unit be NULL or NA if no radius is specified")
+} else if(!is.na(radius) & is.na(unit)){
+  stop("Error: unit be 'cell' or 'map' if radius is specified")
+}
 
 ## stand checks
 if (length(stand)!= 1){
@@ -223,6 +231,14 @@ if(is.vector(w)){
       stop("Error: Focal weights matrix, w, must only include NA's and 1's")
     }
   }
+
+if((shape %in% c("circle", "annulus")) & is.na(unit)){
+  if(grepl(pattern = "MU", attributes(w_mat)$scale)){
+    unit<- "map" 
+    } else{
+      unit<- "cell"
+    }
+}
 
 ## Exclude center cell
 if(exclude_center){

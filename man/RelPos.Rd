@@ -13,7 +13,7 @@ RelPos(
     max(terra::res(r)), TRUE ~ NA_real_),
   stand = "none",
   exclude_center = FALSE,
-  unit = "cell",
+  unit = ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_),
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -34,11 +34,11 @@ RelPos(
 
 \item{exclude_center}{Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1.}
 
-\item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
+\item{unit}{Unit for radius. If a circle or annulus shaped window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell", otherwise if w is specified, the default is NA.}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
-\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
+\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window and MultiscaleDTM::annulus_window).}
 
 \item{filename}{Character output filename.}
 

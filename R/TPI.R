@@ -6,7 +6,7 @@
 #' @param shape Character representing the shape of the focal window. Either "rectangle" (default) or "circle".
 #' @param radius For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".
 #' @param stand Standardization method. Either "none" (the default), "range" or "sd" indicating whether the TPI should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "tpi", otherwise it will be "stpi" to indicate that the layer has been standardized.
-#' @param unit Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).
+#' @param unit Unit for radius. If a circle shaped window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell" otherwise, if w is specified, the default is NA.
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.
 #' @param filename Character output filename.
@@ -32,7 +32,8 @@ TPI<- function(r, w=ifelse(tolower(shape)=="rectangle", c(3,3), NA_real_), shape
                                                     tolower(shape)=="circle" & tolower(unit)=="cell" ~ 1,
                                                     tolower(shape)=="circle" & tolower(unit)=="map" ~ max(terra::res(r)),
                                                     TRUE ~ NA_real_),
-               stand="none", unit="cell", na.rm=FALSE, include_scale =FALSE, 
+               stand="none", unit=ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_), 
+               na.rm=FALSE, include_scale =FALSE, 
                filename=NULL, overwrite=FALSE, wopt=list()){
   
   og_class<- class(r)[1]

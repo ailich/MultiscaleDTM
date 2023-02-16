@@ -8,7 +8,7 @@ BPI(
   r,
   radius,
   stand = "none",
-  unit = "cell",
+  unit = ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_),
   w = NULL,
   na.rm = FALSE,
   include_scale = FALSE,
@@ -24,7 +24,7 @@ BPI(
 
 \item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "bpi", otherwise it will be "sbpi" to indicate that the layer has been standardized.}
 
-\item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
+\item{unit}{Unit for radius. If the annulus window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell", otherwise if w is specified, the default is NA.}
 
 \item{w}{A focal weights matrix created MultiscaleDTM::annulus_window or w can be set to NA or NULL and radius can be used instead.}
 

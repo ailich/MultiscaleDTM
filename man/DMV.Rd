@@ -11,8 +11,8 @@ DMV(
   radius = dplyr::case_when(is.matrix(w) ~ NA_real_, tolower(shape) == "circle" &
     tolower(unit) == "cell" ~ 1, tolower(shape) == "circle" & tolower(unit) == "map" ~
     max(terra::res(r)), TRUE ~ NA_real_),
-  unit = "cell",
   stand = "none",
+  unit = ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_),
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -29,9 +29,9 @@ DMV(
 
 \item{radius}{For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".}
 
-\item{unit}{Unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
-
 \item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the TPI should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "dmv", otherwise it will be "sdmv" to indicate that the layer has been standardized.}
+
+\item{unit}{Unit for radius. If a circle shaped window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell" otherwise, if w is specified, the default is NA.}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
