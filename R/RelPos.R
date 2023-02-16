@@ -200,9 +200,9 @@ if(unit=="map" & (!shape %in% c("circle", "annulus"))){
   stop("Error: unit can only be 'map' if shape is circle or annulus")
 }
 
-if(is.na(radius) & !is.na(unit)){
+if(any(is.na(radius)) & !is.na(unit)){
   stop("Error: unit be NULL or NA if no radius is specified")
-} else if(!is.na(radius) & is.na(unit)){
+} else if(!any(is.na(radius)) & is.na(unit)){
   stop("Error: unit be 'cell' or 'map' if radius is specified")
 }
 
