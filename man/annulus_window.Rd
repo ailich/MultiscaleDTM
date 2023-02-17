@@ -4,7 +4,7 @@
 \alias{annulus_window}
 \title{Creates annulus focal window}
 \usage{
-annulus_window(radius, unit = "cell", resolution, return_dismat = FALSE)
+annulus_window(radius, unit, resolution)
 }
 \arguments{
 \item{radius}{radius of inner annulus c(inner,outer). Inner radius must be less than or equal to outer radius.}
@@ -12,11 +12,9 @@ annulus_window(radius, unit = "cell", resolution, return_dismat = FALSE)
 \item{unit}{unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).}
 
 \item{resolution}{resolution of intended raster layer (one number or a vector of length 2). Only necessary if unit= "map"}
-
-\item{return_dismat}{logical, if TRUE return a matrix of distances from focal cell instead of a matrix to pass to terra::focal (default FALSE)}
 }
 \value{
-a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.
+a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations. It also contains attributes attributes 'unit', 'scale', and 'shape'.
 }
 \description{
 Creates annulus focal window around central pixel.

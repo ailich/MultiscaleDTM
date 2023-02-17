@@ -6,13 +6,12 @@
 \usage{
 DMV(
   r,
-  w = ifelse(tolower(shape) == "rectangle", c(3, 3), NA_real_),
+  w = dplyr::case_when(tolower(shape) == "rectangle" ~ 3, tolower(shape) == "circle" &
+    isTRUE(tolower(unit) == "cell") ~ 1, tolower(shape) == "circle" &
+    isTRUE(tolower(unit) == "map") ~ max(terra::res(r))),
   shape = "rectangle",
-  radius = dplyr::case_when(is.matrix(w) ~ NA_real_, tolower(shape) == "circle" &
-    tolower(unit) == "cell" ~ 1, tolower(shape) == "circle" & tolower(unit) == "map" ~
-    max(terra::res(r)), TRUE ~ NA_real_),
   stand = "none",
-  unit = ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_),
+  unit = "cell",
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -23,21 +22,17 @@ DMV(
 \arguments{
 \item{r}{DTM as a SpatRaster or RasterLayer.}
 
-\item{w}{For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window.}
+\item{w}{For a "rectangle" focal window, a vector of length 2 containing odd numbers specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). For a "circle" shaped focal window, a single integer representing the radius in "cell" or "map" units or a focal weights matrix created by MultiscaleDTM::circle_window.}
 
 \item{shape}{Character representing the shape of the focal window. Either "rectangle" (default) or "circle".}
 
-\item{radius}{For "circle" shaped focal windows, a single integer representing the radius in "cell" or "map" units. For a circle, the default radius is 1 cell if units= "cell" or the maximum of the x and y cell resolution if unit="map".}
-
 \item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the TPI should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "dmv", otherwise it will be "sdmv" to indicate that the layer has been standardized.}
 
-\item{unit}{Unit for radius. If a circle shaped window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell" otherwise, if w is specified, the default is NA.}
+\item{unit}{Unit for w if shape is 'circle' and it is a vector (default is unit="cell"). For circular windows specified with a matrix, unit is ignored and extracted directly from w. For rectangular and custom focal windows set unit='cell' or set unit to NA/NULL.}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
-\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
-
-\item{filename}{character output filename.}
+\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window).}
 
 \item{overwrite}{Logical. If TRUE, filename is overwritten (default is FALSE).}
 

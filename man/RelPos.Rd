@@ -6,14 +6,13 @@
 \usage{
 RelPos(
   r,
-  w = ifelse(tolower(shape) == "rectangle", c(3, 3), NA_real_),
+  w = dplyr::case_when(tolower(shape) == "rectangle" ~ 3, tolower(shape) == "circle" &
+    isTRUE(tolower(unit) == "cell") ~ 1, tolower(shape) == "circle" &
+    isTRUE(tolower(unit) == "map") ~ max(terra::res(r))),
   shape = "rectangle",
-  radius = dplyr::case_when(is.matrix(w) ~ NA_real_, tolower(shape) == "circle" &
-    tolower(unit) == "cell" ~ 1, tolower(shape) == "circle" & tolower(unit) == "map" ~
-    max(terra::res(r)), TRUE ~ NA_real_),
   stand = "none",
   exclude_center = FALSE,
-  unit = ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_),
+  unit = "cell",
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -24,17 +23,15 @@ RelPos(
 \arguments{
 \item{r}{DTM as a SpatRaster or RasterLayer.}
 
-\item{w}{For a "rectangle" focal window, a vector of length 2 specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). Window size must be an odd number, and the default is 3x3. For circle and annulus shaped windows, w can be set to NA or NULL and radius can be used instead, or w can be specified using focal weights matrix created by MultiscaleDTM::circle_window or MultiscaleDTM::annulus_window. If "custom" focal window shape is used, w should be a focal weights matrix with 1's for included values and NAs for excluded values.}
+\item{w}{For a "rectangle" focal window, a vector of length 2 containing odd numbers specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). For a "circle" shaped focal window, a single integer representing the radius in "cell" or "map" units or a focal weights matrix created by MultiscaleDTM::circle_window. The default radius is 1 cell if unit= "cell" or the maximum of the x and y cell resolution if unit="map". For an "annulus" shaped focal window, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units or a focal weights matrix created by MultiscaleDTM::annulus_window. Inner radius must be less than or equal to outer radius. There is no default size for an annulus window. If a "custom" focal window shape is used, w must be a focal weights matrix with 1's for included values and NAs for excluded values.}
 
 \item{shape}{Character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix.}
-
-\item{radius}{For "circle" shaped focal windows, a single integer representing the radius. For "annulus" shaped focal windows, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units. Inner radius must be less than or equal to outer radius. For a circle, the default radius is 1 cell if unit= "cell" or the maximum of the x and y cell resolution if unit="map". There is no default for an annulus window.}
 
 \item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "rpos", otherwise it will be "srpos" to indicate that the layer has been standardized.}
 
 \item{exclude_center}{Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1.}
 
-\item{unit}{Unit for radius. If a circle or annulus shaped window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell", otherwise if w is specified, the default is NA.}
+\item{unit}{Unit for w if shape is 'circle' or 'annulus' and it is a vector (default is unit="cell"). For circular and annulus shaped windows specified with a matrix, unit is ignored and extracted directly from w. For rectangular and custom focal windows set unit='cell' or set unit to NA/NULL.}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 

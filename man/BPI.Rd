@@ -6,10 +6,9 @@
 \usage{
 BPI(
   r,
-  radius,
+  w,
   stand = "none",
-  unit = ifelse((!is.matrix(w)) & all(is.null(w) | is.na(w)), "cell", NA_character_),
-  w = NULL,
+  unit = "cell",
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -20,17 +19,15 @@ BPI(
 \arguments{
 \item{r}{r DTM as a SpatRaster or RasterLayer.}
 
-\item{radius}{Vector of length 2 specifying c(inner, outer) radii of the annulus c(inner,outer) in "cell" or "map" units. Inner radius must be less than or equal to outer radius.}
+\item{w}{Vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units or a focal weights matrix created by MultiscaleDTM::annulus_window. Inner radius must be less than or equal to outer radius. There is no default size.}
 
 \item{stand}{Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "bpi", otherwise it will be "sbpi" to indicate that the layer has been standardized.}
 
-\item{unit}{Unit for radius. If the annulus window is specified with the radius parameter either "cell" (number of cells) or "map" for map units (e.g. meters). Otherwise it should be NA or NULL. If radius is specified the default is "cell", otherwise if w is specified, the default is NA.}
+\item{unit}{Unit for w if it is a vector (default is unit="cell"). If w is a matrix, unit is ignored and extracted directly from w.}
 
-\item{w}{A focal weights matrix created MultiscaleDTM::annulus_window or w can be set to NA or NULL and radius can be used instead.}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
-\item{na.rm}{A logical vector indicating whether or not to remove NA values before calculations}
-
-\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE). If include_scale = TRUE the inner and outer radius will be appended to the layer name. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units.}
+\item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the appended scale will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window and MultiscaleDTM::annulus_window).}
 
 \item{filename}{Character output filename.}
 
