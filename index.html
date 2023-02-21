@@ -92,9 +92,7 @@
 <li><p><code>SlpAsp</code> calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the “rook” case and an additional four corner cells for the “queen” case. <img src="reference/figures/SlpAsp.png" width="70%"></p></li>
 <li><p><code>Qfit</code> calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).</p></li>
 </ul>
-<div class="figure">
-<embed src="https://latex.codecogs.com/png.latex?Z%20%3D%20aX%5E2%20%2B%20bY%5E2%20%2BcXY%2B%20dX%20%2BeY%20%2Bf" title="Z = aX^2 + bY^2 +cXY+ dX +eY +f"></embed><p class="caption">Z = aX^2 + bY^2 +cXY+ dX +eY +f</p>
-</div>
+<p><span class="math display"><em>Z</em> = <em>a</em><em>X</em><sup>2</sup> + <em>b</em><em>Y</em><sup>2</sup> + <em>c</em><em>X</em><em>Y</em> + <em>d</em><em>X</em> + <em>e</em><em>Y</em> + <em>f</em></span></p>
 <p><img src="reference/figures/Qfit_annotated.png" width="70%"></p>
 <p>Figure adapted from Walbridge et al., (2018)</p>
 </div>
@@ -109,18 +107,12 @@
 <p>Figure adapted from Sappington et al. (2007)</p>
 <p><img src="reference/figures/VRM_focal.png" width="70%"></p>
 <p>Figure adapted from Habib (2021)</p>
-<div class="figure">
-<embed src="https://latex.codecogs.com/png.latex?%5Ctext%7BVRM%7D%20%3D%201-%20%5Cfrac%7B%5Csqrt%7B%5Cbigg%28%5Csum%20x%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20y%5Cbigg%29%5E2%2B%5Cbigg%28%5Csum%20z%5Cbigg%29%5E2%7D%7D%7BN%7D" title="\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{N}"></embed><p class="caption"> = 1- </p>
-</div>
-<div class="figure">
-<embed src="https://latex.codecogs.com/png.latex?x%20%3D%20sin%28%5Ctext%7Bslope%7D%29%2Asin%28%5Ctext%7Baspect%7D%29" title="x = sin(\text{slope})*sin(\text{aspect})"></embed><p class="caption">x = sin()*sin()</p>
-</div>
-<div class="figure">
-<embed src="https://latex.codecogs.com/png.latex?y%3Dsin%28%5Ctext%7Bslope%7D%29%2Acos%28%5Ctext%7Baspect%7D%29" title="y=sin(\text{slope})*cos(\text{aspect})"></embed><p class="caption">y=sin()*cos()</p>
-</div>
-<div class="figure">
-<embed src="https://latex.codecogs.com/png.latex?z%3Dcos%28%5Ctext%7Bslope%7D%29" title="z=cos(\text{slope})"></embed><p class="caption">z=cos()</p>
-</div>
+<p><span class="math display">$$
+\text{VRM} = 1- \frac{\sqrt{\bigg(\sum x\bigg)^2+\bigg(\sum y\bigg)^2+\bigg(\sum z\bigg)^2}}{N}
+$$</span></p>
+<p><span class="math display"><em>x</em> = <em>s</em><em>i</em><em>n</em>(slope) * <em>s</em><em>i</em><em>n</em>(aspect)</span></p>
+<p><span class="math display"><em>y</em> = <em>s</em><em>i</em><em>n</em>(slope) * <em>c</em><em>o</em><em>s</em>(aspect)</span></p>
+<p><span class="math display"><em>z</em> = <em>c</em><em>o</em><em>s</em>(slope)</span></p>
 <ul>
 <li>
 <p><code>SAPA</code> - Calculates the Surface Area to Planar Area (Jenness, 2004). Rougher surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical “chain-and-tape” method, which calculates roughness as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.</p>
