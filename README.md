@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-January 30, 2023
+February 21, 2023
 
 # MultiscaleDTM
 
@@ -149,26 +149,43 @@ Figure adapted from Cavalli et al. (2008)
 
 ### Relative Position
 
+Relative position represents whether an area is a local high or low, and
+is calculated as the value of the focal cell minus the value of the mean
+of included values in the focal window. Positive values indicate local
+topographic highs and negative values indicate lows.Relative Position
+can be expressed in units of the input DTM raster or can standardized
+relative to the local topography by dividing by the standard deviation
+or range of included elevation values in the focal window.
+
+- `RelPos` - A flexible and general purpose function to calculate
+  relative position using a rectangular, circular, annulus, or custom
+  shaped focal window. All other relative position functions are calls
+  to `RelPos` with different default parameter values.
+
 - `TPI` - Topographic Position Index (Weiss, 2001) is the difference
   between the value of a focal cell and the mean of the surrounding
-  cells.
+  cells (i.e. the central cell is excluded from focal opertaions) within
+  a rectangular or circular focal window.
 
-- `RDMV` - Relative Difference from Mean Value (Lecours et al., 2017) is
-  the difference between the value of a focal cell and the mean of the
-  cells in the focal window divided by the range or standard deviation
-  of the values in the focal window.
+- `DMV` - Difference from Mean Value (Lecours et al., 2017; Wilson, and
+  Gallant, 2000) is the difference between the value of a focal cell and
+  the mean of all cells (i.e. including the focal cell) in a rectangular
+  or circular focal window.
 
 - `BPI` - Bathymetric Position Index (Lundblad et al., 2006) is the
   difference between the value of a focal cell and the mean of the
-  surrounding cells contained within an annulus shaped window. It is a
-  modification of TPI that uses an annulus shaped focal window and
-  therefore requires an inner and outer radius. For example, an annulus
-  window with an inner radius of 4 cells and an outer radius of 6 cells
-  would be
+  surrounding cells contained within an annulus shaped window. Since an
+  annulus shaped window is used, it requires an inner and outer radius
+  to be specified. Although the name contains “bathymetric,” that is due
+  to the context in which it was proposed, and is equally applicable to
+  terrestrial elevation data.
 
-<img src="man/figures/BPI_Fig.png" width="70%">
+<img src="man/figures/WindowShapes.png" width="100%">
 
-Figure adapted from Lundblad et al., (2006)
+Examples of different focal window shapes. Shown are a 13 x 13 cell
+rectangular window (left), a circular window with a radius of six cells
+(center), and an annulus window with an inner radius of four cells and
+an outer radius of six cells (right).
 
 ## Tutorial
 
@@ -251,30 +268,36 @@ rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 ### Relative Position
 
 ``` r
-tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
+rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", na.rm = TRUE)
 ```
 
 ![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
-rdmv<- RDMV(r, w=c(5,5), na.rm = TRUE, method="range")
+tpi<- TPI(r, w=c(5,5), shape= "rectangle", na.rm = TRUE)
 ```
 
 ![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
-bpi<- BPI(r, radius = c(4,6), unit = "cell", na.rm = TRUE)
+dmv<- DMV(r, w=5, shape= "circle", na.rm = TRUE, stand="range")
 ```
 
 ![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
 
-The annulus window for BPI can be specified in either cell units (number
-of raster cells) or in map units (e.g. meters) which can be useful if
-your x and y resolutions are not equal. Additionally, the function
-`annulus_window` can be used to verify that you are specifying your
-window correctly (NA’s are excluded cells and 1’s are included cells)
-and can be directly supplied to the `w` argument in the `BPI` funtion
-instead of using `radius` and `unit` arguments.
+``` r
+bpi<- BPI(r, w = c(4,6), unit = "cell", stand= "sd", na.rm = TRUE)
+```
+
+![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
+
+Circle and annulus windows for can be specified in either cell units
+(number of raster cells) or in map units (e.g. meters) which can be
+useful if your x and y resolutions are not equal. Additionally, the
+function `circle_window` and `annulus_window` can be used to verify that
+you are specifying your window correctly (NA’s are excluded cells and
+1’s are included cells) and can be directly supplied to the `w` argument
+instead.
 
 ``` r
 annulus_window(radius = c(4,6), unit = "cell")
@@ -294,6 +317,16 @@ annulus_window(radius = c(4,6), unit = "cell")
     ## [11,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA
     ## [12,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA
     ## [13,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA
+    ## attr(,"unit")
+    ## [1] "cell"
+    ## attr(,"scale")
+    ## [1] "4x6"
+    ## attr(,"shape")
+    ## [1] "annulus"
+
+``` r
+bpi2<- BPI(r, w = annulus_window(radius = c(4,6), unit = "cell"), stand= "sd", na.rm = TRUE) # equivalent to BPI code from earlier
+```
 
 # References
 
@@ -369,6 +402,9 @@ Geosciences 8, 94. <https://doi.org/10.3390/geosciences8030094>
 
 Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented
 at the ESRI user conference, San Diego, CA.
+
+Wilson, J.P., Gallant, J.C. (Eds.), 2000. Terrain Analysis: Principles
+and Applications. John Wiley & Sons, Inc.
 
 Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J.,
 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for
