@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="readme">README<a class="anchor" aria-label="anchor" href="#readme"></a>
 </h1></div>
-<p>Alexander Ilich January 30, 2023</p>
+<p>Alexander Ilich February 21, 2023</p>
 </div>
 <div class="section level1">
 <h1 id="multiscaledtm">MultiscaleDTM<a class="anchor" aria-label="anchor" href="#multiscaledtm"></a>
@@ -149,13 +149,15 @@
 <div class="section level3">
 <h3 id="relative-position">Relative Position<a class="anchor" aria-label="anchor" href="#relative-position"></a>
 </h3>
+<p>Relative position represents whether an area is a local high or low, and is calculated as the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local topographic highs and negative values indicate lows.Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.</p>
 <ul>
-<li><p><code>TPI</code> - Topographic Position Index (Weiss, 2001) is the difference between the value of a focal cell and the mean of the surrounding cells.</p></li>
-<li><p><code>RDMV</code> - Relative Difference from Mean Value (Lecours et al., 2017) is the difference between the value of a focal cell and the mean of the cells in the focal window divided by the range or standard deviation of the values in the focal window.</p></li>
-<li><p><code>BPI</code> - Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window. It is a modification of TPI that uses an annulus shaped focal window and therefore requires an inner and outer radius. For example, an annulus window with an inner radius of 4 cells and an outer radius of 6 cells would be</p></li>
+<li><p><code>RelPos</code> - A flexible and general purpose function to calculate relative position using a rectangular, circular, annulus, or custom shaped focal window. All other relative position functions are calls to <code>RelPos</code> with different default parameter values.</p></li>
+<li><p><code>TPI</code> - Topographic Position Index (Weiss, 2001) is the difference between the value of a focal cell and the mean of the surrounding cells (i.e. the central cell is excluded from focal opertaions) within a rectangular or circular focal window.</p></li>
+<li><p><code>DMV</code> - Difference from Mean Value (Lecours et al., 2017; Wilson, and Gallant, 2000) is the difference between the value of a focal cell and the mean of all cells (i.e. including the focal cell) in a rectangular or circular focal window.</p></li>
+<li><p><code>BPI</code> - Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window. Since an annulus shaped window is used, it requires an inner and outer radius to be specified. Although the name contains “bathymetric,” that is due to the context in which it was proposed, and is equally applicable to terrestrial elevation data.</p></li>
 </ul>
-<p><img src="reference/figures/BPI_Fig.png" width="70%"></p>
-<p>Figure adapted from Lundblad et al., (2006)</p>
+<p><img src="reference/figures/WindowShapes.png" width="100%"></p>
+<p>Examples of different focal window shapes. Shown are a 13 x 13 cell rectangular window (left), a circular window with a radius of six cells (center), and an annulus window with an inner radius of four cells and an outer radius of six cells (right).</p>
 </div>
 </div>
 <div class="section level2">
@@ -204,31 +206,42 @@
 <h3 id="relative-position-1">Relative Position<a class="anchor" aria-label="anchor" href="#relative-position-1"></a>
 </h3>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/TPI.html">TPI</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rp</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/RelPos.html">RelPos</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"custom"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-18-1.png"><!-- --></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rdmv</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/RDMV.html">RDMV</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, method<span class="op">=</span><span class="st">"range"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/TPI.html">TPI</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, shape<span class="op">=</span> <span class="st">"rectangle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">bpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/BPI.html">BPI</a></span><span class="op">(</span><span class="va">r</span>, radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dmv</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/DMV.html">DMV</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fl">5</span>, shape<span class="op">=</span> <span class="st">"circle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, stand<span class="op">=</span><span class="st">"range"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-22-1.png"><!-- --></p>
-<p>The annulus window for BPI can be specified in either cell units (number of raster cells) or in map units (e.g. meters) which can be useful if your x and y resolutions are not equal. Additionally, the function <code>annulus_window</code> can be used to verify that you are specifying your window correctly (NA’s are excluded cells and 1’s are included cells) and can be directly supplied to the <code>w</code> argument in the <code>BPI</code> funtion instead of using <code>radius</code> and <code>unit</code> arguments.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/BPI.html">BPI</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span>, stand<span class="op">=</span> <span class="st">"sd"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="reference/figures/README-unnamed-chunk-24-1.png"><!-- --></p>
+<p>Circle and annulus windows for can be specified in either cell units (number of raster cells) or in map units (e.g. meters) which can be useful if your x and y resolutions are not equal. Additionally, the function <code>circle_window</code> and <code>annulus_window</code> can be used to verify that you are specifying your window correctly (NA’s are excluded cells and 1’s are included cells) and can be directly supplied to the <code>w</code> argument instead.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/annulus_window.html">annulus_window</a></span><span class="op">(</span>radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="do">##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [2,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [3,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [4,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  [5,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [6,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7,]    1    1    1   NA   NA   NA   NA   NA   NA    NA     1     1     1</span></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  [8,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  [9,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [10,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [11,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [12,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA</span></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [13,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="do">##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="do">##  [2,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [3,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [4,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  [5,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [6,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  [7,]    1    1    1   NA   NA   NA   NA   NA   NA    NA     1     1     1</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  [8,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="do">##  [9,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [10,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [11,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [12,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [13,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="do">## attr(,"unit")</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "cell"</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="do">## attr(,"scale")</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "4x6"</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="do">## attr(,"shape")</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "annulus"</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bpi2</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/BPI.html">BPI</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="reference/annulus_window.html">annulus_window</a></span><span class="op">(</span>radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span>, stand<span class="op">=</span> <span class="st">"sd"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="co"># equivalent to BPI code from earlier</span></span></code></pre></div>
 </div>
 </div>
 </div>
@@ -252,6 +265,7 @@
 <p>Sappington, J.M., Longshore, K.M., Thompson, D.B., 2007. Quantifying Landscape Ruggedness for Animal Habitat Analysis: A Case Study Using Bighorn Sheep in the Mojave Desert. The Journal of Wildlife Management 71, 1419–1426. <a href="https://doi.org/10.2193/2005-723" class="external-link uri">https://doi.org/10.2193/2005-723</a></p>
 <p>Walbridge, S., Slocum, N., Pobuda, M., Wright, D.J., 2018. Unified geomorphological analysis workflows with benthic terrain modeler. Geosciences 8, 94. <a href="https://doi.org/10.3390/geosciences8030094" class="external-link uri">https://doi.org/10.3390/geosciences8030094</a></p>
 <p>Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented at the ESRI user conference, San Diego, CA.</p>
+<p>Wilson, J.P., Gallant, J.C. (Eds.), 2000. Terrain Analysis: Principles and Applications. John Wiley &amp; Sons, Inc.</p>
 <p>Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. <a href="https://doi.org/10.1080/01490410701295962" class="external-link uri">https://doi.org/10.1080/01490410701295962</a></p>
 <p>Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.</p>
 </div>
@@ -259,6 +273,7 @@
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=MultiscaleDTM" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/ailich/MultiscaleDTM/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/ailich/MultiscaleDTM/issues" class="external-link">Report a bug</a></li>
 </ul>

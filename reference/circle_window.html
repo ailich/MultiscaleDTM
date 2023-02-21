@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Creates circular focal window</h1>
-      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/HEAD/R/BPI.R" class="external-link"><code>R/BPI.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/HEAD/R/RelPos.R" class="external-link"><code>R/RelPos.R</code></a></small>
       <div class="d-none name"><code>circle_window.Rd</code></div>
     </div>
 
@@ -48,7 +48,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">circle_window</span><span class="op">(</span><span class="va">radius</span>, unit <span class="op">=</span> <span class="st">"cell"</span>, <span class="va">resolution</span>, return_dismat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">circle_window</span><span class="op">(</span><span class="va">radius</span>, <span class="va">unit</span>, <span class="va">resolution</span>, return_dismat <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -58,7 +58,7 @@
 
 
 <dt>unit</dt>
-<dd><p>unit for radius. Either "cell" (number of cells, the default) or "map" for map units (e.g. meters).</p></dd>
+<dd><p>unit for radius. Either "cell" (number of cells) or "map" for map units (e.g. meters).</p></dd>
 
 
 <dt>resolution</dt>
@@ -73,7 +73,7 @@
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>if a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell.</p>
+<p>a matrix of 1's and NA's showing which cells to include and exclude respectively in focal calculations, or if return_dismat=TRUE, a matrix indicating the distance from the focal cell. It also contains attributes attributes 'unit', 'scale', and 'shape' if return_dismat=FALSE, and if return_dismat=TRUE the attribute 'unit'.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
