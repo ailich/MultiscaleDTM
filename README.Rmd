@@ -4,7 +4,7 @@ author: "Alexander Ilich"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   github_document:
-    pandoc_args: --mathml
+    pandoc_args: --webtex
 ---
 # MultiscaleDTM
 <!-- badges: start -->
@@ -73,6 +73,7 @@ $$
 $$
 x = sin(\text{slope})*sin(\text{aspect})
 $$
+
 $$
 y=sin(\text{slope})*cos(\text{aspect})
 $$
@@ -80,6 +81,7 @@ $$
 $$
 z=cos(\text{slope})
 $$
+
 -   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Rougher surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical "chain-and-tape" method, which calculates roughness as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
