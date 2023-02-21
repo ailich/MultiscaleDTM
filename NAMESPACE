@@ -2,9 +2,10 @@
 
 export(AdjSD)
 export(BPI)
+export(DMV)
 export(Qfit)
-export(RDMV)
 export(RIE)
+export(RelPos)
 export(SAPA)
 export(SlpAsp)
 export(SurfaceArea)
