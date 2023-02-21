@@ -21,6 +21,7 @@
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
+#' @importFrom dplyr case_when
 #' @references 
 #' Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027
 #' Wilson, J.P., Gallant, J.C. (Eds.), 2000. Terrain Analysis: Principles and Applications. John Wiley & Sons, Inc.

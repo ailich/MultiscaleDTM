@@ -20,6 +20,7 @@
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
+#' @importFrom dplyr case_when
 #' @references 
 #' Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111. https://doi.org/10.1080/01490410600738021
 #' @export
