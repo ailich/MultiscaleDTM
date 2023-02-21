@@ -4,7 +4,7 @@ author: "Alexander Ilich"
 date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: 
   github_document:
-    pandoc_args: --webtex
+    pandoc_args: --mathml
 ---
 # MultiscaleDTM
 <!-- badges: start -->
