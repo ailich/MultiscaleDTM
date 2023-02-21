@@ -39,7 +39,7 @@ Calculates Topographic Position Index (TPI). This is the value of the focal pixe
 r<- rast(volcano, extent= ext(2667400, 2667400 + 
 ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
 crs = "EPSG:27200")
-tpi<- TPI(r, w=c(5,5), na.rm = TRUE)
+tpi<- TPI_Old(r, w=c(5,5), na.rm = TRUE)
 plot(tpi)
 }
 \references{

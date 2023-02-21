@@ -8,6 +8,7 @@
 #' @param unit Unit for w if shape is 'circle' and it is a vector (default is unit="cell"). For circular windows specified with a matrix, unit is ignored and extracted directly from w. For rectangular and custom focal windows set unit='cell' or set unit to NA/NULL.
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular windows. For circular windows it will be a single number representing the radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window).
+#' @param filename Character output filename.
 #' @param overwrite Logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt List with named options for writing files as in writeRaster.
 #' @return a SpatRaster or RasterLayer.

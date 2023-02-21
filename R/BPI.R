@@ -15,7 +15,7 @@
 #' r<- rast(volcano, extent= ext(2667400, 2667400 + 
 #' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
 #' crs = "EPSG:27200")
-#' bpi<- BPI(r, radius = c(2,4), stand= "none", unit = "cell", na.rm = TRUE)
+#' bpi<- BPI(r, w = c(2,4), stand= "none", unit = "cell", na.rm = TRUE)
 #' plot(bpi)
 #' @import terra
 #' @importFrom raster raster
