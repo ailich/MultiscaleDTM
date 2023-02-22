@@ -1,6 +1,6 @@
 citHeader("To cite MultiscaleDTM in publications use:")
 
-citEntry(entry = "misc",
+bibentry(bibtype = "misc",
   author = c(person("Alexander R.", "Ilich"), 
   person("Benjamin", "Misiuk"), 
   person("Vincent", "Lecours"), 
