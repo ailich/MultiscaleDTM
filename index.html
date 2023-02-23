@@ -60,7 +60,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="readme">README<a class="anchor" aria-label="anchor" href="#readme"></a>
 </h1></div>
-<p>Alexander Ilich February 21, 2023</p>
+<p>Alexander Ilich February 23, 2023</p>
 </div>
 <div class="section level1">
 <h1 id="multiscaledtm">MultiscaleDTM<a class="anchor" aria-label="anchor" href="#multiscaledtm"></a>
@@ -155,7 +155,7 @@ $$</span></p>
 <div class="section level2">
 <h2 id="tutorial">Tutorial<a class="anchor" aria-label="anchor" href="#tutorial"></a>
 </h2>
-<p>In this tutorial we will calculate various terrain attributes using a 5 x 5 cell rectangular window. Any rectangular odd numbered window size however could be used (see figure directly below). Window sizes are specified with a vector of length 2 of <code>c(n_rows, n_cols)</code>. If a single number is provided it will be used for both the number of rows and columns. The only metric that does not follow this syntax is BPI which uses an annulus shaped focal window which we will calculate using an inner radius of 4 and an outer radius of 6 cells.</p>
+<p>In this tutorial we will calculate most terrain attributes using a 5 x 5 cell rectangular window; however, any rectangular odd numbered window size could be used. Window size is specified using the <code>w</code> parameter. Rectangular window sizes are specified with a vector of length 2 as <code>c(n_rows, n_cols)</code>. If a single number is provided it will be used for both the number of rows and columns. Functions that calculate relative position currently support other focal window shapes. In those examples, we will additionally calculate the measures using a circular focal window with a radius of 2 cells, an annulus window with an inner radius of 4 and an outer radius of 6 cells, and a custom focal window. Circular windows are specified by a single number representing the radius, annulus windows are specified with a vector of length 2 of <code>c(inner_radius, outer_radius)</code>, and custom windows are specified by a matrix with values showing which data to include (1’s) and which data to exclude (NA’s).</p>
 <p><strong>Load packages</strong></p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ailich.github.io/MultiscaleDTM/">MultiscaleDTM</a></span><span class="op">)</span> <span class="co">#Load MultiscaleDTM package</span></span></code></pre></div>
@@ -197,6 +197,7 @@ $$</span></p>
 <div class="section level3">
 <h3 id="relative-position-1">Relative Position<a class="anchor" aria-label="anchor" href="#relative-position-1"></a>
 </h3>
+<p>Note, the “s” at the start of some names indicates the attribute has been standardized based on local topography.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rp</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/RelPos.html">RelPos</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"custom"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-18-1.png"><!-- --></p>
@@ -204,7 +205,7 @@ $$</span></p>
 <code class="sourceCode R"><span><span class="va">tpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/TPI.html">TPI</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, shape<span class="op">=</span> <span class="st">"rectangle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">dmv</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/DMV.html">DMV</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fl">5</span>, shape<span class="op">=</span> <span class="st">"circle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, stand<span class="op">=</span><span class="st">"range"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">dmv</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/DMV.html">DMV</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fl">2</span>, shape<span class="op">=</span> <span class="st">"circle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, stand<span class="op">=</span><span class="st">"range"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-22-1.png"><!-- --></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/BPI.html">BPI</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span>, stand<span class="op">=</span> <span class="st">"sd"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
