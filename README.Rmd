@@ -82,7 +82,7 @@ $$
 z=cos(\text{slope})
 $$
 
--   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Rougher surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical "chain-and-tape" method, which calculates roughness as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a proposed extension to multiple scales is provided by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
+-   `SAPA` - Calculates the Surface Area to Planar Area (Jenness, 2004). Rougher surfaces will have a greater surface area to planar area ratio, and perfectly smooth surfaces will have a value of 1. This is a 3D analog to the classical "chain-and-tape" method, which calculates roughness as the ratio of the contoured distance (chain length) and linear distance (tape measure distance; Risk, 1972). Additionally, planar area can be corrected for slope by dividing the product of the x and y resolution by the cosine of slope (Du Preez 2015). The metric by Jenness (2004) and De Preez (2015) works at the per cell level (1x1 cell). This function generalizes this method to multiple scales by summing the surface areas within the focal window and adjusting the planar area of the focal window using multi-scale slope.
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
@@ -246,7 +246,6 @@ tm_shape(vrm, raster.downsample = FALSE)+
   tm_layout(legend.outside = TRUE, main.title="VRM")
 ```
 
-Note: multi-scale SAPA is experimental. The established metric by De Preez (2015) would use `w=1`.
 ```{r}
 sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 ```

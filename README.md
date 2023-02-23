@@ -120,10 +120,11 @@ $$
   roughness as the ratio of the contoured distance (chain length) and
   linear distance (tape measure distance; Risk, 1972). Additionally,
   planar area can be corrected for slope by dividing the product of the
-  x and y resolution by the cosine of slope (Du Preez 2015). Moreover, a
-  proposed extension to multiple scales is provided by summing the
-  surface areas within the focal window and adjusting the planar area of
-  the focal window using multi-scale slope.
+  x and y resolution by the cosine of slope (Du Preez 2015). The metric
+  by Jenness (2004) and De Preez (2015) works at the per cell level (1x1
+  cell). This function generalizes this method to multiple scales by
+  summing the surface areas within the focal window and adjusting the
+  planar area of the focal window using multi-scale slope.
 
   - `SurfaceArea` - Calculate the surface area of each grid cell
     (Jenness, 2004). This is accomplished by connecting a focal cell to
@@ -266,9 +267,6 @@ vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ```
 
 ![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
-
-Note: multi-scale SAPA is experimental. The established metric by De
-Preez (2015) would use `w=1`.
 
 ``` r
 sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
