@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-February 21, 2023
+February 23, 2023
 
 # MultiscaleDTM
 
@@ -205,14 +205,21 @@ an outer radius of six cells (right).
 
 ## Tutorial
 
-In this tutorial we will calculate various terrain attributes using a 5
-x 5 cell rectangular window. Any rectangular odd numbered window size
-however could be used (see figure directly below). Window sizes are
-specified with a vector of length 2 of `c(n_rows, n_cols)`. If a single
-number is provided it will be used for both the number of rows and
-columns. The only metric that does not follow this syntax is BPI which
-uses an annulus shaped focal window which we will calculate using an
-inner radius of 4 and an outer radius of 6 cells.
+In this tutorial we will calculate most terrain attributes using a 5 x 5
+cell rectangular window; however, any rectangular odd numbered window
+size could be used. Window size is specified using the `w` parameter.
+Rectangular window sizes are specified with a vector of length 2 as
+`c(n_rows, n_cols)`. If a single number is provided it will be used for
+both the number of rows and columns. Functions that calculate relative
+position currently support other focal window shapes. In those examples,
+we will additionally calculate the measures using a circular focal
+window with a radius of 2 cells, an annulus window with an inner radius
+of 4 and an outer radius of 6 cells, and a custom focal window. Circular
+windows are specified by a single number representing the radius,
+annulus windows are specified with a vector of length 2 of
+`c(inner_radius, outer_radius)`, and custom windows are specified by a
+matrix with values showing which data to include (1’s) and which data to
+exclude (NA’s).
 
 **Load packages**
 
@@ -283,6 +290,9 @@ rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 
 ### Relative Position
 
+Note, the “s” at the start of some names indicates the attribute has
+been standardized based on local topography.
+
 ``` r
 rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", na.rm = TRUE)
 ```
@@ -296,7 +306,7 @@ tpi<- TPI(r, w=c(5,5), shape= "rectangle", na.rm = TRUE)
 ![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
 
 ``` r
-dmv<- DMV(r, w=5, shape= "circle", na.rm = TRUE, stand="range")
+dmv<- DMV(r, w=2, shape= "circle", na.rm = TRUE, stand="range")
 ```
 
 ![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
