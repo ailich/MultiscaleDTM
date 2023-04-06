@@ -1,0 +1,20 @@
+---
+title: "README"
+author: "Alexander Ilich"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{README}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.path = "README-") #Default chunk options
+fig_dir<- "../docs/reference/figures/"
+```
+
+```{r child='../man/fragments/README_Frag.Rmd'}
+```
+
+

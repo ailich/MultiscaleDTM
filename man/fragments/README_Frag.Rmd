@@ -1,32 +1,8 @@
----
-title: "README"
-author: "Alexander Ilich"
-date: "April 06, 2023"
-output: 
-  github_document:
-    pandoc_args: --mathml
----
-# MultiscaleDTM
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml)
-[![CRAN](https://www.r-pkg.org/badges/version/MultiscaleDTM)](https://cran.r-project.org/package=MultiscaleDTM)
- [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
-<!-- badges: end -->
-
-Please cite as
-
-Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 2021. “MultiscaleDTM”, https://doi.org/10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDTM.
-
-
-
-
-
 ## Purpose
 
 This package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
 
-<img src="man/figures/kwindow.png" width="50%">
+<img src="`r fig_dir`kwindow.png" width="50%">
 
 Figure adapted from Wilson et al. (2007)
 
@@ -40,7 +16,7 @@ This package relies on the `terra` package for handling of spatial raster data.
 ### Slope, Aspect and Curvature
 
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the "rook" case and an additional four corner cells for the "queen" case.
-<img src="man/figures/SlpAsp.png" width="70%">
+<img src="`r fig_dir`SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
@@ -48,7 +24,7 @@ $$
 Z = aX^2 + bY^2 +cXY+ dX +eY +f
 $$
 
-<img src="man/figures/Qfit_annotated.png" width="70%">
+<img src="`r fig_dir`Qfit_annotated.png" width="70%">
 
 Figure adapted from Walbridge et al., (2018)
 
@@ -57,11 +33,11 @@ Figure adapted from Walbridge et al., (2018)
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies roughness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: N is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rough surfaces, respectively.
 .
 
-<img src="man/figures/VRM_annotated.png" width="70%">
+<img src="`r fig_dir`VRM_annotated.png" width="70%">
 
 Figure adapted from Sappington et al. (2007)
 
-<img src="man/figures/VRM_focal.png" width="70%">
+<img src="`r fig_dir`VRM_focal.png" width="70%">
 
 Figure adapted from Habib (2021)
 
@@ -85,23 +61,23 @@ $$
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
-<img src="man/figures/chaintape.png" width="90%">
+<img src="`r fig_dir`chaintape.png" width="90%">
 
 Figure adapted from Friedman et al. (2012) and created with BioRender.com.
 
 
-<img src="man/figures/SAPA_annotated.png" width="70%">
+<img src="`r fig_dir`SAPA_annotated.png" width="70%">
 
 Figure adapted from Jenness (2004)
 
 
 -   `AdjSD`- This new proposed roughness metric modifies the standard deviation of elevation/bathymetry to account for slope. It does this by first fitting a plane to the data in the focal window using ordinary least squares, and then extracting the residuals, and then calculating the standard deviation of the residuals within the focal window.
 
-<img src="man/figures/adj_sd.png" width="80%">
+<img src="`r fig_dir`adj_sd.png" width="80%">
 
 - `RIE` - Calculates the Roughness Index-Elevation which quantifies the standard deviation of residual topography (Cavalli et al., 2008). This measure is conceptually similar to `AdjSD` but rather than fitting a plane and extracting residuals for the entire focal window, residual topography is calculated as the focal pixel minus the focal mean. Then the local standard deviation is calculated from this residual topography using a focal filter.
 
-<img src="man/figures/RIE.png" width="80%">
+<img src="`r fig_dir`RIE.png" width="80%">
 
 Figure adapted from Cavalli et al. (2008)
 
@@ -118,7 +94,7 @@ Relative position represents whether an area is a local high or low, and is calc
 
 -   `BPI` -  Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window. Since an annulus shaped window is used, it requires an inner and outer radius to be specified. Although the name contains "bathymetric," that is due to the context in which it was proposed, and is equally applicable to terrestrial elevation data.
 
-<img src="man/figures/WindowShapes.png" width="100%">
+<img src="`r fig_dir`WindowShapes.png" width="100%">
 
 Examples of different focal window shapes. Shown are a 13 x 13 cell rectangular window (left), a circular window with a radius of six cells (center), and an annulus window with an inner radius of four cells and an outer radius of six cells (right).
 
@@ -129,139 +105,204 @@ In this tutorial we will calculate most terrain attributes using a 5 x 5 cell re
 
 **Load packages**
 
-
-```r
+```{r message=FALSE}
 library(MultiscaleDTM) #Load MultiscaleDTM package
 ```
 
 **See package help page**
 
-
-```r
+```{r eval=FALSE}
 help(package="MultiscaleDTM")
 ```
 
 **Read in Data**
-
-```r
+```{r}
 r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 ```
 
-![plot of chunk unnamed-chunk-5](man/figures/README-unnamed-chunk-5-1.png)
+```{r echo= FALSE, message=FALSE}
+library(tmap) #For plotting
+tm_shape(r, raster.downsample = FALSE)+
+  tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title = "")+
+  tm_layout(legend.outside=TRUE, main.title= "Elevation")
+```
 
 ### Slope, Aspect, and Curvature
 
-
-```r
+```{r}
 slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 ```
 
-![plot of chunk unnamed-chunk-7](man/figures/README-unnamed-chunk-7-1.png)
+```{r echo=FALSE}
+slp_asp_list<- vector(mode="list", length = nlyr(slp_asp))
+for (i in 1:length(slp_asp_list)) {
+  curr_var<- names(slp_asp)[i]
+  
+  if (grepl(pattern = "(^northness)|(^eastness)", curr_var)) {
+    breaks<- c(-1,0,1)
+    midpoint<- 0
+    curr_pal<- c("blue", "gray", "red")
+  } else if (grepl(pattern = "aspect", curr_var)) {
+    curr_pal<-c("blue", "purple", "red", "orange", "yellow", "green", "cyan", "blue")
+    breaks<- c(0,90,180,270,360)
+    midpoint<- 180
+  } else{
+    curr_pal<- colorRamps::matlab.like(100)
+    midpoint<- NULL
+    breaks<- NULL
+  }
+  
+  slp_asp_list[[i]]<- tm_shape(slp_asp[[i]], raster.downsample = FALSE) +
+    tm_raster(palette = curr_pal, style= "cont", title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
+      tm_layout(main.title = curr_var, 
+      main.title.position = "center",
+      main.title.size=0.75)
+  }
+slp_asp_plot<- tmap_arrange(slp_asp_list, ncol=2)
+slp_asp_plot
+```
 
-
-```r
+```{r}
 qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-9](man/figures/README-unnamed-chunk-9-1.png)
+```{r echo= FALSE}
+qmetrics_list<- vector(mode="list", length = nlyr(qmetrics))
+for (i in 1:length(qmetrics_list)) {
+  curr_var<- names(qmetrics)[i]
+  
+  if (grepl(pattern = "(northness)|(eastness)", curr_var)) {
+    breaks<- c(-1,0,1)
+    midpoint<- 0
+    curr_pal<- c("blue", "gray", "red")
+    style<- "cont"
+  } else if (grepl(pattern = "aspect", curr_var)) {
+    curr_pal<-c("blue", "purple", "red", "orange", "yellow", "green", "cyan", "blue")
+    breaks<- c(0,90,180,270,360)
+    midpoint<- 180
+    style<- "cont"
+    } else if(grepl(pattern = "^features", curr_var)) {
+    curr_pal<- c("gray", "orange", "black", "blue", "green", "yellow", "red")
+    midpoint<- NULL
+    breaks<- NULL
+    style<- "cat"
+  } else if(grepl(pattern = "c$", curr_var)){
+    curr_pal<- c("blue", "gray", "red")
+    style<- "cont"
+    breaks<- NULL
+    midpoint<- 0
+  } else{
+    curr_pal<- colorRamps::matlab.like(100)
+    midpoint<- NULL
+    breaks<- NULL
+    style<- "cont"}
+  
+  qmetrics_list[[i]]<- tm_shape(qmetrics[[i]], raster.downsample = FALSE) +
+    tm_raster(palette = curr_pal, style= style, title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
+      tm_layout(main.title = curr_var, 
+      main.title.position = "center",
+      main.title.size=0.75)
+}
+qmetrics_plot<- tmap_arrange(qmetrics_list, ncol=3)
+qmetrics_plot
+```
 
 To explore these measures in an interactive environment use `explore_terrain()` or go to this [website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)
 
 ### Roughness
 
-
-```r
+```{r}
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-11](man/figures/README-unnamed-chunk-11-1.png)
+```{r echo=FALSE}
+tm_shape(vrm, raster.downsample = FALSE)+
+  tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="VRM")
+```
 
-
-```r
+```{r}
 sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-13](man/figures/README-unnamed-chunk-13-1.png)
+```{r echo=FALSE}
+tm_shape(sapa, raster.downsample = FALSE)+
+  tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="SAPA")
+```
 
-
-```r
+```{r}
 adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-15](man/figures/README-unnamed-chunk-15-1.png)
+```{r echo=FALSE}
+tm_shape(adj_SD, raster.downsample = FALSE)+
+  tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="Adjusted SD")
+```
 
-
-```r
+```{r}
 rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-17](man/figures/README-unnamed-chunk-17-1.png)
+```{r echo=FALSE}
+tm_shape(rie, raster.downsample = FALSE)+
+  tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="Roughness Index-Elevation")
+```
 
 ### Relative Position
 
 Note, the "s" at the start of some names indicates the attribute has been standardized based on local topography. 
 
-
-```r
+```{r}
 rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-19](man/figures/README-unnamed-chunk-19-1.png)
+```{r echo=FALSE}
+tm_shape(rp, raster.downsample = FALSE)+
+  tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="Relative Position")
+```
 
 
-
-```r
+```{r}
 tpi<- TPI(r, w=c(5,5), shape= "rectangle", na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-21](man/figures/README-unnamed-chunk-21-1.png)
+```{r echo=FALSE}
+tm_shape(tpi, raster.downsample = FALSE)+
+  tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="TPI")
+```
 
-
-```r
+```{r}
 dmv<- DMV(r, w=2, shape= "circle", na.rm = TRUE, stand="range")
 ```
 
-![plot of chunk unnamed-chunk-23](man/figures/README-unnamed-chunk-23-1.png)
+```{r echo=FALSE}
+tm_shape(dmv, raster.downsample = FALSE)+
+  tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="sDMV")
+```
 
-
-```r
+```{r}
 bpi<- BPI(r, w = c(4,6), unit = "cell", stand= "sd", na.rm = TRUE)
 ```
 
-![plot of chunk unnamed-chunk-25](man/figures/README-unnamed-chunk-25-1.png)
+```{r echo=FALSE}
+tm_shape(bpi, raster.downsample = FALSE)+
+  tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
+  tm_layout(legend.outside = TRUE, main.title="sBPI")
+```
 
 Circle and annulus windows for can be specified in either cell units (number of raster cells) or in map units (e.g. meters) which can be useful if your x and y resolutions are not equal. Additionally, the function `circle_window` and `annulus_window` can be used to verify that you are specifying your window correctly (NA's are excluded cells and 1's are included cells) and can be directly supplied to the `w` argument instead.
 
-
-```r
+```{r}
 annulus_window(radius = c(4,6), unit = "cell")
 ```
 
-```
-##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
-##  [1,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA
-##  [2,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA
-##  [3,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA
-##  [4,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA
-##  [5,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
-##  [6,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
-##  [7,]    1    1    1   NA   NA   NA   NA   NA   NA    NA     1     1     1
-##  [8,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
-##  [9,]   NA    1    1   NA   NA   NA   NA   NA   NA    NA     1     1    NA
-## [10,]   NA    1    1    1   NA   NA   NA   NA   NA     1     1     1    NA
-## [11,]   NA   NA    1    1    1    1    1    1    1     1     1    NA    NA
-## [12,]   NA   NA   NA    1    1    1    1    1    1     1    NA    NA    NA
-## [13,]   NA   NA   NA   NA   NA   NA    1   NA   NA    NA    NA    NA    NA
-## attr(,"unit")
-## [1] "cell"
-## attr(,"scale")
-## [1] "4x6"
-## attr(,"shape")
-## [1] "annulus"
-```
-
-
-```r
+```{r}
 bpi2<- BPI(r, w = annulus_window(radius = c(4,6), unit = "cell"), stand= "sd", na.rm = TRUE) # equivalent to BPI code from earlier
 ```
 

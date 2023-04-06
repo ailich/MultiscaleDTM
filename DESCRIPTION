@@ -1,6 +1,6 @@
 Package: MultiscaleDTM
 Title: Multi-Scale Geomorphometric Terrain Attributes
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: 
      c(
     person(given = "Alexander",
@@ -39,4 +39,5 @@ Imports:
 Suggests:
   knitr,
   rmarkdown
+VignetteBuilder: knitr
 URL: https://ailich.github.io/MultiscaleDTM/, https://github.com/ailich/MultiscaleDTM
