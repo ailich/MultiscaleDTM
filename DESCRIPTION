@@ -38,6 +38,7 @@ Imports:
     utils
 Suggests:
   knitr,
-  rmarkdown
-VignetteBuilder: knitr
+  rmarkdown,
+  pkgdown
 URL: https://ailich.github.io/MultiscaleDTM/, https://github.com/ailich/MultiscaleDTM
+VignetteBuilder: knitr

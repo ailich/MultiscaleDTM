@@ -120,7 +120,7 @@ help(package="MultiscaleDTM")
 r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 ```
 
-```{r echo= FALSE, message=FALSE}
+```{r Topo, echo= FALSE, message=FALSE}
 library(tmap) #For plotting
 tm_shape(r, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title = "")+
@@ -129,11 +129,11 @@ tm_shape(r, raster.downsample = FALSE)+
 
 ### Slope, Aspect, and Curvature
 
-```{r}
+```{r }
 slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 ```
 
-```{r echo=FALSE}
+```{r SlpAsp, echo=FALSE}
 slp_asp_list<- vector(mode="list", length = nlyr(slp_asp))
 for (i in 1:length(slp_asp_list)) {
   curr_var<- names(slp_asp)[i]
@@ -166,7 +166,7 @@ slp_asp_plot
 qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
-```{r echo= FALSE}
+```{r Qfit, echo= FALSE}
 qmetrics_list<- vector(mode="list", length = nlyr(qmetrics))
 for (i in 1:length(qmetrics_list)) {
   curr_var<- names(qmetrics)[i]
@@ -215,7 +215,7 @@ To explore these measures in an interactive environment use `explore_terrain()` 
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r VRM, echo=FALSE}
 tm_shape(vrm, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="VRM")
@@ -225,7 +225,7 @@ tm_shape(vrm, raster.downsample = FALSE)+
 sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r SAPA, echo=FALSE}
 tm_shape(sapa, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="SAPA")
@@ -235,7 +235,7 @@ tm_shape(sapa, raster.downsample = FALSE)+
 adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r AdjSD, echo=FALSE}
 tm_shape(adj_SD, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="Adjusted SD")
@@ -245,7 +245,7 @@ tm_shape(adj_SD, raster.downsample = FALSE)+
 rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r RIE, echo=FALSE}
 tm_shape(rie, raster.downsample = FALSE)+
   tm_raster(palette = colorRamps::matlab.like(100), style = "cont", legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="Roughness Index-Elevation")
@@ -259,7 +259,7 @@ Note, the "s" at the start of some names indicates the attribute has been standa
 rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", na.rm = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r RP, echo=FALSE}
 tm_shape(rp, raster.downsample = FALSE)+
   tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="Relative Position")
@@ -270,7 +270,7 @@ tm_shape(rp, raster.downsample = FALSE)+
 tpi<- TPI(r, w=c(5,5), shape= "rectangle", na.rm = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r TPI, echo=FALSE}
 tm_shape(tpi, raster.downsample = FALSE)+
   tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="TPI")
@@ -280,7 +280,7 @@ tm_shape(tpi, raster.downsample = FALSE)+
 dmv<- DMV(r, w=2, shape= "circle", na.rm = TRUE, stand="range")
 ```
 
-```{r echo=FALSE}
+```{r DMV, echo=FALSE}
 tm_shape(dmv, raster.downsample = FALSE)+
   tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="sDMV")
@@ -290,7 +290,7 @@ tm_shape(dmv, raster.downsample = FALSE)+
 bpi<- BPI(r, w = c(4,6), unit = "cell", stand= "sd", na.rm = TRUE)
 ```
 
-```{r echo=FALSE}
+```{r BPI, echo=FALSE}
 tm_shape(bpi, raster.downsample = FALSE)+
   tm_raster(palette = c("blue", "gray", "red"), style = "cont", midpoint=0, legend.reverse = TRUE, title="")+
   tm_layout(legend.outside = TRUE, main.title="sBPI")
