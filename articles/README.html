@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -232,20 +232,22 @@ this residual topography using a focal filter.</li>
 <div class="section level4">
 <h4 id="relative-position">Relative Position<a class="anchor" aria-label="anchor" href="#relative-position"></a>
 </h4>
-<p>Relative position represents whether an area is a local high or low,
-and is calculated as the value of the focal cell minus the value of the
-mean of included values in the focal window. Positive values indicate
-local topographic highs and negative values indicate lows.Relative
-Position can be expressed in units of the input DTM raster or can
-standardized relative to the local topography by dividing by the
+<p>Relative position represents whether an area is a local high or low
+in relation to a reference height. It is calculated as the value of the
+focal cell minus the value of a reference elevation which is often the
+mean of included values in the focal window but could also be other
+functions such as the median, min, or max of included values. Positive
+values indicate local topographic highs and negative values indicate
+lows.Relative Position can be expressed in units of the input DTM raster
+or can standardized relative to the local topography by dividing by the
 standard deviation or range of included elevation values in the focal
 window.</p>
 <ul>
 <li><p><code>RelPos</code> - A flexible and general purpose function to
 calculate relative position using a rectangular, circular, annulus, or
-custom shaped focal window. All other relative position functions are
-calls to <code>RelPos</code> with different default parameter
-values.</p></li>
+custom shaped focal window and various functions of the included values
+as the reference height All other relative position functions are calls
+to <code>RelPos</code> with different default parameter values.</p></li>
 <li><p><code>TPI</code> - Topographic Position Index (Weiss, 2001) is
 the difference between the value of a focal cell and the mean of the
 surrounding cells (i.e. the central cell is excluded from focal
@@ -331,7 +333,7 @@ to include (1’s) and which data to exclude (NA’s).</p>
 <p>Note, the “s” at the start of some names indicates the attribute has
 been standardized based on local topography.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rp</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/RelPos.html">RelPos</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"custom"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rp</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/RelPos.html">RelPos</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"custom"</span>, fun <span class="op">=</span> <span class="st">"median"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="README_files/figure-html/RP-1.png" width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tpi</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/TPI.html">TPI</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, shape<span class="op">=</span> <span class="st">"rectangle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
