@@ -1,0 +1,22 @@
+---
+title: "README"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{README}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE, warning = FALSE, message = FALSE, fig.path = "man/figures/README-")
+```
+
+```{r setup, include=FALSE}
+fig_dir<- "man/figures/"
+```
+
+```{r child='man/fragments/README_Frag.Rmd'}
+```
