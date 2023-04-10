@@ -38,5 +38,8 @@ Imports:
     utils
 Suggests:
   knitr,
-  rmarkdown
+  rmarkdown,
+  tmap,
+  colorRamps
 URL: https://ailich.github.io/MultiscaleDTM/, https://github.com/ailich/MultiscaleDTM
+VignetteBuilder: knitr

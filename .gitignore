@@ -43,3 +43,4 @@ vignettes/*.pdf
 rsconnect
 CRAN-SUBMISSION
 docs
+inst/doc

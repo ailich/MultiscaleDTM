@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-February 23, 2023
+April 10, 2023
 
 # MultiscaleDTM
 
@@ -240,7 +240,7 @@ help(package="MultiscaleDTM")
 r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
 ```
 
-![](man/figures/README-unnamed-chunk-4-1.png)<!-- -->
+![](man/figures/README-Topo-1.png)<!-- -->
 
 ### Slope, Aspect, and Curvature
 
@@ -248,13 +248,13 @@ r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478
 slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
 ```
 
-![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/README-SlpAsp-1.png)<!-- -->
 
 ``` r
 qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-8-1.png)<!-- -->
+![](man/figures/README-Qfit-1.png)<!-- -->
 
 To explore these measures in an interactive environment use
 `explore_terrain()` or go to this
@@ -266,25 +266,25 @@ To explore these measures in an interactive environment use
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-10-1.png)<!-- -->
+![](man/figures/README-VRM-1.png)<!-- -->
 
 ``` r
 sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-12-1.png)<!-- -->
+![](man/figures/README-SAPA-1.png)<!-- -->
 
 ``` r
 adj_SD<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-14-1.png)<!-- -->
+![](man/figures/README-AdjSD-1.png)<!-- -->
 
 ``` r
 rie<- RIE(r, w=c(5,5), na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-16-1.png)<!-- -->
+![](man/figures/README-RIE-1.png)<!-- -->
 
 ### Relative Position
 
@@ -295,25 +295,25 @@ been standardized based on local topography.
 rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
+![](man/figures/README-RP-1.png)<!-- -->
 
 ``` r
 tpi<- TPI(r, w=c(5,5), shape= "rectangle", na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-20-1.png)<!-- -->
+![](man/figures/README-TPI-1.png)<!-- -->
 
 ``` r
 dmv<- DMV(r, w=2, shape= "circle", na.rm = TRUE, stand="range")
 ```
 
-![](man/figures/README-unnamed-chunk-22-1.png)<!-- -->
+![](man/figures/README-DMV-1.png)<!-- -->
 
 ``` r
 bpi<- BPI(r, w = c(4,6), unit = "cell", stand= "sd", na.rm = TRUE)
 ```
 
-![](man/figures/README-unnamed-chunk-24-1.png)<!-- -->
+![](man/figures/README-BPI-1.png)<!-- -->
 
 Circle and annulus windows for can be specified in either cell units
 (number of raster cells) or in map units (e.g. meters) which can be
