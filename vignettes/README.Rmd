@@ -18,5 +18,5 @@ knitr::opts_chunk$set(
 fig_dir<- "../man/figures/"
 ```
 
-```{r child='man/fragments/README_Frag.Rmd'}
+```{r child='../man/fragments/README_Frag.Rmd'}
 ```
