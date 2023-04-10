@@ -10,10 +10,13 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
-)
+  comment = "#>",
+  echo = TRUE, warning = FALSE, message = FALSE)
 ```
 
-```{r setup}
-library(MultiscaleDTM)
+```{r setup, include=FALSE}
+fig_dir<- "../man/figures/"
+```
+
+```{r child='../man/fragments/README_Frag.Rmd'}
 ```

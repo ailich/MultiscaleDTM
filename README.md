@@ -1,7 +1,11 @@
 README
 ================
 Alexander Ilich
+<<<<<<< HEAD
 April 06, 2023
+=======
+April 10, 2023
+>>>>>>> 694a83980320ed6b903820df6f64e052c9b5c915
 
 # MultiscaleDTM
 
