@@ -38,6 +38,12 @@
 <li class="nav-item">
   <a class="nav-link" href="reference/index.html">Reference</a>
 </li>
+<li class="nav-item dropdown">
+  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
+  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
+    <a class="dropdown-item" href="articles/README.html">README</a>
+  </div>
+</li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="search.json" id="search-input" placeholder="Search for" autocomplete="off">
@@ -60,7 +66,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="readme">README<a class="anchor" aria-label="anchor" href="#readme"></a>
 </h1></div>
-<p>Alexander Ilich February 23, 2023</p>
+<p>Alexander Ilich April 10, 2023</p>
 </div>
 <div class="section level1">
 <h1 id="multiscaledtm">MultiscaleDTM<a class="anchor" aria-label="anchor" href="#multiscaledtm"></a>
@@ -165,16 +171,16 @@ $$</span></p>
 <p><strong>Read in Data</strong></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/rast.html" class="external-link">rast</a></span><span class="op">(</span><span class="va">volcano</span>, extent<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/ext.html" class="external-link">ext</a></span><span class="op">(</span><span class="fl">2667400</span>, <span class="fl">2667400</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span><span class="op">*</span><span class="fl">10</span>, <span class="fl">6478700</span>, <span class="fl">6478700</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/terra/man/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, crs <span class="op">=</span> <span class="st">"EPSG:27200"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-4-1.png"><!-- --></p>
+<p><img src="reference/figures/README-Topo-1.png"><!-- --></p>
 <div class="section level3">
 <h3 id="slope-aspect-and-curvature-1">Slope, Aspect, and Curvature<a class="anchor" aria-label="anchor" href="#slope-aspect-and-curvature-1"></a>
 </h3>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">slp_asp</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/SlpAsp.html">SlpAsp</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"degrees"</span>, method <span class="op">=</span> <span class="st">"queen"</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"slope"</span>, <span class="st">"aspect"</span>, <span class="st">"eastness"</span>, <span class="st">"northness"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-6-1.png"><!-- --></p>
+<p><img src="reference/figures/README-SlpAsp-1.png"><!-- --></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qmetrics</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/Qfit.html">Qfit</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"degrees"</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elev"</span>, <span class="st">"qslope"</span>, <span class="st">"qaspect"</span>, <span class="st">"qeastness"</span>, <span class="st">"qnorthness"</span>, <span class="st">"profc"</span>, <span class="st">"planc"</span>, <span class="st">"twistc"</span>, <span class="st">"meanc"</span>, <span class="st">"maxc"</span>, <span class="st">"minc"</span>, <span class="st">"features"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-8-1.png"><!-- --></p>
+<p><img src="reference/figures/README-Qfit-1.png"><!-- --></p>
 <p>To explore these measures in an interactive environment use <code><a href="reference/explore_terrain.html">explore_terrain()</a></code> or go to this <a href="https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/" class="external-link">website</a></p>
 </div>
 <div class="section level3">
@@ -182,16 +188,16 @@ $$</span></p>
 </h3>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vrm</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/VRM.html">VRM</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-10-1.png"><!-- --></p>
+<p><img src="reference/figures/README-VRM-1.png"><!-- --></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sapa</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/SAPA.html">SAPA</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, slope_correction <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-12-1.png"><!-- --></p>
+<p><img src="reference/figures/README-SAPA-1.png"><!-- --></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">adj_SD</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/AdjSD.html">AdjSD</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-14-1.png"><!-- --></p>
+<p><img src="reference/figures/README-AdjSD-1.png"><!-- --></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rie</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/RIE.html">RIE</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-16-1.png"><!-- --></p>
+<p><img src="reference/figures/README-RIE-1.png"><!-- --></p>
 </div>
 <div class="section level3">
 <h3 id="relative-position-1">Relative Position<a class="anchor" aria-label="anchor" href="#relative-position-1"></a>
@@ -199,16 +205,16 @@ $$</span></p>
 <p>Note, the “s” at the start of some names indicates the attribute has been standardized based on local topography.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rp</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/RelPos.html">RelPos</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"custom"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-18-1.png"><!-- --></p>
+<p><img src="reference/figures/README-RP-1.png"><!-- --></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/TPI.html">TPI</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, shape<span class="op">=</span> <span class="st">"rectangle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-20-1.png"><!-- --></p>
+<p><img src="reference/figures/README-TPI-1.png"><!-- --></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dmv</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/DMV.html">DMV</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fl">2</span>, shape<span class="op">=</span> <span class="st">"circle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, stand<span class="op">=</span><span class="st">"range"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-22-1.png"><!-- --></p>
+<p><img src="reference/figures/README-DMV-1.png"><!-- --></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bpi</span><span class="op">&lt;-</span> <span class="fu"><a href="reference/BPI.html">BPI</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span>, stand<span class="op">=</span> <span class="st">"sd"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reference/figures/README-unnamed-chunk-24-1.png"><!-- --></p>
+<p><img src="reference/figures/README-BPI-1.png"><!-- --></p>
 <p>Circle and annulus windows for can be specified in either cell units (number of raster cells) or in map units (e.g. meters) which can be useful if your x and y resolutions are not equal. Additionally, the function <code>circle_window</code> and <code>annulus_window</code> can be used to verify that you are specifying your window correctly (NA’s are excluded cells and 1’s are included cells) and can be directly supplied to the <code>w</code> argument instead.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/annulus_window.html">annulus_window</a></span><span class="op">(</span>radius <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span><span class="op">)</span></span></code></pre></div>
