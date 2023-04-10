@@ -6,19 +6,6 @@ output:
   github_document:
     pandoc_args: --mathml
 ---
-# MultiscaleDTM
-<!-- badges: start -->
-[![R-CMD-check](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml)
-[![CRAN](https://www.r-pkg.org/badges/version/MultiscaleDTM)](https://cran.r-project.org/package=MultiscaleDTM)
- [![License: GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![DOI](https://zenodo.org/badge/353158828.svg)](https://zenodo.org/badge/latestdoi/353158828)
-<!-- badges: end -->
-
-Please cite as
-
-Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 2021. “MultiscaleDTM”, https://doi.org/10.5281/zenodo.5548338. https://github.com/ailich/MultiscaleDTM.
-
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.path = "man/figures/README-") #Default chunk options
 fig_dir<- "man/figures/"
