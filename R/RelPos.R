@@ -95,13 +95,14 @@ annulus_window<- function(radius, unit, resolution){
 
 #' Calculates Relative Position of a focal cell
 #'
-#' Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
+#' Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of a reference elevation (often the mean of included values in the focal window but see "fun" argument). Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
 #' @param r DTM as a SpatRaster or RasterLayer.
 #' @param w For a "rectangle" focal window, a vector of length 2 containing odd numbers specifying dimensions where the first number is the number of rows and the second is the number of columns (or a single number if the number of rows and columns is equal). For a "circle" shaped focal window, a single integer representing the radius in "cell" or "map" units or a focal weights matrix created by MultiscaleDTM::circle_window. The default radius is 1 cell if unit= "cell" or the maximum of the x and y cell resolution if unit="map". For an "annulus" shaped focal window, a vector of length 2 specifying c(inner, outer) radii of the annulus in "cell" or "map" units or a focal weights matrix created by MultiscaleDTM::annulus_window. Inner radius must be less than or equal to outer radius. There is no default size for an annulus window. If a "custom" focal window shape is used, w must be a focal weights matrix with 1's for included values and NAs for excluded values.
 #' @param shape Character representing the shape of the focal window. Either "rectangle" (default), "circle", or "annulus", or "custom". If a "custom" shape is used, w must be a focal weights matrix.
 #' @param stand Standardization method. Either "none" (the default), "range" or "sd" indicating whether the relative position should be standardized by dividing by the standard deviation or range of included values in the focal window. If stand is 'none' the layer name will be "rpos", otherwise it will be "srpos" to indicate that the layer has been standardized.
 #' @param exclude_center Logical indicating whether to exclude the central value from focal calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI. Note, if a focal weights matrix is supplied to w, setting exclude_center=TRUE will overwrite the center value of w to NA, but setting exclude_center=FALSE will not overwrite the central value to be 1. 
 #' @param unit Unit for w if shape is 'circle' or 'annulus' and it is a vector (default is unit="cell"). For circular and annulus shaped windows specified with a matrix, unit is ignored and extracted directly from w. For rectangular and custom focal windows set unit='cell' or set unit to NA/NULL.
+#' @param fun Function to apply to included values to determine the reference elevation. Accepted values are "mean","median", "min", and "max". The default is "mean"
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window and MultiscaleDTM::annulus_window).
 #' @param filename Character output filename.
@@ -118,6 +119,7 @@ annulus_window<- function(radius, unit, resolution){
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
 #' @importFrom dplyr case_when
+#' @importFrom stats median
 #' @references 
 #' Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling & Software 89, 19-30. https://doi.org/10.1016/j.envsoft.2016.11.027
 #'
@@ -132,7 +134,7 @@ RelPos<- function(r, w=dplyr::case_when(tolower(shape)=="rectangle" ~ 3,
                                         tolower(shape)=="circle" & isTRUE(tolower(unit)=="cell") ~ 1,
                                         tolower(shape)=="circle" & isTRUE(tolower(unit)=="map") ~ max(terra::res(r))),
                   shape="rectangle", stand="none", exclude_center= FALSE, 
-                  unit="cell", na.rm=FALSE, include_scale =FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+                  unit="cell", fun = "mean", na.rm=FALSE, include_scale =FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
 #Input checks
 og_class<- class(r)[1]
 if(og_class=="RasterLayer"){
@@ -147,6 +149,7 @@ if(terra::nlyr(r)!=1){
 stand<- tolower(stand)
 shape<- tolower(shape)
 resolution<- terra::res(r)
+fun<- tolower(fun)
 
 ## Focal Window Checks
 if (!(shape %in% c("rectangle", "circle", "annulus", "custom"))){
@@ -205,6 +208,11 @@ if(!(stand %in% c("none", "range", "sd"))){
   stop("Error: stand must be 'none', 'range', or 'sd'")
 }
 
+## fun checks
+if(!(fun %in% c("mean", "median", "min", "max"))){
+  stop("Error: fun must be 'mean', 'median', 'min', or 'max'")
+}
+
 # Set up focal window
 ## if focal weights matrix if w is a vector
 if(is.vector(w)){
@@ -226,7 +234,7 @@ if(exclude_center){
 }
 
 # Calculate Relative Position
-rpos<- r - terra::focal(x = r, w = w_mat, fun = mean, na.rm = na.rm, wopt=wopt)
+rpos<- r - terra::focal(x = r, w = w_mat, fun = fun, na.rm = na.rm, wopt=wopt)
 names(rpos)<- "rpos"
 
 # standardize

@@ -166,17 +166,21 @@ Figure adapted from Cavalli et al. (2008)
 
 ### Relative Position
 
-Relative position represents whether an area is a local high or low, and
-is calculated as the value of the focal cell minus the value of the mean
-of included values in the focal window. Positive values indicate local
-topographic highs and negative values indicate lows.Relative Position
-can be expressed in units of the input DTM raster or can standardized
-relative to the local topography by dividing by the standard deviation
-or range of included elevation values in the focal window.
+Relative position represents whether an area is a local high or low in
+relation to a reference height. It is calculated as the value of the
+focal cell minus the value of a reference elevation which is often the
+mean of included values in the focal window but could also be other
+functions such as the median, min, or max of included values. Positive
+values indicate local topographic highs and negative values indicate
+lows.Relative Position can be expressed in units of the input DTM raster
+or can standardized relative to the local topography by dividing by the
+standard deviation or range of included elevation values in the focal
+window.
 
 - `RelPos` - A flexible and general purpose function to calculate
   relative position using a rectangular, circular, annulus, or custom
-  shaped focal window. All other relative position functions are calls
+  shaped focal window and various functions of the included values as
+  the reference height All other relative position functions are calls
   to `RelPos` with different default parameter values.
 
 - `TPI` - Topographic Position Index (Weiss, 2001) is the difference
@@ -292,7 +296,7 @@ Note, the “s” at the start of some names indicates the attribute has
 been standardized based on local topography.
 
 ``` r
-rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", na.rm = TRUE)
+rp<- RelPos(r, w=matrix(data = c(1,NA,1), nrow = 3, ncol=3), shape = "custom", fun = "median", na.rm = TRUE)
 ```
 
 ![](man/figures/README-RP-1.png)<!-- -->

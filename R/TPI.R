@@ -44,7 +44,7 @@ TPI<- function(r, w=dplyr::case_when(tolower(shape)=="rectangle" ~ 3,
     stop("Error: shape must be 'rectangle' or 'circle'")
   }
   tpi<- MultiscaleDTM::RelPos(r, w=w, shape= shape, stand=stand, exclude_center= TRUE, 
-                        unit=unit, na.rm=na.rm, include_scale =include_scale, filename=NULL, 
+                        unit=unit, fun="mean", na.rm=na.rm, include_scale =include_scale, filename=NULL, 
                         overwrite=FALSE, wopt=list())
   names(tpi)<- gsub(pattern = "rpos", replacement = "tpi", names(tpi))
   

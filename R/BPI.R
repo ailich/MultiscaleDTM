@@ -40,7 +40,7 @@ BPI<- function(r, w, stand="none",
   }
   
   bpi<- MultiscaleDTM::RelPos(r, w=w, shape= "annulus", stand=stand, 
-               exclude_center= FALSE, unit=unit, na.rm=na.rm, 
+               exclude_center= FALSE, unit=unit, fun="mean", na.rm=na.rm, 
                include_scale =include_scale, filename=NULL, overwrite=FALSE, wopt=list())
   names(bpi)<- gsub(pattern = "rpos", replacement = "bpi", names(bpi))
   

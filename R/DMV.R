@@ -44,7 +44,7 @@ DMV<- function(r, w = dplyr::case_when(tolower(shape)=="rectangle" ~ 3,
     stop("Error: shape must be 'rectangle' or 'circle'")
   }
   dmv<- MultiscaleDTM::RelPos(r, w=w, shape= shape, stand=stand, exclude_center= FALSE, 
-               unit=unit, na.rm=na.rm, include_scale =include_scale, filename=filename, overwrite=overwrite, wopt=wopt)
+               unit=unit, fun="mean", na.rm=na.rm, include_scale =include_scale, filename=filename, overwrite=overwrite, wopt=wopt)
   names(dmv)<- gsub(pattern = "rpos", replacement = "dmv", names(dmv))
   
   #Return

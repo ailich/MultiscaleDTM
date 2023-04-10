@@ -13,6 +13,7 @@ RelPos(
   stand = "none",
   exclude_center = FALSE,
   unit = "cell",
+  fun = "mean",
   na.rm = FALSE,
   include_scale = FALSE,
   filename = NULL,
@@ -33,6 +34,8 @@ RelPos(
 
 \item{unit}{Unit for w if shape is 'circle' or 'annulus' and it is a vector (default is unit="cell"). For circular and annulus shaped windows specified with a matrix, unit is ignored and extracted directly from w. For rectangular and custom focal windows set unit='cell' or set unit to NA/NULL.}
 
+\item{fun}{Function to apply to included values to determine the reference elevation. Accepted values are "mean","median", "min", and "max". The default is "mean"}
+
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
 
 \item{include_scale}{Logical indicating whether to append window size to the layer names (default = FALSE) or a character vector specifying the name you would like to append or a number specifying the number of significant digits. If include_scale = TRUE the number of rows and number of columns will be appended for rectangular or custom windows. For circular windows it will be a single number representing the radius. For annulus windows it will be the inner and outer radius. If unit="map" then window size will have "MU" after the number indicating that the number represents the scale in map units (note units can be extracted from w created with MultiscaleDTM::circle_window and MultiscaleDTM::annulus_window).}
@@ -47,7 +50,7 @@ RelPos(
 A SpatRaster or RasterLayer.
 }
 \description{
-Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of the mean of included values in the focal window. Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
+Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of a reference elevation (often the mean of included values in the focal window but see "fun" argument). Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 
