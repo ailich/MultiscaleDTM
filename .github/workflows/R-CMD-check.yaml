@@ -6,10 +6,6 @@ on:
   pull_request:
     branches: [main, master]
 
-name: Install XQuartz on macOS
-  if: runner.os == 'macOS'
-  run: brew cask install xquartz
-
 name: R-CMD-check
 
 jobs:
@@ -52,3 +48,7 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
+      
+      - name: Install XQuartz on macOS
+        if: runner.os == 'macOS'
+        run: brew cask install xquartz
