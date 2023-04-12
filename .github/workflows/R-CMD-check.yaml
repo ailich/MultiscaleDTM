@@ -8,6 +8,10 @@ on:
 
 name: R-CMD-check
 
+# https://github.com/r-lib/actions#where-to-find-help
+- if: runner.os == 'macOS'
+  run: brew install --cask xquartz
+
 jobs:
   R-CMD-check:
     runs-on: ${{ matrix.config.os }}
