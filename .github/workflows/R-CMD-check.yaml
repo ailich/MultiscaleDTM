@@ -48,5 +48,5 @@ jobs:
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
-      - if: runner.os == 'macOS'
-      run: brew install --cask xquartz
+        if: runner.os == 'macOS'
+          run: brew install --cask xquartz
