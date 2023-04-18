@@ -15,7 +15,8 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, include=FALSE}
-fig_dir<- "../man/figures/"
+md_fig_dir<- "../man/figures/" #Path relative to this Rmd
+R_fig_dir<- "../figures/" #Path relative to child Rmd
 ```
 
 ```{r child='../man/fragments/README_Frag.Rmd'}

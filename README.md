@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-April 10, 2023
+April 18, 2023
 
 # MultiscaleDTM
 
@@ -258,7 +258,7 @@ slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics 
 qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), na.rm = TRUE)
 ```
 
-![](man/figures/README-Qfit-1.png)<!-- -->
+<img src="man/figures/qmetrics.jpg" width="100%">
 
 To explore these measures in an interactive environment use
 `explore_terrain()` or go to this

@@ -14,7 +14,7 @@ Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 20
 
 This package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
 
-<img src="`r fig_dir`kwindow.png" width="50%">
+<img src="`r md_fig_dir`kwindow.png" width="50%">
 
 Figure adapted from Wilson et al. (2007)
 
@@ -28,7 +28,7 @@ This package relies on the `terra` package for handling of spatial raster data.
 ### Slope, Aspect and Curvature
 
 -   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the "rook" case and an additional four corner cells for the "queen" case.
-<img src="`r fig_dir`SlpAsp.png" width="70%">
+<img src="`r md_fig_dir`SlpAsp.png" width="70%">
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
@@ -36,7 +36,7 @@ $$
 Z = aX^2 + bY^2 +cXY+ dX +eY +f
 $$
 
-<img src="`r fig_dir`Qfit_annotated.png" width="70%">
+<img src="`r md_fig_dir`Qfit_annotated.png" width="70%">
 
 Figure adapted from Walbridge et al., (2018)
 
@@ -45,11 +45,11 @@ Figure adapted from Walbridge et al., (2018)
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies roughness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: N is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rough surfaces, respectively.
 .
 
-<img src="`r fig_dir`VRM_annotated.png" width="70%">
+<img src="`r md_fig_dir`VRM_annotated.png" width="70%">
 
 Figure adapted from Sappington et al. (2007)
 
-<img src="`r fig_dir`VRM_focal.png" width="70%">
+<img src="`r md_fig_dir`VRM_focal.png" width="70%">
 
 Figure adapted from Habib (2021)
 
@@ -73,23 +73,23 @@ $$
 
     - `SurfaceArea` - Calculate the surface area of each grid cell (Jenness, 2004). This is accomplished by connecting a focal cell to its immediate neighbors to create 8 large triangles. These large triangles are then trimmed back to the extent of the focal cell using the principle of similar triangles, and then the area of those 8 smaller triangles are calculated and summed to estimate the surface area of the focal pixel. This is used within `SAPA`.
 
-<img src="`r fig_dir`chaintape.png" width="90%">
+<img src="`r md_fig_dir`chaintape.png" width="90%">
 
 Figure adapted from Friedman et al. (2012) and created with BioRender.com.
 
 
-<img src="`r fig_dir`SAPA_annotated.png" width="70%">
+<img src="`r md_fig_dir`SAPA_annotated.png" width="70%">
 
 Figure adapted from Jenness (2004)
 
 
 -   `AdjSD`- This new proposed roughness metric modifies the standard deviation of elevation/bathymetry to account for slope. It does this by first fitting a plane to the data in the focal window using ordinary least squares, and then extracting the residuals, and then calculating the standard deviation of the residuals within the focal window.
 
-<img src="`r fig_dir`adj_sd.png" width="80%">
+<img src="`r md_fig_dir`adj_sd.png" width="80%">
 
 - `RIE` - Calculates the Roughness Index-Elevation which quantifies the standard deviation of residual topography (Cavalli et al., 2008). This measure is conceptually similar to `AdjSD` but rather than fitting a plane and extracting residuals for the entire focal window, residual topography is calculated as the focal pixel minus the focal mean. Then the local standard deviation is calculated from this residual topography using a focal filter.
 
-<img src="`r fig_dir`RIE.png" width="80%">
+<img src="`r md_fig_dir`RIE.png" width="80%">
 
 Figure adapted from Cavalli et al. (2008)
 
@@ -106,7 +106,7 @@ Relative position represents whether an area is a local high or low in relation 
 
 -   `BPI` -  Bathymetric Position Index (Lundblad et al., 2006) is the difference between the value of a focal cell and the mean of the surrounding cells contained within an annulus shaped window. Since an annulus shaped window is used, it requires an inner and outer radius to be specified. Although the name contains "bathymetric," that is due to the context in which it was proposed, and is equally applicable to terrestrial elevation data.
 
-<img src="`r fig_dir`WindowShapes.png" width="100%">
+<img src="`r md_fig_dir`WindowShapes.png" width="100%">
 
 Examples of different focal window shapes. Shown are a 13 x 13 cell rectangular window (left), a circular window with a radius of six cells (center), and an annulus window with an inner radius of four cells and an outer radius of six cells (right).
 
@@ -179,9 +179,11 @@ qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", metrics = c("elev", "qslope", "
 ```
 
 ```{r Qfit, echo= FALSE}
-qmetrics_list<- vector(mode="list", length = nlyr(qmetrics))
-for (i in 1:length(qmetrics_list)) {
+library(cowplot)
+for (i in 1:nlyr(qmetrics)) {
   curr_var<- names(qmetrics)[i]
+  i_txt<- as.character(i)
+  if(nchar(i)==1){i_txt<- paste0("0", i_txt)}
   
   if (grepl(pattern = "(northness)|(eastness)", curr_var)) {
     breaks<- c(-1,0,1)
@@ -195,9 +197,6 @@ for (i in 1:length(qmetrics_list)) {
     style<- "cont"
     } else if(grepl(pattern = "^features", curr_var)) {
     curr_pal<- c("gray", "orange", "black", "blue", "green", "yellow", "red")
-    midpoint<- NULL
-    breaks<- NULL
-    style<- "cat"
   } else if(grepl(pattern = "c$", curr_var)){
     curr_pal<- c("blue", "gray", "red")
     style<- "cont"
@@ -209,15 +208,28 @@ for (i in 1:length(qmetrics_list)) {
     breaks<- NULL
     style<- "cont"}
   
-  qmetrics_list[[i]]<- tm_shape(qmetrics[[i]], raster.downsample = FALSE) +
+  if(!grepl(pattern = "^features", curr_var)){
+    qfit_plt<- tm_shape(qmetrics[[i]], raster.downsample = FALSE) +
     tm_raster(palette = curr_pal, style= style, title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
-      tm_layout(main.title = curr_var, 
-      main.title.position = "center",
-      main.title.size=0.75)
+      tm_layout(legend.outside = TRUE, legend.text.size = 0.7, legend.frame=FALSE,
+      legend.outside.size = 0.4, outer.margins = 0.01, asp = 0, frame = FALSE)
+    tmap_save(qfit_plt, filename = paste0(R_fig_dir, "qfit", i_txt, ".png"), dpi=300, width =3, height = 2, units = "in")
+    } else{
+      png(filename = paste0(R_fig_dir, "qfit", i_txt, ".png"), res = 300, width =3.5, height = 3, units = "in")
+      qfit_plt<- plot(qmetrics[[i]],col=curr_pal, axes=FALSE, box=FALSE, cex=0.1)
+      dev.off()
+      } 
 }
-qmetrics_plot<- tmap_arrange(qmetrics_list, ncol=3)
-qmetrics_plot
+
+qfit_plt_files<- list.files(R_fig_dir, pattern = "qfit\\d{2}.png$", full.names = TRUE)
+qfit_plt_list<- vector(mode = "list", length = length(qfit_plt_files))
+for (i in seq_along(qfit_plt_list)) {
+  qfit_plt_list[[i]]<- ggdraw()+ draw_image(qfit_plt_files[[i]])
+  }
+save_plot(plot_grid(plotlist = qfit_plt_list, ncol = 3, labels = names(qmetrics), label_size = 12, align = "hv"),filename= paste0(R_fig_dir, "qmetrics.jpg"), base_width=7.5, base_height=9, unit="in")
 ```
+
+<img src="`r md_fig_dir`qmetrics.jpg" width="100%">
 
 To explore these measures in an interactive environment use `explore_terrain()` or go to this [website](https://ailich.shinyapps.io/Terrain_Attributes_Explorer_App/)
 

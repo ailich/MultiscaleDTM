@@ -8,7 +8,8 @@ output:
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, fig.path = "man/figures/README-") #Default chunk options
-fig_dir<- "man/figures/"
+md_fig_dir<- "man/figures/" #Path relative to this Rmd
+R_fig_dir<- "../figures/" #Path relative to child Rmd
 ```
 
 ```{r child='man/fragments/README_Frag.Rmd'}
