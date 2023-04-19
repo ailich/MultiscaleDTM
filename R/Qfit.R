@@ -149,7 +149,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   metrics[metrics=="northness"]<- "qnorthness" #replace northness with qnorthness
   
   if (any(!(metrics %in% all_metrics))){
-    stop("Error: Invlaid metric. Valid metrics include 'elev', 'qslope', 'qaspect', 'qeastness', 'qnorthness', 'profc', 'planc', 'twistc', 'meanc', 'maxc', 'minc', and `features`.")
+    stop("Error: Invlaid metric. Valid metrics include 'elev', 'qslope', 'qaspect', 'qeastness', 'qnorthness', 'profc', 'planc', 'twistc', 'meanc', 'maxc', 'minc', and 'features'.")
     }
   
   if(force_center & ("elev" %in% metrics)){

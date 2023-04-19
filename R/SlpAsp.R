@@ -6,9 +6,9 @@
 #' @param unit "degrees" or "radians"
 #' @param method "queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right). Alternatively, instead of "queen" or "rook", method can be specified as 8 and 4 respectively. 
 #' @param metrics a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").
+#' @param na.rm Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
-#' @param mask_aspect A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.
 #' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
@@ -39,7 +39,7 @@
 #' @importFrom raster stack
 #' @export
 
-SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), include_scale=FALSE, mask_aspect=TRUE, filename=NULL, overwrite=FALSE, wopt=list()){ 
+SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), na.rm=FALSE, include_scale=FALSE, mask_aspect=TRUE, filename=NULL, overwrite=FALSE, wopt=list()){ 
   og_class<- class(r)[1]
 
   if(og_class=="RasterLayer"){
@@ -70,14 +70,14 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   }
   unit<- tolower(unit) #make lowercase
   if(!(unit %in% c("degrees", "radians"))){
-    stop("unit must be `degrees` or `radians`")
+    stop("unit must be 'degrees' or 'radians'")
   }
   
   if(method==4){method<- "rook"}
   if(method==8){method<- "queen"}
   
   if(!(method %in% c("queen", "rook"))){
-    stop("method must be `queen`, `rook`, `8`, or `4`")
+    stop("method must be 'queen', 'rook', '8', or '4'")
   }
   metrics<- tolower(metrics) #Make all lowercase
   if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
@@ -91,6 +91,11 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   if(mask_aspect & ("aspect" %in% needed_metrics)){
     needed_metrics<- c(needed_metrics, "slope")
   }
+  if(method=="rook" & na.rm){
+    warning("na.rm=TRUE is only relevant if `method` is 'queen' or '8'")
+    }
+  
+  Non_NA_rast<- !is.na(r)
   
   #k is size of window in a given direction
   kx<- w[2]
@@ -130,16 +135,25 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     yb.mat <- cbind(yb.end, y.mids, yb.mid, y.mids, yb.end)
     
     #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=FALSE, wopt=wopt)
+    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=na.rm, wopt=wopt)
     
-    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    
-    #calculate dz/dx and dz/dy using the components. 8*j is the weighted run, or distance between ends: 4*j*2, or (4 values in each row)*(length of the side)*(2 sides)
-    dz.dx <- (dz.dx.r-dz.dx.l)/(8*jx*terra::res(r)[1])
-    dz.dy <- (dz.dy.t-dz.dy.b)/(8*jy*terra::res(r)[2])
+    if(!na.rm){
+      #calculate dz/dx and dz/dy using the components. 8*j is the weighted run, or distance between ends: 4*j*2, or (4 values in each row)*(length of the side)*(2 sides)
+      dz.dx <- (dz.dx.r-dz.dx.l)/(8*jx*terra::res(r)[1])
+      dz.dy <- (dz.dy.t-dz.dy.b)/(8*jy*terra::res(r)[2])
+    } else{
+      weights.l<-terra::focal(Non_NA_rast, w=xl.mat, fun=sum, na.rm=TRUE)
+      weights.r<-terra::focal(Non_NA_rast, w=xr.mat, fun=sum, na.rm=TRUE)
+      weights.t<-terra::focal(Non_NA_rast, w=yt.mat, fun=sum, na.rm=TRUE)
+      weights.b<-terra::focal(Non_NA_rast, w=yb.mat, fun=sum, na.rm=TRUE)
+      dz.dx <- ((dz.dx.r/weights.r) - (dz.dx.l/weights.l))/(2*jx*terra::xres(r))
+      dz.dy <- ((dz.dy.t/weights.t) - (dz.dy.b/weights.b))/(2*jy*terra::yres(r))
+    }
   }
+  
   
   if(method=="rook"){
     
