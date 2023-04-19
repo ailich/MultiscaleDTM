@@ -185,21 +185,32 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     X<- cbind(X,1)
     } # Z = ax^2+by^2+cxy+dx+ey+f (with intercept)
   
-  # Calculate Regression Parameters
-  if(force_center){
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit2, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
-    if(!all(outlier_quantile==c(0,1))){
-      params <- outlier_filter(params, outlier_quantile, wopt=wopt)
-      }
-    } else{
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit1, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
-    if(!all(outlier_quantile==c(0,1))){
-      params <- outlier_filter(params, outlier_quantile)
+  if(!na.rm){
+    Xt<- t(X)
+    XtX_inv<- solve(Xt %*% X)
     }
+  
+  # Calculate Regression Parameters
+  if((!na.rm) & (!force_center)){
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, fillvalue=NA, wopt=wopt)
+    } else if(na.rm & (!force_center)){
+      params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, fillvalue=NA, wopt=wopt)
+    } else if((!na.rm) & force_center){
+      params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, fillvalue=NA, wopt=wopt)} else{
+        params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmT, X_full= X, fillvalue=NA, wopt=wopt)
+      }
+  
+  # Filter outliers
+  if(!all(outlier_quantile==c(0,1))){
+    params <- outlier_filter(params, outlier_quantile, wopt=wopt)
+    }
+  
+  if(!force_center){
     elev<- params$f
     names(elev)<- "elev"
     params<- params[[-6]] #drop intercept
-    }
+  }
+  
   mask_raster<- terra::app(terra::math(params, fun= "abs", wopt=wopt), fun= "sum", na.rm=FALSE, wopt=wopt) == 0 # Mask of when all params are 0
 
      

@@ -9,20 +9,40 @@ C_OLS_params <- function(X, Y) {
     .Call(`_MultiscaleDTM_C_OLS_params`, X, Y)
 }
 
+C_OLS_params2 <- function(Xt, XtX_inv, Y) {
+    .Call(`_MultiscaleDTM_C_OLS_params2`, Xt, XtX_inv, Y)
+}
+
 C_OLS_resid <- function(X, Y) {
     .Call(`_MultiscaleDTM_C_OLS_resid`, X, Y)
 }
 
-C_Qfit1 <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDTM_C_Qfit1`, z, X_full, na_rm, ni, nw)
+C_OLS_resid2 <- function(X, Xt, XtX_inv, Y) {
+    .Call(`_MultiscaleDTM_C_OLS_resid2`, X, Xt, XtX_inv, Y)
 }
 
-C_Qfit2 <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDTM_C_Qfit2`, z, X_full, na_rm, ni, nw)
+C_Qfit1_narmT <- function(z, X_full, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit1_narmT`, z, X_full, ni, nw)
 }
 
-C_AdjSD <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDTM_C_AdjSD`, z, X_full, na_rm, ni, nw)
+C_Qfit1_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit1_narmF`, z, X, Xt, XtX_inv, ni, nw)
+}
+
+C_Qfit2_narmT <- function(z, X_full, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit2_narmT`, z, X_full, ni, nw)
+}
+
+C_Qfit2_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit2_narmF`, z, X, Xt, XtX_inv, ni, nw)
+}
+
+C_AdjSD_narmT <- function(z, X_full, na_rm, ni, nw) {
+    .Call(`_MultiscaleDTM_C_AdjSD_narmT`, z, X_full, na_rm, ni, nw)
+}
+
+C_AdjSD_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
+    .Call(`_MultiscaleDTM_C_AdjSD_narmF`, z, X, Xt, XtX_inv, ni, nw)
 }
 
 C_TriArea <- function(a, b, c) {
