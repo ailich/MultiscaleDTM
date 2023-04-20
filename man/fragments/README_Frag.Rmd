@@ -213,15 +213,15 @@ for (i in 1:nlyr(qmetrics)) {
     tm_raster(palette = curr_pal, style= style, title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
       tm_layout(legend.outside = TRUE, legend.text.size = 0.7, legend.frame=FALSE,
       legend.outside.size = 0.4, outer.margins = 0.01, asp = 0, frame = FALSE)
-    tmap_save(qfit_plt, filename = paste0(R_fig_dir, "qfit", i_txt, ".png"), dpi=300, width =3, height = 2, units = "in")
+    tmap_save(qfit_plt, filename = paste0(R_fig_dir, "qfit/qfit", i_txt, ".png"), dpi=96, width =3, height = 2, units = "in")
     } else{
-      png(filename = paste0(R_fig_dir, "qfit", i_txt, ".png"), res = 300, width =3.5, height = 3, units = "in")
+      png(filename = paste0(R_fig_dir, "qfit/qfit", i_txt, ".png"), res = 96, width =3.5, height = 3, units = "in")
       qfit_plt<- plot(qmetrics[[i]],col=curr_pal, axes=FALSE, box=FALSE, cex=0.1)
       dev.off()
       } 
 }
 
-qfit_plt_files<- list.files(R_fig_dir, pattern = "qfit\\d{2}.png$", full.names = TRUE)
+qfit_plt_files<- list.files(paste0(R_fig_dir, "qfit"), pattern = "qfit\\d{2}.png$", full.names = TRUE)
 qfit_plt_list<- vector(mode = "list", length = length(qfit_plt_files))
 for (i in seq_along(qfit_plt_list)) {
   qfit_plt_list[[i]]<- ggdraw()+ draw_image(qfit_plt_files[[i]])
