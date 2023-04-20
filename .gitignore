@@ -44,4 +44,4 @@ rsconnect
 CRAN-SUBMISSION
 docs
 inst/doc
-man/figures/qfit
+man/figures/sub_qfit*.png
