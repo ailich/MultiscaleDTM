@@ -12,7 +12,7 @@ Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 20
 
 ## Purpose
 
-This package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
+This R package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
 
 <img src="`r md_fig_dir`kwindow.png" width="50%">
 
@@ -128,8 +128,10 @@ help(package="MultiscaleDTM")
 ```
 
 **Read in Data**
+
+Typically raster data would be loaded into R via `terra` package's `rast` function. We will use instead load a georeferenced version of R's built in volcano data set using the `erupt` function.
 ```{r}
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+r<- erupt()
 ```
 
 ```{r Topo, echo= FALSE, message=FALSE}
@@ -142,7 +144,7 @@ tm_shape(r, raster.downsample = FALSE)+
 ### Slope, Aspect, and Curvature
 
 ```{r }
-slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"), na.rm=TRUE)
 ```
 
 ```{r SlpAsp, echo=FALSE}

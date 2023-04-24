@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-April 20, 2023
+April 24, 2023
 
 # MultiscaleDTM
 
@@ -23,7 +23,7 @@ Steven A.; 2021. “MultiscaleDTM”,
 
 ## Purpose
 
-This package calculates multi-scale geomorphometric terrain attributes
+This R package calculates multi-scale geomorphometric terrain attributes
 from regularly gridded digital terrain models (DTM; i.e. elevation or
 bathymetry rasters) via a specified window size.
 
@@ -240,8 +240,12 @@ help(package="MultiscaleDTM")
 
 **Read in Data**
 
+Typically raster data would be loaded into R via `terra` package’s
+`rast` function. We will use instead load a georeferenced version of R’s
+built in volcano data set using the `erupt` function.
+
 ``` r
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+r<- erupt()
 ```
 
 ![](man/figures/README-Topo-1.png)<!-- -->
@@ -249,7 +253,7 @@ r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478
 ### Slope, Aspect, and Curvature
 
 ``` r
-slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"), na.rm=TRUE)
 ```
 
 ![](man/figures/README-SlpAsp-1.png)<!-- -->
