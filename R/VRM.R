@@ -51,7 +51,12 @@ VRM<- function(r, w=c(3,3), na.rm = FALSE, include_scale=FALSE, filename=NULL, o
     warning("Distance calculations conducted using Haversine (spheroid) rather geodesic formulas since terra version is < 1.5.49")
     }
   
-  sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
+  if(isTRUE(terra::is.lonlat(r, perhaps=FALSE)) | (!na.rm)){
+    sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt)
+    } else{
+      sa <- SlpAsp(r, w=c(3,3),unit="radians", method="queen", metrics= c("slope", "aspect"), na.rm=na.rm, include_scale=FALSE, mask_aspect=FALSE, wopt=wopt)
+    } #SlpAsp can use na.rm in slope calculations, terra::terrain cannot but can handle spherical geometry.
+  
   #Decompose vectors into components 
   sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt)
   Xrast <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # xRaster

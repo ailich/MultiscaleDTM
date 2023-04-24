@@ -27,7 +27,7 @@ SlpAsp(
 
 \item{method}{"queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right). Alternatively, instead of "queen" or "rook", method can be specified as 8 and 4 respectively.}
 
-\item{metrics}{a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").}
+\item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".}
 
