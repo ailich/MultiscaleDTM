@@ -5,9 +5,9 @@
 #' @examples 
 #' r<- erupt()
 #' @import terra
-#' @import datasets
 #' @export
 erupt<- function(){
+  volcano<- volcano #add visible binding for variable volcano
   return(rast(volcano, 
               extent= ext(2667400, 2667400 + ncol(volcano)*10, 
                           6478700, 6478700 + nrow(volcano)*10), 
