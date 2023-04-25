@@ -35,7 +35,8 @@ Imports:
     shiny,
     rgl,
     stats,
-    utils
+    utils,
+    datasets
 Suggests:
   knitr,
   rmarkdown,

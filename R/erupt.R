@@ -5,6 +5,7 @@
 #' @examples 
 #' r<- erupt()
 #' @import terra
+#' @import datasets
 #' @export
 erupt<- function(){
   return(rast(volcano, 
