@@ -67,11 +67,11 @@ SAPA<- function(r, w = 1, slope_correction=TRUE, include_scale=FALSE, slope_laye
     SA<- terra::focal(SA, w= w, fun=sum, na.rm=FALSE, wopt=wopt)
   } # Sum up surface area in focal window
   
-  if(is.null(slope_layer)){
+  if(is.null(slope_layer) & slope_correction){
     if (all(w==1)){
       slope_layer<- terra::terrain(r, v="slope", unit="radians", neighbors=8, wopt=wopt)
       } else{
-        slope_layer<- SlpAsp(r, w=w+2, unit="radians", method="queen", metrics= "slope", include_scale=FALSE, wopt=wopt)
+        slope_layer<- SlpAsp(r, w=w+2, unit="radians", method="queen", metrics= "slope", na.rm=FALSE, include_scale=FALSE, wopt=wopt)
       }
     }
   PA<- (x_res*w[2]) * (y_res*w[1])

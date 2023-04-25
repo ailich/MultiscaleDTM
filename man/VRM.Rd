@@ -19,7 +19,7 @@ VRM(
 
 \item{w}{A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.}
 
-\item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
+\item{na.rm}{A logical indicating whether or not to remove NA values before calculations. See details for more information.}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
@@ -34,6 +34,9 @@ a RasterLayer
 }
 \description{
 Implementation of the Sappington et al., (2007) vector ruggedness measure, modified from Evans (2021).
+}
+\details{
+If the crs is cartesian, when na.rm=TRUE, NA's will be removed from the slope/aspect calculations. When the crs is lat/lon, na.rm=TRUE will not affect the calculation of slope/aspect as terra::terrain will be used since it can calculate slope and aspect for spherical geometry but it does not support na.rm. In both cases when na.rm=TRUE, the x, y, and z components will be summed with na.rm=TRUE, and the N used in the denominator of the VRM equation will be the number of non-NA cells in the window rather than the total number of cells.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 

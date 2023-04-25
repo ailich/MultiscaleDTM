@@ -61,8 +61,17 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, o
   #Explanatory Variable matrix X for linear fit
   X<- cbind(x, y, 1) #Z = dx+ey+f
   
+  if(!na.rm){
+    Xt<- t(X)
+    XtX_inv<- solve(Xt %*% X)
+  }
+  
   #Fit Quadratic and Extract Residuals
-  out<- terra::focalCpp(r, w=w, fun = C_AdjSD, X_full= X, na_rm=na.rm, fillvalue=NA, wopt=wopt)
+  if(na.rm){
+    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, wopt=wopt)
+  } else{
+    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmF, X= X, Xt=Xt, XtX_inv=XtX_inv, fillvalue=NA, wopt=wopt)
+    }
   
   names(out)<- "adjSD"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names

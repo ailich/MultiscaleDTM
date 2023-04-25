@@ -40,6 +40,12 @@ NumericVector C_OLS_params(arma::mat X, arma::mat Y){
   return B;
   }
 
+// [[Rcpp::export]]
+NumericVector C_OLS_params2(arma::mat Xt, arma::mat XtX_inv, arma::mat Y){
+  NumericVector B = Rcpp::as<Rcpp::NumericVector>(wrap(XtX_inv * (Xt * Y)));
+  return B;
+  }
+
 //Ordinary Least Squares (only returns residuals)
 // [[Rcpp::export]]
 NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
@@ -49,11 +55,20 @@ NumericVector C_OLS_resid(arma::mat X, arma::mat Y){
   return resid;
   }
 
-//Fit Wood/Evans Quadratic Surface with Intercept
 // [[Rcpp::export]]
-NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+NumericVector C_OLS_resid2(arma::mat X, arma::mat Xt, arma::mat XtX_inv, arma::mat Y){
+  arma::mat B = XtX_inv * (Xt * Y);
+  arma::mat Yhat = X*B;
+  NumericVector resid = Rcpp::as<Rcpp::NumericVector>(wrap(Yhat - Y));
+  return resid;
+}
+
+//Fit Wood/Evans Quadratic Surface with Intercept
+
+//na.rm=TRUE, force_center=FALSE
+// [[Rcpp::export]]
+NumericMatrix C_Qfit1_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw) {
   
-  //double tol = std::numeric_limits<double>::epsilon();
   size_t nlyr = X_full.ncol(); //Number of layers
   NumericMatrix out(ni, nlyr);
   out.fill(NA_REAL);
@@ -67,7 +82,7 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
     NumericVector zw_full = z[Rcpp::Range(start,end)]; //Current window of elevation values
     LogicalVector NA_idx = is_na(zw_full);
     int n_obs = sum(!NA_idx);
-    if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
+    if(n_obs < thresh) {} else {
       NumericVector zw = zw_full[!NA_idx];
       NumericMatrix Z(n_obs,1, zw.begin());
       NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
@@ -83,9 +98,37 @@ NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
   return out;
 }
 
-//Fit Wood/Evans Quadratic Surface forced throough center
+//na.rm=FALSE, force_center=FALSE
 // [[Rcpp::export]]
-NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw) {
+NumericMatrix C_Qfit1_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw) {
+  
+  size_t nlyr = X.n_cols; //Number of layers
+  NumericMatrix out(ni, nlyr);
+  out.fill(NA_REAL);
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f");
+  
+  for (size_t i=0; i<ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    arma::mat Z = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    if(Z.has_nan()) {} else {
+      arma::vec uni_Zvals = unique(Z);
+      if(uni_Zvals.size() == 1){
+        //If all Z values are the same, intercept should just be the value and all other parameters are 0.
+        out(i, _) = rep(0, 6); //all zeros
+        out(i, 5) = uni_Zvals(0); //f
+        } else {
+          out(i, _) =  C_OLS_params2(Xt, XtX_inv, Z);
+          }}
+    }
+  return out;
+}
+
+//Fit Wood/Evans Quadratic Surface forced through center
+
+//na.rm=TRUE, force_center=TRUE
+// [[Rcpp::export]]
+NumericMatrix C_Qfit2_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw) {
   
   //double tol = std::numeric_limits<double>::epsilon();
   size_t nlyr = X_full.ncol(); //Number of layers
@@ -103,7 +146,7 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
     zw_full = zw_full - center_val; //reference values as difference from center value
     LogicalVector NA_idx = is_na(zw_full);
     int n_obs = sum(!NA_idx);
-    if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
+    if(n_obs < thresh) {} else {
       NumericVector zw = zw_full[!NA_idx];
       NumericMatrix Z(n_obs,1, zw.begin());
       NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
@@ -112,7 +155,33 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
         //If all Z values are the same, all parameters are 0.
         out(i, _) = rep(0,5);
       } else{
-        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+        // out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+      }
+    }}
+  return out;
+}
+
+//na.rm=FALSE, force_center=TRUE
+// [[Rcpp::export]]
+NumericMatrix C_Qfit2_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw) {
+  size_t nlyr = X.n_cols; //Number of layers
+  NumericMatrix out(ni, nlyr);
+  out.fill(NA_REAL);
+  colnames(out)= CharacterVector::create("a", "b", "c", "d", "e");
+  
+  for (size_t i=0; i<ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    arma::mat Z = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    double center_val =  Z(Z.size()/2); //integer math takes care of rounding index
+    Z = Z - center_val; //reference values as difference from center value
+    if(Z.has_nan()) {} else {
+      arma::vec uni_Zvals = unique(Z);
+      if(uni_Zvals.size() == 1){
+        //If all Z values are the same, all parameters are 0.
+        out(i, _) = rep(0,5);
+      } else{
+        out(i, _) =  C_OLS_params2(Xt, XtX_inv, Z);
       }
     }}
   return out;
@@ -120,8 +189,7 @@ NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
 
 //SD of residuals from a planar fit
 // [[Rcpp::export]]
-NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw){
-  //double tol = std::numeric_limits<double>::epsilon();
+NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw){
   NumericVector out(ni, NA_REAL);
   //Z = dX + eY + f
   
@@ -135,7 +203,7 @@ NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
     NumericVector zw_full = z[Rcpp::Range(start,end)]; //Current window of elevation values
     LogicalVector NA_idx = is_na(zw_full);
     int n_obs = sum(!NA_idx);
-    if((is_true(any(NA_idx)) && (!na_rm)) || (n_obs < thresh)) {} else {
+    if(n_obs < thresh) {} else {
       NumericVector zw = zw_full[!NA_idx];
       NumericMatrix Z(n_obs,1, zw.begin());
       NumericMatrix X = subset_mat_rows(X_full, !NA_idx);
@@ -146,6 +214,28 @@ NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t 
           NumericVector resid = C_OLS_resid(as<arma::mat>(X), as<arma::mat>(Z));
           out[i] =  sd(resid); //SD resid
           }
+    }}
+  return out;
+}
+
+//SD from planar fit with na.rm=FALSE
+// [[Rcpp::export]]
+NumericVector C_AdjSD_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw){
+  NumericVector out(ni, NA_REAL);
+  //Z = dX + eY + f
+  
+  for (size_t i=0; i< ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    arma::mat Z = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    if(Z.has_nan()) {} else {
+      arma::vec uni_Zvals = unique(Z);
+      if(uni_Zvals.size() == 1){
+        out[i] = 0; //If all Z values are the same residuals are 0
+      } else{
+        NumericVector resid = C_OLS_resid2(X, Xt, XtX_inv, Z);
+        out[i] =  sd(resid); //SD resid
+      }
     }}
   return out;
 }

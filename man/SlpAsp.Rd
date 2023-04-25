@@ -10,6 +10,7 @@ SlpAsp(
   unit = "degrees",
   method = "queen",
   metrics = c("slope", "aspect", "eastness", "northness"),
+  na.rm = FALSE,
   include_scale = FALSE,
   mask_aspect = TRUE,
   filename = NULL,
@@ -26,11 +27,13 @@ SlpAsp(
 
 \item{method}{"queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right). Alternatively, instead of "queen" or "rook", method can be specified as 8 and 4 respectively.}
 
-\item{metrics}{a character string or vector of character strings of which terrain atrributes to return ("slope" and/or "aspect"). Default is c("slope", "aspect", "eastness", "northness").}
+\item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").}
+
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
-\item{mask_aspect}{A logical. If slope evaluates to 0, aspect will be set to NA when mask_aspect is TRUE (the default). If FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain.}
+\item{mask_aspect}{A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.}
 
 \item{filename}{character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer}
 

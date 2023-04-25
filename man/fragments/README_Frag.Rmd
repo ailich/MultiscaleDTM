@@ -12,7 +12,7 @@ Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski, Steven A.; 20
 
 ## Purpose
 
-This package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
+This R package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window size.
 
 <img src="`r md_fig_dir`kwindow.png" width="50%">
 
@@ -128,8 +128,10 @@ help(package="MultiscaleDTM")
 ```
 
 **Read in Data**
+
+Typically raster data would be loaded into R via `terra` package's `rast` function. We will use instead load a georeferenced version of R's built in volcano data set using the `erupt` function.
 ```{r}
-r<- rast(volcano, extent= ext(2667400, 2667400 + ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), crs = "EPSG:27200")
+r<- erupt()
 ```
 
 ```{r Topo, echo= FALSE, message=FALSE}
@@ -142,7 +144,7 @@ tm_shape(r, raster.downsample = FALSE)+
 ### Slope, Aspect, and Curvature
 
 ```{r }
-slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"))
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", method = "queen", metrics = c("slope", "aspect", "eastness", "northness"), na.rm=TRUE)
 ```
 
 ```{r SlpAsp, echo=FALSE}
@@ -213,20 +215,20 @@ for (i in 1:nlyr(qmetrics)) {
     tm_raster(palette = curr_pal, style= style, title = "", breaks = breaks, midpoint = midpoint, legend.reverse = TRUE)+
       tm_layout(legend.outside = TRUE, legend.text.size = 0.7, legend.frame=FALSE,
       legend.outside.size = 0.4, outer.margins = 0.01, asp = 0, frame = FALSE)
-    tmap_save(qfit_plt, filename = paste0(R_fig_dir, "qfit", i_txt, ".png"), dpi=300, width =3, height = 2, units = "in")
+    tmap_save(qfit_plt, filename = paste0(R_fig_dir, "sub_qfit", i_txt, ".png"), dpi=150, width =3, height = 2, units = "in")
     } else{
-      png(filename = paste0(R_fig_dir, "qfit", i_txt, ".png"), res = 300, width =3.5, height = 3, units = "in")
+      png(filename = paste0(R_fig_dir, "sub_qfit", i_txt, ".png"), res = 150, width =3.5, height = 3, units = "in")
       qfit_plt<- plot(qmetrics[[i]],col=curr_pal, axes=FALSE, box=FALSE, cex=0.1)
       dev.off()
       } 
 }
 
-qfit_plt_files<- list.files(R_fig_dir, pattern = "qfit\\d{2}.png$", full.names = TRUE)
+qfit_plt_files<- list.files(R_fig_dir, pattern = "sub_qfit\\d{2}.png$", full.names = TRUE)
 qfit_plt_list<- vector(mode = "list", length = length(qfit_plt_files))
 for (i in seq_along(qfit_plt_list)) {
   qfit_plt_list[[i]]<- ggdraw()+ draw_image(qfit_plt_files[[i]])
   }
-save_plot(plot_grid(plotlist = qfit_plt_list, ncol = 3, labels = names(qmetrics), label_size = 12, align = "hv"),filename= paste0(R_fig_dir, "qmetrics.jpg"), base_width=7.5, base_height=9, unit="in")
+save_plot(plot_grid(plotlist = qfit_plt_list, ncol = 3, labels = names(qmetrics), label_size = 12, align = "hv"),filename= paste0(R_fig_dir, "qmetrics.jpg"), base_width=7.5, base_height=9, dpi= 150, unit="in")
 ```
 
 <img src="`r md_fig_dir`qmetrics.jpg" width="100%">

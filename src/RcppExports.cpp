@@ -35,6 +35,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_OLS_params2
+NumericVector C_OLS_params2(arma::mat Xt, arma::mat XtX_inv, arma::mat Y);
+RcppExport SEXP _MultiscaleDTM_C_OLS_params2(SEXP XtSEXP, SEXP XtX_invSEXP, SEXP YSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XtX_inv(XtX_invSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_OLS_params2(Xt, XtX_inv, Y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_OLS_resid
 NumericVector C_OLS_resid(arma::mat X, arma::mat Y);
 RcppExport SEXP _MultiscaleDTM_C_OLS_resid(SEXP XSEXP, SEXP YSEXP) {
@@ -47,39 +60,83 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// C_Qfit1
-NumericMatrix C_Qfit1(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDTM_C_Qfit1(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_OLS_resid2
+NumericVector C_OLS_resid2(arma::mat X, arma::mat Xt, arma::mat XtX_inv, arma::mat Y);
+RcppExport SEXP _MultiscaleDTM_C_OLS_resid2(SEXP XSEXP, SEXP XtSEXP, SEXP XtX_invSEXP, SEXP YSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
-    Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
-    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_Qfit1(z, X_full, na_rm, ni, nw));
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XtX_inv(XtX_invSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_OLS_resid2(X, Xt, XtX_inv, Y));
     return rcpp_result_gen;
 END_RCPP
 }
-// C_Qfit2
-NumericMatrix C_Qfit2(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDTM_C_Qfit2(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_Qfit1_narmT
+NumericMatrix C_Qfit1_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_Qfit1_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_Qfit2(z, X_full, na_rm, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_Qfit1_narmT(z, X_full, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
-// C_AdjSD
-NumericVector C_AdjSD(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDTM_C_AdjSD(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+// C_Qfit1_narmF
+NumericMatrix C_Qfit1_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_Qfit1_narmF(SEXP zSEXP, SEXP XSEXP, SEXP XtSEXP, SEXP XtX_invSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XtX_inv(XtX_invSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Qfit1_narmF(z, X, Xt, XtX_inv, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_Qfit2_narmT
+NumericMatrix C_Qfit2_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_Qfit2_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Qfit2_narmT(z, X_full, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_Qfit2_narmF
+NumericMatrix C_Qfit2_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_Qfit2_narmF(SEXP zSEXP, SEXP XSEXP, SEXP XtSEXP, SEXP XtX_invSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XtX_inv(XtX_invSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_Qfit2_narmF(z, X, Xt, XtX_inv, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_AdjSD_narmT
+NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -88,7 +145,23 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_AdjSD(z, X_full, na_rm, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmT(z, X_full, na_rm, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_AdjSD_narmF
+NumericVector C_AdjSD_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmF(SEXP zSEXP, SEXP XSEXP, SEXP XtSEXP, SEXP XtX_invSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type XtX_inv(XtX_invSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmF(z, X, Xt, XtX_inv, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -137,10 +210,15 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDTM_subset_mat_rows", (DL_FUNC) &_MultiscaleDTM_subset_mat_rows, 2},
     {"_MultiscaleDTM_C_OLS_params", (DL_FUNC) &_MultiscaleDTM_C_OLS_params, 2},
+    {"_MultiscaleDTM_C_OLS_params2", (DL_FUNC) &_MultiscaleDTM_C_OLS_params2, 3},
     {"_MultiscaleDTM_C_OLS_resid", (DL_FUNC) &_MultiscaleDTM_C_OLS_resid, 2},
-    {"_MultiscaleDTM_C_Qfit1", (DL_FUNC) &_MultiscaleDTM_C_Qfit1, 5},
-    {"_MultiscaleDTM_C_Qfit2", (DL_FUNC) &_MultiscaleDTM_C_Qfit2, 5},
-    {"_MultiscaleDTM_C_AdjSD", (DL_FUNC) &_MultiscaleDTM_C_AdjSD, 5},
+    {"_MultiscaleDTM_C_OLS_resid2", (DL_FUNC) &_MultiscaleDTM_C_OLS_resid2, 4},
+    {"_MultiscaleDTM_C_Qfit1_narmT", (DL_FUNC) &_MultiscaleDTM_C_Qfit1_narmT, 4},
+    {"_MultiscaleDTM_C_Qfit1_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit1_narmF, 6},
+    {"_MultiscaleDTM_C_Qfit2_narmT", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmT, 4},
+    {"_MultiscaleDTM_C_Qfit2_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmF, 6},
+    {"_MultiscaleDTM_C_AdjSD_narmT", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT, 5},
+    {"_MultiscaleDTM_C_AdjSD_narmF", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmF, 6},
     {"_MultiscaleDTM_C_TriArea", (DL_FUNC) &_MultiscaleDTM_C_TriArea, 3},
     {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 5},
     {"_MultiscaleDTM_C_CountVals", (DL_FUNC) &_MultiscaleDTM_C_CountVals, 3},

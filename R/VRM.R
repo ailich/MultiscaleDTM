@@ -3,7 +3,7 @@
 #' Implementation of the Sappington et al., (2007) vector ruggedness measure, modified from Evans (2021). 
 #' @param r DTM as a SpatRaster or RasterLayer
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
-#' @param na.rm A logical indicating whether or not to remove NA values before calculations
+#' @param na.rm A logical indicating whether or not to remove NA values before calculations. See details for more information.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
@@ -19,6 +19,9 @@
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
 #' @importFrom utils packageVersion
+#' @details
+#' If the crs is cartesian, when na.rm=TRUE, NA's will be removed from the slope/aspect calculations. When the crs is lat/lon, na.rm=TRUE will not affect the calculation of slope/aspect as terra::terrain will be used since it can calculate slope and aspect for spherical geometry but it does not support na.rm. In both cases when na.rm=TRUE, the x, y, and z components will be summed with na.rm=TRUE, and the N used in the denominator of the VRM equation will be the number of non-NA cells in the window rather than the total number of cells.
+#' 
 #' @references
 #' Evans JS (2021). spatialEco. R package version 1.3-6, https://github.com/jeffreyevans/spatialEco.
 #' 
@@ -51,7 +54,12 @@ VRM<- function(r, w=c(3,3), na.rm = FALSE, include_scale=FALSE, filename=NULL, o
     warning("Distance calculations conducted using Haversine (spheroid) rather geodesic formulas since terra version is < 1.5.49")
     }
   
-  sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt) 					
+  if(isTRUE(terra::is.lonlat(r, perhaps=FALSE)) | (!na.rm)){
+    sa <- terra::terrain(r, v=c("slope", "aspect"), unit="radians", neighbors=8, wopt=wopt)
+    } else{
+      sa <- SlpAsp(r, w=c(3,3),unit="radians", method="queen", metrics= c("slope", "aspect"), na.rm=na.rm, include_scale=FALSE, mask_aspect=FALSE, wopt=wopt)
+    } #SlpAsp can use na.rm in slope calculations, terra::terrain cannot but can handle spherical geometry.
+  
   #Decompose vectors into components 
   sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt)
   Xrast <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # xRaster

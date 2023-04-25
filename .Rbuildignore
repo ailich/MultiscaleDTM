@@ -14,3 +14,4 @@ inst/Terrain_Attributes_Explorer_App/rsconnect
 BuildDocs.R
 ^doc$
 ^Meta$
+man/figures/sub_qfit*.png
