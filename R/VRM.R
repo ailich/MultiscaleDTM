@@ -50,7 +50,7 @@ VRM<- function(r, w=c(3,3), na.rm = FALSE, include_scale=FALSE, filename=NULL, o
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
   
-  if((packageVersion("terra") < "1.5.49") & isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
+  if((compareVersion(as.character(packageVersion("terra")), "1.5.49")==-1) & isTRUE(terra::is.lonlat(r, perhaps=FALSE))){
     warning("Distance calculations conducted using Haversine (spheroid) rather geodesic formulas since terra version is < 1.5.49")
     }
   
