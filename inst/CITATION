@@ -7,7 +7,7 @@ bibentry(
   person("Vincent", "Lecours"), 
   person("Steven A.", "Murawski")),
   title = "MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis",
-  doi = "http://doi.org/10.1111/tgis.13067",
+  doi = "10.1111/tgis.13067",
   year = 2023,
   publisher = "Wiley",
   volume = 27,

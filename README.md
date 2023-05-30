@@ -26,7 +26,7 @@ analysis. *Transactions in GIS*, *27*(4).
 This R package calculates multi-scale geomorphometric terrain attributes
 from regularly gridded digital terrain models (DTM; i.e. elevation or
 bathymetry rasters) via a specified window as described in [Ilich et
-al. (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tgis.13067).
+al. (2023)](http://doi.org/10.1111/tgis.13067).
 
 <img src="man/figures/kwindow.png" width="50%">
 

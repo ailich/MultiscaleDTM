@@ -12,7 +12,7 @@ Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023). MultiscaleDTM: 
 
 ## Purpose
 
-This R package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window as described in [Ilich et al. (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tgis.13067).
+This R package calculates multi-scale geomorphometric terrain attributes from regularly gridded digital terrain models (DTM; i.e. elevation or bathymetry rasters) via a specified window as described in [Ilich et al. (2023)](http://doi.org/10.1111/tgis.13067).
 
 <img src="`r md_fig_dir`kwindow.png" width="50%">
 
