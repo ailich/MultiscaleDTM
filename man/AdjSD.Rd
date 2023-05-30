@@ -33,7 +33,7 @@ AdjSD(
 a SpatRaster or RasterLayer of adjusted rugosity
 }
 \description{
-Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated.
+Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated (Ilich et al., 2023)
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 
@@ -41,4 +41,7 @@ ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10),
 crs = "EPSG:27200")
 adjsd<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 plot(adjsd)
+}
+\references{
+Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023). MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis. Transactions in GIS, 27(4). https://doi.org/10.1111/tgis.13067
 }

@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-April 25, 2023
+May 30, 2023
 
 # MultiscaleDTM
 
@@ -16,16 +16,17 @@ GPLv3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org
 
 Please cite as
 
-Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski,
-Steven A.; 2021. “MultiscaleDTM”,
-<https://doi.org/10.5281/zenodo.5548338>.
-<https://github.com/ailich/MultiscaleDTM>.
+Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023).
+MultiscaleDTM: An open-source R package for multiscale geomorphometric
+analysis. *Transactions in GIS*, *27*(4).
+<https://doi.org/10.1111/tgis.13067>
 
 ## Purpose
 
 This R package calculates multi-scale geomorphometric terrain attributes
 from regularly gridded digital terrain models (DTM; i.e. elevation or
-bathymetry rasters) via a specified window size.
+bathymetry rasters) via a specified window as described in [Ilich et
+al. (2023)](https://onlinelibrary.wiley.com/doi/10.1111/tgis.13067).
 
 <img src="man/figures/kwindow.png" width="50%">
 
@@ -124,7 +125,8 @@ $$
   by Jenness (2004) and De Preez (2015) works at the per cell level (1x1
   cell). This function generalizes this method to multiple scales by
   summing the surface areas within the focal window and adjusting the
-  planar area of the focal window using multi-scale slope.
+  planar area of the focal window using multi-scale slope (Ilich et al.,
+  2023).
 
   - `SurfaceArea` - Calculate the surface area of each grid cell
     (Jenness, 2004). This is accomplished by connecting a focal cell to
@@ -143,12 +145,12 @@ BioRender.com.
 
 Figure adapted from Jenness (2004)
 
-- `AdjSD`- This new proposed roughness metric modifies the standard
-  deviation of elevation/bathymetry to account for slope. It does this
-  by first fitting a plane to the data in the focal window using
-  ordinary least squares, and then extracting the residuals, and then
-  calculating the standard deviation of the residuals within the focal
-  window.
+- `AdjSD`- This roughness metric modifies the standard deviation of
+  elevation/bathymetry to account for slope (Ilich et al., 2023). It
+  does this by first fitting a plane to the data in the focal window
+  using ordinary least squares, and then extracting the residuals, and
+  then calculating the standard deviation of the residuals within the
+  focal window.
 
 <img src="man/figures/adj_sd.png" width="80%">
 
@@ -387,6 +389,11 @@ Image Reconstructions. PLOS ONE 7, e50440.
 Habib, M., 2021. Quantifying Topographic Ruggedness Using Principal
 Component Analysis. Advances in Civil Engineering 2021, e3311912.
 <https://doi.org/10.1155/2021/3311912>
+
+Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023).
+MultiscaleDTM: An open-source R package for multiscale geomorphometric
+analysis. Transactions in GIS, 27(4).
+<https://doi.org/10.1111/tgis.13067>
 
 Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of
 the IEEE 69, 14–47.

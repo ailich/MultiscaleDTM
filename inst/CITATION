@@ -1,5 +1,21 @@
 citHeader("To cite MultiscaleDTM in publications use:")
 
+bibentry(
+  bibtype = "Article",
+  author = c(person("Alexander R.", "Ilich"), 
+  person("Benjamin", "Misiuk"), 
+  person("Vincent", "Lecours"), 
+  person("Steven A.", "Murawski")),
+  title = "MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis",
+  doi = "http://doi.org/10.1111/tgis.13067",
+  year = 2023,
+  publisher = "Wiley",
+  volume = 27,
+  number = 4,
+  journal = "Transactions in GIS",
+  textVersion = "Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023). MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis. Transactions in GIS, 27(4). https://doi.org/10.1111/tgis.13067")
+
+
 bibentry(bibtype = "misc",
   author = c(person("Alexander R.", "Ilich"), 
   person("Benjamin", "Misiuk"), 
