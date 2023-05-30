@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.4.1
+# CITATION file created with {cffr} R package, v0.5.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
  
@@ -8,12 +8,11 @@ message: 'To cite package "MultiscaleDTM" in publications use:'
 type: software
 license: GPL-3.0-or-later
 title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
-version: '0.8'
-doi: 10.5281/zenodo.5548338
+version: 0.8.1
+doi: http://doi.org/10.1111/tgis.13067
 abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
-  gridded digital terrain models using a variable focal windows size (Misiuk et al.
-  (2021) <doi:10.1080/01490419.2021.1925789>; Wilson et al. (2007) <doi:10.1080/01490410701295962>;
-  Wood (1996) <https://hdl.handle.net/2381/34503>).
+  gridded digital terrain models using a variable focal windows size (Ilich et al.
+  (2023) <doi:10.1111/tgis.13067>).
 authors:
 - family-names: Ilich
   given-names: Alexander
@@ -26,7 +25,34 @@ authors:
 - family-names: Murawski
   given-names: Steven
 preferred-citation:
-  type: generic
+  type: article
+  title: 'MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis'
+  authors:
+  - family-names: Ilich
+    given-names: Alexander R.
+  - family-names: Misiuk
+    given-names: Benjamin
+  - family-names: Lecours
+    given-names: Vincent
+  - family-names: Murawski
+    given-names: Steven A.
+  doi: http://doi.org/10.1111/tgis.13067
+  year: '2023'
+  publisher:
+    name: Wiley
+  volume: '27'
+  issue: '4'
+  journal: Transactions in GIS
+repository: https://CRAN.R-project.org/package=MultiscaleDTM
+repository-code: https://github.com/ailich/MultiscaleDTM
+url: https://ailich.github.io/MultiscaleDTM/
+contact:
+- family-names: Ilich
+  given-names: Alexander
+  email: ailich@usf.edu
+  orcid: https://orcid.org/0000-0003-1758-8499
+references:
+- type: generic
   title: MultiscaleDTM
   authors:
   - family-names: Ilich
@@ -40,15 +66,6 @@ preferred-citation:
   year: '2021'
   doi: 10.5281/zenodo.5548338
   url: https://github.com/ailich/MultiscaleDTM
-repository: https://CRAN.R-project.org/package=MultiscaleDTM
-repository-code: https://github.com/ailich/MultiscaleDTM
-url: https://ailich.github.io/MultiscaleDTM/
-contact:
-- family-names: Ilich
-  given-names: Alexander
-  email: ailich@usf.edu
-  orcid: https://orcid.org/0000-0003-1758-8499
-references:
 - type: software
   title: terra
   abstract: 'terra: Spatial Data Analysis'
@@ -303,4 +320,16 @@ references:
     given-names: Claus O.
     email: wilke@austin.utexas.edu
     orcid: https://orcid.org/0000-0002-7470-9261
+  year: '2023'
+- type: software
+  title: magick
+  abstract: 'magick: Advanced Graphics and Image-Processing in R'
+  notes: Suggests
+  url: https://docs.ropensci.org/magick/
+  repository: https://CRAN.R-project.org/package=magick
+  authors:
+  - family-names: Ooms
+    given-names: Jeroen
+    email: jeroen@berkeley.edu
+    orcid: https://orcid.org/0000-0002-4035-0289
   year: '2023'
