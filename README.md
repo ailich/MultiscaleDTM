@@ -390,13 +390,13 @@ Habib, M., 2021. Quantifying Topographic Ruggedness Using Principal
 Component Analysis. Advances in Civil Engineering 2021, e3311912.
 <https://doi.org/10.1155/2021/3311912>
 
+Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of
+the IEEE 69, 14–47.
+
 Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023).
 MultiscaleDTM: An open-source R package for multiscale geomorphometric
 analysis. Transactions in GIS, 27(4).
 <https://doi.org/10.1111/tgis.13067>
-
-Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of
-the IEEE 69, 14–47.
 
 Jenness, J.S., 2004. Calculating landscape surface area from digital
 elevation models. Wildlife Society Bulletin 32, 829–839.
