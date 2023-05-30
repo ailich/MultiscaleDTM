@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,14 +84,17 @@
 <p><a href="https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/ailich/MultiscaleDTM/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a> <a href="https://cran.r-project.org/package=MultiscaleDTM" class="external-link"><img src="https://www.r-pkg.org/badges/version/MultiscaleDTM" alt="CRAN"></a> <a href="https://www.gnu.org/licenses/gpl-3.0" class="external-link"><img src="https://img.shields.io/badge/License-GPLv3-blue.svg" alt="License: GPLv3"></a> <a href="https://zenodo.org/badge/latestdoi/353158828" class="external-link"><img src="https://zenodo.org/badge/353158828.svg" alt="DOI"></a>
 <!-- badges: end --></p>
 <p>Please cite as</p>
-<p>Ilich, Alexander R.; Misiuk, Benjamin; Lecours, Vincent; Murawski,
-Steven A.; 2021. “MultiscaleDTM”, <a href="https://doi.org/10.5281/zenodo.5548338" class="external-link uri">https://doi.org/10.5281/zenodo.5548338</a>. <a href="https://github.com/ailich/MultiscaleDTM" class="external-link uri">https://github.com/ailich/MultiscaleDTM</a>.</p>
+<p>Ilich, A. R., Misiuk, B., Lecours, V., &amp; Murawski, S. A. (2023).
+MultiscaleDTM: An open-source R package for multiscale geomorphometric
+analysis. <em>Transactions in GIS</em>, <em>27</em>(4). <a href="https://doi.org/10.1111/tgis.13067" class="external-link uri">https://doi.org/10.1111/tgis.13067</a></p>
 <div class="section level3">
 <h3 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h3>
 <p>This R package calculates multi-scale geomorphometric terrain
 attributes from regularly gridded digital terrain models (DTM;
-i.e. elevation or bathymetry rasters) via a specified window size.</p>
+i.e. elevation or bathymetry rasters) via a specified window as
+described in <a href="https://onlinelibrary.wiley.com/doi/10.1111/tgis.13067" class="external-link">Ilich et
+al. (2023)</a>.</p>
 <p><img src="../reference/figures/kwindow.png" width="50%"></p>
 <p>Figure adapted from Wilson et al. (2007)</p>
 </div>
@@ -187,8 +190,8 @@ product of the x and y resolution by the cosine of slope (Du Preez
 2015). The metric by Jenness (2004) and De Preez (2015) works at the per
 cell level (1x1 cell). This function generalizes this method to multiple
 scales by summing the surface areas within the focal window and
-adjusting the planar area of the focal window using multi-scale
-slope.</p>
+adjusting the planar area of the focal window using multi-scale slope
+(Ilich et al., 2023).</p>
 <ul>
 <li>
 <code>SurfaceArea</code> - Calculate the surface area of each grid
@@ -208,12 +211,12 @@ BioRender.com.</p>
 <p>Figure adapted from Jenness (2004)</p>
 <ul>
 <li>
-<code>AdjSD</code>- This new proposed roughness metric modifies the
-standard deviation of elevation/bathymetry to account for slope. It does
-this by first fitting a plane to the data in the focal window using
-ordinary least squares, and then extracting the residuals, and then
-calculating the standard deviation of the residuals within the focal
-window.</li>
+<code>AdjSD</code>- This roughness metric modifies the standard
+deviation of elevation/bathymetry to account for slope (Ilich et al.,
+2023). It does this by first fitting a plane to the data in the focal
+window using ordinary least squares, and then extracting the residuals,
+and then calculating the standard deviation of the residuals within the
+focal window.</li>
 </ul>
 <p><img src="../reference/figures/adj_sd.png" width="80%"></p>
 <ul>
@@ -402,6 +405,9 @@ Purdue University, West Lafayette, Indiana.</p>
 Stereo Image Reconstructions. PLOS ONE 7, e50440. <a href="https://doi.org/10.1371/journal.pone.0050440" class="external-link uri">https://doi.org/10.1371/journal.pone.0050440</a></p>
 <p>Habib, M., 2021. Quantifying Topographic Ruggedness Using Principal
 Component Analysis. Advances in Civil Engineering 2021, e3311912. <a href="https://doi.org/10.1155/2021/3311912" class="external-link uri">https://doi.org/10.1155/2021/3311912</a></p>
+<p>Ilich, A. R., Misiuk, B., Lecours, V., &amp; Murawski, S. A. (2023).
+MultiscaleDTM: An open-source R package for multiscale geomorphometric
+analysis. Transactions in GIS, 27(4). <a href="https://doi.org/10.1111/tgis.13067" class="external-link uri">https://doi.org/10.1111/tgis.13067</a></p>
 <p>Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings
 of the IEEE 69, 14–47.</p>
 <p>Jenness, J.S., 2004. Calculating landscape surface area from digital
