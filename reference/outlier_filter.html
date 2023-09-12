@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@
 
 
 <dt>outlier_quantile</dt>
-<dd><p>vector of length 2 specifying the quantiles used for filtering outliers</p></dd>
+<dd><p>A numeric vector of length two or three. If two numbers are used it specifies the lower (Q1) and upper (Q2) quantiles used for determining the interquantile range (IQR). These values should be between 0 and 1 with Q2 &gt; Q1. An optional third number can be used to specify a the size of a regular sample to be taken which can be useful if the full dataset is too large to fit in memory. Values are considered outliers if they are less than Q1-(100<em>IQR) or greater than Q2+(100</em>IQR), where IQR=Q2-Q1.</p></dd>
 
 
 <dt>wopt</dt>
