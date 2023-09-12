@@ -33,11 +33,12 @@ classify_features_ff<- function(slope_tolerance=1, curvature_tolerance=0.0001){
 #' Helper function to filter outliers from regression parameters using interquartile range
 #'
 #' @param params regression parameters for fitted surface
-#' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
+#' @param outlier_quantile A numeric vector of length two or three. If two numbers are used it specifies the lower (Q1) and upper (Q2) quantiles used for determining the interquantile range (IQR). These values should be between 0 and 1 with Q2 > Q1. An optional third number can be used to specify a the size of a regular sample to be taken which can be useful if the full dataset is too large to fit in memory. Values are considered outliers if they are less than Q1-(100*IQR) or greater than Q2+(100*IQR), where IQR=Q2-Q1.
 #' @param wopt list with named options for writing files as in writeRaster
 
 outlier_filter<- function(params, outlier_quantile, wopt=list()){ 
-  quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE)
+  if(length(outlier_quantile)==2){outlier_quantile[3]<- Inf}
+  quant <- terra::global(params, fun = quantile, probs = c(0, outlier_quantile[1], outlier_quantile[2], 1), na.rm = TRUE, maxcell=outlier_quantile[3])
   iqr <- quant[, 3] - quant[, 2]
   outliers <- row.names(quant)[which(quant[, 1] < (quant[, 2] - 100 * iqr) | quant[, 4] > (quant[, 3] + 100 * iqr))]
   
@@ -64,7 +65,7 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
 #' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'elev' is the predicted elevation at the central cell (i.e. the intercept term of the regression) and is only relevant when force_center=FALSE. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, and 'features' are morphometric features. See details.
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
-#' @param outlier_quantile vector of length 2 specifying the quantiles used for filtering outliers
+#' @param outlier_quantile A numeric vector of length two or three. If two numbers are used it specifies the lower (Q1) and upper (Q2) quantiles used for determining the interquantile range (IQR). These values should be between 0 and 1 with Q2 > Q1. An optional third number can be used to specify a the size of a regular sample to be taken which can be useful if the full dataset is too large to fit in memory. Values are considered outliers and replaced with NA if they are less than Q1-(100*IQR) or greater than Q2+(100*IQR), where IQR=Q2-Q1. The outlier filter is performed on the results of the regression parameters ('a'-'e' and 'elev') prior to calculation of subsequent terrain attributes. Note that c(0,1) will skip the outlier filtering step and can speed up computations. The default is c(0.01,0.99).
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
 #' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
 #' @param force_center Logical specifying whether the constrain the model through the central cell of the focal window
@@ -201,7 +202,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
       }
   
   # Filter outliers
-  if(!all(outlier_quantile==c(0,1))){
+  if(!all(outlier_quantile[c(1,2)]==c(0,1))){
     params <- outlier_filter(params, outlier_quantile, wopt=wopt)
     }
   
