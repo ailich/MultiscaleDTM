@@ -9,7 +9,7 @@ type: software
 license: GPL-3.0-or-later
 title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
 version: 0.8.1
-doi: http://doi.org/10.1111/tgis.13067
+doi: 10.1111/tgis.13067
 abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
   gridded digital terrain models using a variable focal windows size (Ilich et al.
   (2023) <doi:10.1111/tgis.13067>).
@@ -36,7 +36,7 @@ preferred-citation:
     given-names: Vincent
   - family-names: Murawski
     given-names: Steven A.
-  doi: http://doi.org/10.1111/tgis.13067
+  doi: 10.1111/tgis.13067
   year: '2023'
   publisher:
     name: Wiley
