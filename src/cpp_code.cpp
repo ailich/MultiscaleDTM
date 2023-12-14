@@ -202,7 +202,7 @@ NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, s
     size_t start = i*nw;
     size_t end = start+nw-1;
     NumericVector zw_full = z[Rcpp::Range(start,end)]; //Current window of elevation values
-    Rcout << "zw: " << zw_full << std::endl; //print zw
+    //Rcout << "zw: " << zw_full << std::endl; //print zw
     LogicalVector NA_idx = is_na(zw_full);
     int n_obs = sum(!NA_idx);
     if(n_obs < thresh) {} else {
