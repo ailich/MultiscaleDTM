@@ -22,7 +22,7 @@
 #' Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023). MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis. Transactions in GIS, 27(4). https://doi.org/10.1111/tgis.13067
 #' @export
 
-AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, f1_name="i.txt", f2_name="zw.txt", wopt=list()){
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -70,7 +70,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, o
   
   #Fit Quadratic and Extract Residuals
   if(na.rm){
-    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, wopt=wopt)
+    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, f1_name=f1_name, f2_name=f2_name, wopt=wopt)
   } else{
     out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmF, X= X, Xt=Xt, XtX_inv=XtX_inv, fillvalue=NA, wopt=wopt)
     }

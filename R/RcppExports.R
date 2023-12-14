@@ -37,8 +37,8 @@ C_Qfit2_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
     .Call(`_MultiscaleDTM_C_Qfit2_narmF`, z, X, Xt, XtX_inv, ni, nw)
 }
 
-C_AdjSD_narmT <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDTM_C_AdjSD_narmT`, z, X_full, na_rm, ni, nw)
+C_AdjSD_narmT <- function(z, X_full, na_rm, ni, nw, f1_name, f2_name) {
+    .Call(`_MultiscaleDTM_C_AdjSD_narmT`, z, X_full, na_rm, ni, nw, f1_name, f2_name)
 }
 
 C_AdjSD_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {

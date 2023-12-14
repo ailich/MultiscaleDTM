@@ -135,8 +135,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_AdjSD_narmT
-NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw, const std::string& f1_name, const std::string& f2_name);
+RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP, SEXP f1_nameSEXP, SEXP f2_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -145,7 +145,9 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmT(z, X_full, na_rm, ni, nw));
+    Rcpp::traits::input_parameter< const std::string& >::type f1_name(f1_nameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type f2_name(f2_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmT(z, X_full, na_rm, ni, nw, f1_name, f2_name));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -217,7 +219,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDTM_C_Qfit1_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit1_narmF, 6},
     {"_MultiscaleDTM_C_Qfit2_narmT", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmT, 4},
     {"_MultiscaleDTM_C_Qfit2_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmF, 6},
-    {"_MultiscaleDTM_C_AdjSD_narmT", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT, 5},
+    {"_MultiscaleDTM_C_AdjSD_narmT", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT, 7},
     {"_MultiscaleDTM_C_AdjSD_narmF", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmF, 6},
     {"_MultiscaleDTM_C_TriArea", (DL_FUNC) &_MultiscaleDTM_C_TriArea, 3},
     {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 5},
