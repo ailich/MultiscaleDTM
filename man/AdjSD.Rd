@@ -9,8 +9,11 @@ AdjSD(
   w = c(3, 3),
   na.rm = FALSE,
   include_scale = FALSE,
+  ncores = 1,
   filename = NULL,
   overwrite = FALSE,
+  f1_name = "i.txt",
+  f2_name = "zw.txt",
   wopt = list()
 )
 }
@@ -22,6 +25,8 @@ AdjSD(
 \item{na.rm}{A logical indicating whether or not to remove NA values before calculations}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
+
+\item{ncores}{Number of cores to use for parallel processing (default is 1 aka serial processing).}
 
 \item{filename}{character Output filename.}
 

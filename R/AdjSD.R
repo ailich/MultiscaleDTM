@@ -5,6 +5,7 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param na.rm A logical indicating whether or not to remove NA values before calculations
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
+#' @param ncores Number of cores to use for parallel processing (default is 1 aka serial processing).
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
@@ -18,11 +19,20 @@
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster writeRaster
+#' @importFrom future plan
+#' @importFrom future.apply future_lapply
 #' @references
 #' Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023). MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis. Transactions in GIS, 27(4). https://doi.org/10.1111/tgis.13067
 #' @export
 
-AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, f1_name="i.txt", f2_name="zw.txt", wopt=list()){
+AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, ncores =1, filename=NULL, overwrite=FALSE, f1_name="i.txt", f2_name="zw.txt", wopt=list()){
+  
+  file.create(f1_name)
+  file.create(f2_name)
+  
+  oplan<- future::plan()
+  on.exit(future::plan(oplan)) #restore original parallelization plan on exit of function
+  
   og_class<- class(r)[1]
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
@@ -69,10 +79,44 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, o
   }
   
   #Fit Quadratic and Extract Residuals
-  if(na.rm){
-    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, f1_name=f1_name, f2_name=f2_name, wopt=wopt)
-  } else{
-    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmF, X= X, Xt=Xt, XtX_inv=XtX_inv, fillvalue=NA, wopt=wopt)
+  if(ncores==1){
+    if(na.rm){
+      out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, f1_name=f1_name, f2_name=f2_name, wopt=wopt)
+      } else{
+        out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmF, X= X, Xt=Xt, XtX_inv=XtX_inv, fillvalue=NA, wopt=wopt)
+        }
+    } else{
+        buffer<- (w[1]-1)/2
+        r_list<- chunk_raster(r, n_chunks=ncores, buffer=buffer) #Break raster into smaller chunks
+        breaks_df<- r_list[[1]]
+        r_list<- r_list[[2]]
+        nchunks<- length(r_list)
+        if(na.rm){
+          future::plan(strategy = "multisession", workers=nchunks) #Set up parallel
+          out<- future.apply::future_lapply(r_list, FUN = focalCpp_parallel,
+                                                 w=w, 
+                                                 fun = C_AdjSD_narmT, 
+                                                 X_full= X, 
+                                                 na_rm=TRUE, 
+                                                 fillvalue=NA, 
+                                                 f1_name=f1_name, 
+                                                 f2_name=f2_name, 
+                                                 wopt=wopt)
+          plan(oplan) #Go back to original plan
+          } else{
+            future::plan(strategy = "multisession", workers=nchunks) #Set up parallel
+            out<- future.apply::future_lapply(r_list, FUN = focalCpp_parallel,
+                                              w=w, 
+                                              fun = C_AdjSD_narmF, 
+                                              X= X, 
+                                              Xt=Xt, 
+                                              XtX_inv=XtX_inv, 
+                                              fillvalue=NA, 
+                                              wopt=wopt)
+            plan(oplan) #Go back to original plan
+          }
+        out<- lapply(out, terra::unwrap)
+        out<- combine_raster_chunks(out, breaks_df=breaks_df)
     }
   
   names(out)<- "adjSD"

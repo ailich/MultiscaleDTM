@@ -197,10 +197,10 @@ NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, s
   //SET THRESH TO 4 B/C WITH 3 RESIDUALS WILL ALWAYS BE 0
   
   int thresh = 4;
-  std::ofstream f1(f1_name);
-  std::ofstream f2(f2_name);
+  std::ofstream f1(f1_name, std::ios_base::app);
+  std::ofstream f2(f2_name, std::ios_base::app);
   for (size_t i=0; i< ni; i++) {
-    Rcout << "i: " << i << std::endl; //print i
+    // Rcout << "i: " << i << std::endl; //print i
     f1 << "i: " << i << std::endl; //print i to file
     size_t start = i*nw;
     size_t end = start+nw-1;
