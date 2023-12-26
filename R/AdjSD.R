@@ -25,11 +25,10 @@
 #' Ilich, A. R., Misiuk, B., Lecours, V., & Murawski, S. A. (2023). MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis. Transactions in GIS, 27(4). https://doi.org/10.1111/tgis.13067
 #' @export
 
-AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, ncores =1, filename=NULL, overwrite=FALSE, f1_name="i.txt", f2_name="zw.txt", wopt=list()){
+AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, ncores =1, filename=NULL, overwrite=FALSE, f1_name="i.txt", wopt=list()){
   
   file.create(f1_name)
-  file.create(f2_name)
-  
+
   oplan<- future::plan()
   on.exit(future::plan(oplan)) #restore original parallelization plan on exit of function
   
@@ -81,7 +80,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, ncores =1, filen
   #Fit Quadratic and Extract Residuals
   if(ncores==1){
     if(na.rm){
-      out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, f1_name=f1_name, f2_name=f2_name, wopt=wopt)
+      out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, f1_name=f1_name, wopt=wopt)
       } else{
         out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmF, X= X, Xt=Xt, XtX_inv=XtX_inv, fillvalue=NA, wopt=wopt)
         }
@@ -99,8 +98,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, ncores =1, filen
                                                  X_full= X, 
                                                  na_rm=TRUE, 
                                                  fillvalue=NA, 
-                                                 f1_name=f1_name, 
-                                                 f2_name=f2_name, 
+                                                 f1_name=f1_name,
                                                  wopt=wopt)
           plan(oplan) #Go back to original plan
           } else{

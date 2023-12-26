@@ -13,7 +13,6 @@ AdjSD(
   filename = NULL,
   overwrite = FALSE,
   f1_name = "i.txt",
-  f2_name = "zw.txt",
   wopt = list()
 )
 }

@@ -189,7 +189,7 @@ NumericMatrix C_Qfit2_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::ma
 
 //SD of residuals from a planar fit
 // [[Rcpp::export]]
-NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw, const std::string& f1_name, const std::string& f2_name){
+NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw, const std::string& f1_name){
   NumericVector out(ni, NA_REAL);
   //Z = dX + eY + f
   
@@ -198,14 +198,12 @@ NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, s
   
   int thresh = 4;
   std::ofstream f1(f1_name, std::ios_base::app);
-  std::ofstream f2(f2_name, std::ios_base::app);
   for (size_t i=0; i< ni; i++) {
     // Rcout << "i: " << i << std::endl; //print i
     f1 << "i: " << i << std::endl; //print i to file
     size_t start = i*nw;
     size_t end = start+nw-1;
     NumericVector zw_full = z[Rcpp::Range(start,end)]; //Current window of elevation values
-    f2 << "zw: " << zw_full << std::endl; //print zw
     LogicalVector NA_idx = is_na(zw_full);
     int n_obs = sum(!NA_idx);
     if(n_obs < thresh) {} else {
@@ -221,7 +219,6 @@ NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, s
           }
     }}
   f1.close();
-  f2.close();
   return out;
 }
 
