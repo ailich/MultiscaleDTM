@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-September 12, 2023
+December 30, 2023
 
 # MultiscaleDTM
 
@@ -279,7 +279,7 @@ vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 ![](man/figures/README-VRM-1.png)<!-- -->
 
 ``` r
-sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
+sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE, na.rm=TRUE)
 ```
 
 ![](man/figures/README-SAPA-1.png)<!-- -->

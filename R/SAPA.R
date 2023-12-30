@@ -119,7 +119,7 @@ SAPA<- function(r=NULL, w = 1, slope_correction=TRUE, na.rm=FALSE, include_scale
   } # Sum up surface area in focal window (or scale mean to number of cells)
   
   if(is.null(slope_layer) & slope_correction){
-    if (all(w==1)){
+    if (all(w==1) & (!na.rm)){
       slope_layer<- terra::terrain(r, v="slope", unit="radians", neighbors=8, wopt=wopt)
       } else{
         slope_layer<- SlpAsp(r, w=w+2, unit="radians", method="queen", metrics= "slope", na.rm=na.rm, include_scale=FALSE, wopt=wopt)

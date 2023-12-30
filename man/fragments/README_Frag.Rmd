@@ -248,7 +248,7 @@ tm_shape(vrm, raster.downsample = FALSE)+
 ```
 
 ```{r}
-sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE)
+sapa<- SAPA(r, w=c(5,5), slope_correction = TRUE, na.rm=TRUE)
 ```
 
 ```{r SAPA, echo=FALSE}
