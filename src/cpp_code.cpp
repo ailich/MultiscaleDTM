@@ -189,7 +189,7 @@ NumericMatrix C_Qfit2_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::ma
 
 //SD of residuals from a planar fit
 // [[Rcpp::export]]
-NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw){
+NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw){
   NumericVector out(ni, NA_REAL);
   //Z = dX + eY + f
   
@@ -250,7 +250,7 @@ double C_TriArea (double a, double b, double c){
 
 //Surface Area
 // [[Rcpp::export]]
-NumericVector C_SurfaceArea (NumericVector z, double x_res, double y_res, size_t ni, size_t nw){
+NumericVector C_SurfaceArea (NumericVector z, double x_res, double y_res, bool na_rm, size_t ni, size_t nw){
   NumericVector out(ni, NA_REAL);
   double Lx2= pow(x_res, 2);
   double Ly2= pow(y_res, 2);
@@ -285,8 +285,22 @@ NumericVector C_SurfaceArea (NumericVector z, double x_res, double y_res, size_t
     double EI= sqrt(Ld2+pow(zw[4]-zw[8],2))/2;
     
     //Sum area of the 8 triangles
-    out[i] = C_TriArea(EA, AB, BE) + C_TriArea(BE, BC, EC) + C_TriArea(AD, DE, EA) + C_TriArea(EC, CF, EF) + C_TriArea(DE, DG, EG) + C_TriArea(EF, FI, EI) + C_TriArea(EG, EH, GH) + C_TriArea(EH, EI, HI);
-  }
+    if(na_rm){
+      NumericVector Areas = NumericVector::create(C_TriArea(EA, AB, BE),
+                                                  C_TriArea(BE, BC, EC),
+                                                  C_TriArea(AD, DE, EA),
+                                                  C_TriArea(EC, CF, EF),
+                                                  C_TriArea(DE, DG, EG),
+                                                  C_TriArea(EF, FI, EI),
+                                                  C_TriArea(EG, EH, GH),
+                                                  C_TriArea(EH, EI, HI));
+      LogicalVector NA_idx = is_na(Areas);
+      Areas = Areas[!NA_idx];
+      out[i] = mean(Areas)*8;
+    } else{
+      out[i] = C_TriArea(EA, AB, BE) + C_TriArea(BE, BC, EC) + C_TriArea(AD, DE, EA) + C_TriArea(EC, CF, EF) + C_TriArea(DE, DG, EG) + C_TriArea(EF, FI, EI) + C_TriArea(EG, EH, GH) + C_TriArea(EH, EI, HI);
+    }
+    }
   return out;
 }
 

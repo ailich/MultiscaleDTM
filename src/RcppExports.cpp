@@ -135,17 +135,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_AdjSD_narmT
-NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, bool na_rm, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmT(SEXP zSEXP, SEXP X_fullSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
     Rcpp::traits::input_parameter< NumericMatrix >::type X_full(X_fullSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmT(z, X_full, na_rm, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmT(z, X_full, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -179,17 +178,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // C_SurfaceArea
-NumericVector C_SurfaceArea(NumericVector z, double x_res, double y_res, size_t ni, size_t nw);
-RcppExport SEXP _MultiscaleDTM_C_SurfaceArea(SEXP zSEXP, SEXP x_resSEXP, SEXP y_resSEXP, SEXP niSEXP, SEXP nwSEXP) {
+NumericVector C_SurfaceArea(NumericVector z, double x_res, double y_res, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_SurfaceArea(SEXP zSEXP, SEXP x_resSEXP, SEXP y_resSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
     Rcpp::traits::input_parameter< double >::type x_res(x_resSEXP);
     Rcpp::traits::input_parameter< double >::type y_res(y_resSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
-    rcpp_result_gen = Rcpp::wrap(C_SurfaceArea(z, x_res, y_res, ni, nw));
+    rcpp_result_gen = Rcpp::wrap(C_SurfaceArea(z, x_res, y_res, na_rm, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -217,10 +217,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDTM_C_Qfit1_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit1_narmF, 6},
     {"_MultiscaleDTM_C_Qfit2_narmT", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmT, 4},
     {"_MultiscaleDTM_C_Qfit2_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmF, 6},
-    {"_MultiscaleDTM_C_AdjSD_narmT", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT, 5},
+    {"_MultiscaleDTM_C_AdjSD_narmT", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT, 4},
     {"_MultiscaleDTM_C_AdjSD_narmF", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmF, 6},
     {"_MultiscaleDTM_C_TriArea", (DL_FUNC) &_MultiscaleDTM_C_TriArea, 3},
-    {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 5},
+    {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 6},
     {"_MultiscaleDTM_C_CountVals", (DL_FUNC) &_MultiscaleDTM_C_CountVals, 3},
     {NULL, NULL, 0}
 };

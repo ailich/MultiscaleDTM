@@ -70,7 +70,7 @@ AdjSD<- function(r, w=c(3,3), na.rm=FALSE, include_scale=FALSE, filename=NULL, o
   
   #Fit Quadratic and Extract Residuals
   if(na.rm){
-    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, na_rm=TRUE, fillvalue=NA, wopt=wopt)
+    out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmT, X_full= X, fillvalue=NA, wopt=wopt)
   } else{
     out<- terra::focalCpp(r, w=w, fun = C_AdjSD_narmF, X= X, Xt=Xt, XtX_inv=XtX_inv, fillvalue=NA, wopt=wopt)
     }

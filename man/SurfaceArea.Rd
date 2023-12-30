@@ -4,10 +4,18 @@
 \alias{SurfaceArea}
 \title{Calculates surface area of a DTM}
 \usage{
-SurfaceArea(r, filename = NULL, overwrite = FALSE, wopt = list())
+SurfaceArea(
+  r,
+  na.rm = FALSE,
+  filename = NULL,
+  overwrite = FALSE,
+  wopt = list()
+)
 }
 \arguments{
 \item{r}{DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units}
+
+\item{na.rm}{Logical indicating whether to remove NAs from calculations. When FALSE, the sum of the eight triangles is calculated. When TRUE, the mean of the created triangles is calculated and multiplied by 8 to scale it to the proper area.}
 
 \item{filename}{character Output filename.}
 

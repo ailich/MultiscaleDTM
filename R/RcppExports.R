@@ -37,8 +37,8 @@ C_Qfit2_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
     .Call(`_MultiscaleDTM_C_Qfit2_narmF`, z, X, Xt, XtX_inv, ni, nw)
 }
 
-C_AdjSD_narmT <- function(z, X_full, na_rm, ni, nw) {
-    .Call(`_MultiscaleDTM_C_AdjSD_narmT`, z, X_full, na_rm, ni, nw)
+C_AdjSD_narmT <- function(z, X_full, ni, nw) {
+    .Call(`_MultiscaleDTM_C_AdjSD_narmT`, z, X_full, ni, nw)
 }
 
 C_AdjSD_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
@@ -49,8 +49,8 @@ C_TriArea <- function(a, b, c) {
     .Call(`_MultiscaleDTM_C_TriArea`, a, b, c)
 }
 
-C_SurfaceArea <- function(z, x_res, y_res, ni, nw) {
-    .Call(`_MultiscaleDTM_C_SurfaceArea`, z, x_res, y_res, ni, nw)
+C_SurfaceArea <- function(z, x_res, y_res, na_rm, ni, nw) {
+    .Call(`_MultiscaleDTM_C_SurfaceArea`, z, x_res, y_res, na_rm, ni, nw)
 }
 
 C_CountVals <- function(z, ni, nw) {
