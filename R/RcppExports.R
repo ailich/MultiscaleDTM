@@ -45,6 +45,10 @@ C_AdjSD_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
     .Call(`_MultiscaleDTM_C_AdjSD_narmF`, z, X, Xt, XtX_inv, ni, nw)
 }
 
+C_Pfit1_narmF <- function(z, X, Xt, XtX_inv, idx, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Pfit1_narmF`, z, X, Xt, XtX_inv, idx, ni, nw)
+}
+
 C_TriArea <- function(a, b, c) {
     .Call(`_MultiscaleDTM_C_TriArea`, a, b, c)
 }

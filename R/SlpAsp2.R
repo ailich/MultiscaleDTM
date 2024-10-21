@@ -370,6 +370,97 @@ SlpAsp2 <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slo
     }
   }
   
+  if(method=="boundary4"){
+    # #k is size of window in a given direction
+    # kx<- w[2]
+    # ky<- w[1]
+    # 
+    # #j is the number of cells on either side of the focal cell; l is used to generate the focal matrix
+    # jx <- (kx/2)-0.5
+    # jy <- (ky/2)-0.5
+    # 
+    # lx <- jx-1
+    # ly <- jy-1
+    
+    
+    
+    #create matrix weights
+    
+    #create matrix weights for x-component
+    
+    xl.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    v<- jx
+    for (i in 1:jx) {
+      if(i==1){
+        xl.mat[,i]<- v
+      } else{
+        xl.mat[c(1, ky),i]<- v
+      }
+      v<- v-1
+    }
+    print("xl.mat")
+    print(xl.mat)
+    
+    xr.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    v<- jx
+    for (i in kx:(kx-jx+1)) {
+      if(i==kx){
+        xr.mat[,i]<- v
+      } else{
+        xr.mat[c(1, ky),i]<- v
+      }
+      v<- v-1
+    }
+    print("xr.mat")
+    print(xr.mat)
+    
+    #create matrix weights for y-component
+    yt.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    v<- jy
+    for (i in 1:jy) {
+      if(i==1){
+        yt.mat[i,]<- v
+      } else{
+        yt.mat[i, c(1, kx)]<- v
+      }
+      v<- v-1
+    }
+    print("yt.mat")
+    print(yt.mat)
+    
+    yb.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    v<- jy
+    for (i in ky:(ky-jy+1)) {
+      if(i==ky){
+        yb.mat[i,]<- v
+      } else{
+        yb.mat[i, c(1, kx)]<- v
+      }
+      v<- v-1
+    }
+    print("yb.mat")
+    print(yb.mat)
+
+    #use focal statistics for e, w, n, s components of the k-neighbourhood
+    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    
+    if(!na.rm){
+      nc<- (w[1]*2)+(w[2]*2)-4 # Number of border cells (also is equivalent sum of x or y weights)
+      dz.dx <- (dz.dx.r-dz.dx.l)/(nc*jx*terra::res(r)[1])
+      dz.dy <- (dz.dy.t-dz.dy.b)/(nc*jy*terra::res(r)[2])
+    } else{
+      weights.l<-terra::focal(Non_NA_rast, w=xl.mat, fun=sum, na.rm=TRUE)
+      weights.r<-terra::focal(Non_NA_rast, w=xr.mat, fun=sum, na.rm=TRUE)
+      weights.t<-terra::focal(Non_NA_rast, w=yt.mat, fun=sum, na.rm=TRUE)
+      weights.b<-terra::focal(Non_NA_rast, w=yb.mat, fun=sum, na.rm=TRUE)
+      dz.dx <- ((dz.dx.r/weights.r) - (dz.dx.l/weights.l))/(2*jx*terra::xres(r))
+      dz.dy <- ((dz.dy.t/weights.t) - (dz.dy.b/weights.b))/(2*jy*terra::yres(r))
+    }
+  }
+  
   out<- terra::rast() #initialize output
   
   if("slope" %in% needed_metrics){
