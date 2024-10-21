@@ -76,9 +76,9 @@ SlpAsp2 <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slo
   if(method==4){method<- "rook"}
   if(method==8){method<- "queen"}
   
-  if(!(method %in% c("queen", "rook", "boundary"))){
-    stop("method must be 'queen', 'rook', 'boundary', '8', or '4'")
-  }
+  # if(!(method %in% c("queen", "rook", "boundary"))){
+  #   stop("method must be 'queen', 'rook', 'boundary', '8', or '4'")
+  # }
   metrics<- tolower(metrics) #Make all lowercase
   if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
     stop("metrics must be 'slope', 'aspect', 'northness', and/or 'eastness'")
@@ -208,26 +208,145 @@ SlpAsp2 <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slo
     xl.mat[,1]<- 2
     xl.mat[1,1]<- 1
     xl.mat[ky,1]<- 1
-    xl.mat
+    print("xl.mat")
+    print(xl.mat)
     
     xr.mat <- matrix(data=NA, nrow=ky, ncol=kx)
     xr.mat[,kx]<- 2
     xr.mat[1,kx]<- 1
     xr.mat[ky,kx]<- 1
-    xr.mat
+    print("xr.mat")
+    print(xr.mat)
     
     #create matrix weights for y-component
     yt.mat <- matrix(data=NA, nrow=ky, ncol=kx)
     yt.mat[1,]<- 2
     yt.mat[1,1]<- 1
     yt.mat[1,kx]<- 1
-    yt.mat
+    print("yt.mat")
+    print(yt.mat)
     
     yb.mat <- matrix(data=NA, nrow=ky, ncol=kx)
     yb.mat[ky,]<- 2
     yb.mat[ky,1]<- 1
     yb.mat[ky,kx]<- 1
-    yb.mat
+    print("yb.mat")
+    print(yb.mat)
+    
+    #use focal statistics for e, w, n, s components of the k-neighbourhood
+    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    
+    if(!na.rm){
+      xw<- sum(xl.mat,na.rm=TRUE)+sum(xr.mat,na.rm=TRUE) #Sum of x weights
+      yw<- sum(yt.mat,na.rm=TRUE)+sum(yb.mat,na.rm=TRUE) #Sum of y weights
+      
+      dz.dx <- (dz.dx.r-dz.dx.l)/(xw*jx*terra::res(r)[1])
+      dz.dy <- (dz.dy.t-dz.dy.b)/(yw*jy*terra::res(r)[2])
+    } else{
+      weights.l<-terra::focal(Non_NA_rast, w=xl.mat, fun=sum, na.rm=TRUE, wopt=wopt)
+      weights.r<-terra::focal(Non_NA_rast, w=xr.mat, fun=sum, na.rm=TRUE, wopt=wopt)
+      weights.t<-terra::focal(Non_NA_rast, w=yt.mat, fun=sum, na.rm=TRUE, wopt=wopt)
+      weights.b<-terra::focal(Non_NA_rast, w=yb.mat, fun=sum, na.rm=TRUE, wopt=wopt)
+      dz.dx <- ((dz.dx.r/weights.r) - (dz.dx.l/weights.l))/(2*jx*terra::xres(r))
+      dz.dy <- ((dz.dy.t/weights.t) - (dz.dy.b/weights.b))/(2*jy*terra::yres(r))
+    }
+  }
+  
+  if(method=="boundary2"){
+    #create matrix weights
+    
+    mat_full<- matrix(data=NA, nrow=ky, ncol=kx)
+    mat_full[1,]<-1
+    mat_full[,1]<-1
+    mat_full[ky,]<-1
+    mat_full[,kx]<-1
+    mat_full[jy+1,1]<-2
+    mat_full[jy+1,kx]<-2
+    
+    mat_full[1, jx+1]<-2
+    mat_full[ky, jx+1]<-2
+    
+    #create matrix weights for x-component
+    
+    xl.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    xl.mat[, 1:jx]<- mat_full[, 1:jx]
+    print("xl.mat")
+    print(xl.mat)
+    
+    xr.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    xr.mat[, (jx+2):kx]<- mat_full[, (kx-jx+1):kx]
+    print("xr.mat")
+    print(xr.mat)
+    
+    #create matrix weights for y-component
+    yt.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    yt.mat[1:jy,]<- mat_full[1:jy,]
+    print("yt.mat")
+    print(yt.mat)
+    
+    yb.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    yb.mat[(jy+2):ky,]<- mat_full[(jy+2):ky,]
+    print("yb.mat")
+    print(yb.mat)
+    
+    
+    #use focal statistics for e, w, n, s components of the k-neighbourhood
+    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=na.rm, wopt=wopt)
+    
+    if(!na.rm){
+      nc<- (w[1]*2)+(w[2]*2)-4 # Number of border cells (also is equivalent sum of x or y weights)
+      dz.dx <- (dz.dx.r-dz.dx.l)/(nc*jx*terra::res(r)[1])
+      dz.dy <- (dz.dy.t-dz.dy.b)/(nc*jy*terra::res(r)[2])
+    } else{
+      weights.l<-terra::focal(Non_NA_rast, w=xl.mat, fun=sum, na.rm=TRUE)
+      weights.r<-terra::focal(Non_NA_rast, w=xr.mat, fun=sum, na.rm=TRUE)
+      weights.t<-terra::focal(Non_NA_rast, w=yt.mat, fun=sum, na.rm=TRUE)
+      weights.b<-terra::focal(Non_NA_rast, w=yb.mat, fun=sum, na.rm=TRUE)
+      dz.dx <- ((dz.dx.r/weights.r) - (dz.dx.l/weights.l))/(2*jx*terra::xres(r))
+      dz.dy <- ((dz.dy.t/weights.t) - (dz.dy.b/weights.b))/(2*jy*terra::yres(r))
+    }
+  }
+  
+  if(method=="boundary3"){
+    #k is size of window in a given direction
+    kx<- w[2]
+    ky<- w[1]
+    
+    #j is the number of cells on either side of the focal cell; l is used to generate the focal matrix
+    jx <- (kx/2)-0.5
+    jy <- (ky/2)-0.5
+    
+    lx <- jx-1
+    ly <- jy-1
+    
+    #create matrix weights for x-component
+    
+    xl.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    xl.mat[,1]<- c(seq(1,2, length.out=jy+1), seq(2, 1, length.out=jy+1)[-1])
+    print("xl.mat")
+    print(xl.mat)
+    
+    xr.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    xr.mat[,kx]<- c(seq(1,2, length.out=jy+1), seq(2, 1, length.out=jy+1)[-1])
+    print("xr.mat")
+    print(xr.mat)
+    
+    #create matrix weights for y-component
+    yt.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    yt.mat[1,]<- c(seq(1,2, length.out=jx+1), seq(2, 1, length.out=jx+1)[-1])
+    print("yt.mat")
+    print(yt.mat)
+    
+    yb.mat <- matrix(data=NA, nrow=ky, ncol=kx)
+    yb.mat[ky,]<- c(seq(1,2, length.out=jx+1), seq(2, 1, length.out=jx+1)[-1])
+    print("yb.mat")
+    print(yb.mat)
     
     #use focal statistics for e, w, n, s components of the k-neighbourhood
     dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=na.rm, wopt=wopt)
