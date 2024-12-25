@@ -1,18 +1,21 @@
-# -----------------------------------------------------------
-# CITATION file created with {cffr} R package, v0.5.0
+# --------------------------------------------
+# CITATION file created with {cffr} R package
 # See also: https://docs.ropensci.org/cffr/
-# -----------------------------------------------------------
+# --------------------------------------------
  
 cff-version: 1.2.0
 message: 'To cite package "MultiscaleDTM" in publications use:'
 type: software
 license: GPL-3.0-or-later
 title: 'MultiscaleDTM: Multi-Scale Geomorphometric Terrain Attributes'
-version: 0.8.3
+version: 0.8.4
 doi: 10.1111/tgis.13067
+identifiers:
+- type: doi
+  value: 10.32614/CRAN.package.MultiscaleDTM
 abstract: Calculates multi-scale geomorphometric terrain attributes from regularly
   gridded digital terrain models using a variable focal windows size (Ilich et al.
-  (2023) <doi:10.1111/tgis.13067>).
+  (2023) <https://doi.org/10.1111/tgis.13067>).
 authors:
 - family-names: Ilich
   given-names: Alexander
@@ -77,7 +80,8 @@ references:
     given-names: Robert J.
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.terra
   version: '>= 1.7.46'
 - type: software
   title: Rcpp
@@ -88,23 +92,32 @@ references:
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
+    email: edd@debian.org
+    orcid: https://orcid.org/0000-0001-6419-907X
   - family-names: Francois
     given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
   - family-names: Allaire
     given-names: JJ
+    orcid: https://orcid.org/0000-0003-0174-9868
   - family-names: Ushey
     given-names: Kevin
+    orcid: https://orcid.org/0000-0003-2880-7407
   - family-names: Kou
     given-names: Qiang
+    orcid: https://orcid.org/0000-0001-6786-5453
   - family-names: Russell
     given-names: Nathan
   - family-names: Ucar
-    given-names: Inaki
+    given-names: Iñaki
+    orcid: https://orcid.org/0000-0001-6403-5550
   - family-names: Bates
-    given-names: Douglas
+    given-names: Doug
+    orcid: https://orcid.org/0000-0001-8316-9503
   - family-names: Chambers
     given-names: John
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.Rcpp
 - type: software
   title: RcppArmadillo
   abstract: 'RcppArmadillo: ''Rcpp'' Integration for the ''Armadillo'' Templated Linear
@@ -115,15 +128,21 @@ references:
   authors:
   - family-names: Eddelbuettel
     given-names: Dirk
+    email: edd@debian.org
+    orcid: https://orcid.org/0000-0001-6419-907X
   - family-names: Francois
     given-names: Romain
+    orcid: https://orcid.org/0000-0002-2444-4226
   - family-names: Bates
     given-names: Doug
+    orcid: https://orcid.org/0000-0001-8316-9503
   - family-names: Ni
     given-names: Binxiang
   - family-names: Sanderson
     given-names: Conrad
-  year: '2023'
+    orcid: https://orcid.org/0000-0002-0049-4501
+  year: '2024'
+  doi: 10.32614/CRAN.package.RcppArmadillo
 - type: software
   title: raster
   abstract: 'raster: Geographic Data Analysis and Modeling'
@@ -135,7 +154,8 @@ references:
     given-names: Robert J.
     email: r.hijmans@gmail.com
     orcid: https://orcid.org/0000-0001-5872-2872
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.raster
 - type: software
   title: dplyr
   abstract: 'dplyr: A Grammar of Data Manipulation'
@@ -159,7 +179,8 @@ references:
     given-names: Davis
     email: davis@posit.co
     orcid: https://orcid.org/0000-0003-4777-038X
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.dplyr
 - type: software
   title: shiny
   abstract: 'shiny: Web Application Framework for R'
@@ -197,7 +218,8 @@ references:
     given-names: Alan
   - family-names: Borges
     given-names: Barbara
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.shiny
 - type: software
   title: rgl
   abstract: 'rgl: 3D Visualization Using OpenGL'
@@ -211,29 +233,28 @@ references:
   - family-names: Adler
     given-names: Daniel
     email: dadler@dyncall.org
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.rgl
 - type: software
   title: stats
   abstract: 'R: A Language and Environment for Statistical Computing'
   notes: Imports
   authors:
   - name: R Core Team
-  location:
-    name: Vienna, Austria
-  year: '2023'
   institution:
     name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
 - type: software
   title: utils
   abstract: 'R: A Language and Environment for Statistical Computing'
   notes: Imports
   authors:
   - name: R Core Team
-  location:
-    name: Vienna, Austria
-  year: '2023'
   institution:
     name: R Foundation for Statistical Computing
+    address: Vienna, Austria
+  year: '2024'
 - type: software
   title: knitr
   abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
@@ -245,7 +266,8 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.knitr
 - type: software
   title: rmarkdown
   abstract: 'rmarkdown: Dynamic Documents for R'
@@ -288,7 +310,8 @@ references:
     given-names: Richard
     email: rich@posit.co
     orcid: https://orcid.org/0000-0003-3925-190X
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.rmarkdown
 - type: software
   title: tmap
   abstract: 'tmap: Thematic Maps'
@@ -299,7 +322,8 @@ references:
   - family-names: Tennekes
     given-names: Martijn
     email: mtennekes@gmail.com
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.tmap
 - type: software
   title: colorRamps
   abstract: 'colorRamps: Builds Color Tables'
@@ -308,7 +332,10 @@ references:
   authors:
   - family-names: Keitt
     given-names: Tim
-  year: '2023'
+    email: tkeitt@gmail.com
+    orcid: https://orcid.org/0000-0002-4587-1083
+  year: '2024'
+  doi: 10.32614/CRAN.package.colorRamps
 - type: software
   title: cowplot
   abstract: 'cowplot: Streamlined Plot Theme and Plot Annotations for ''ggplot2'''
@@ -320,7 +347,8 @@ references:
     given-names: Claus O.
     email: wilke@austin.utexas.edu
     orcid: https://orcid.org/0000-0002-7470-9261
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.cowplot
 - type: software
   title: magick
   abstract: 'magick: Advanced Graphics and Image-Processing in R'
@@ -330,6 +358,8 @@ references:
   authors:
   - family-names: Ooms
     given-names: Jeroen
-    email: jeroen@berkeley.edu
+    email: jeroenooms@gmail.com
     orcid: https://orcid.org/0000-0002-4035-0289
-  year: '2023'
+  year: '2024'
+  doi: 10.32614/CRAN.package.magick
+
