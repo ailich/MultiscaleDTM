@@ -1,6 +1,6 @@
-#' Calculates multiscale slope using a local planar fit
+#' Calculates multiscale slope using a local planar fit (IN DEVELOPMENT)
 #'
-#' Calculates multiscale slope, aspect, curvature, and morphometric features of a DTM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
+#' Calculates multiscale slope, aspect, using a local planar fit (IN DEVELOPMENT)
 #' @param r DTM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
@@ -21,7 +21,6 @@
 #' Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
 #' 
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
-#' @export
 
 Pfit<- function(r, w=c(3,3), unit= "degrees",na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   

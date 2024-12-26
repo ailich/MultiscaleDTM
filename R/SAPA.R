@@ -126,8 +126,8 @@ SAPA<- function(r=NULL, w = 1, slope_correction=TRUE, na.rm=FALSE, include_scale
       }
   }
   
-  x_res<- terra::xres(slope_layer)
-  y_res<- terra::yres(slope_layer)
+  x_res<- terra::xres(r)
+  y_res<- terra::yres(r)
   
   pa_layer<- (x_res*w[2]) * (y_res*w[1])
   if(slope_correction){pa_layer<- pa_layer/terra::math(slope_layer, fun="cos", wopt=wopt)}#Planar area corrected for slope

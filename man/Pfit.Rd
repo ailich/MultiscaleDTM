@@ -2,7 +2,7 @@
 % Please edit documentation in R/Pfit.R
 \name{Pfit}
 \alias{Pfit}
-\title{Calculates multiscale slope using a local planar fit}
+\title{Calculates multiscale slope using a local planar fit (IN DEVELOPMENT)}
 \usage{
 Pfit(
   r,
@@ -34,7 +34,7 @@ Pfit(
 a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 }
 \description{
-Calculates multiscale slope, aspect, curvature, and morphometric features of a DTM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
+Calculates multiscale slope, aspect, using a local planar fit (IN DEVELOPMENT)
 }
 \references{
 Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.

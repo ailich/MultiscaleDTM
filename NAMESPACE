@@ -3,7 +3,6 @@
 export(AdjSD)
 export(BPI)
 export(DMV)
-export(Pfit)
 export(Qfit)
 export(RIE)
 export(RelPos)
