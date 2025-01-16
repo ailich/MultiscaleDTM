@@ -22,7 +22,9 @@ Pfit(
 
 \item{unit}{"degrees" or "radians".}
 
-\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations.#'}
+
+\item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
 \item{filename}{character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer}
 

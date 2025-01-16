@@ -4,7 +4,8 @@
 #' @param r DTM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
-#' @param na.rm Logical indicating whether or not to remove NA values before calculations.
+#' @param na.rm Logical indicating whether or not to remove NA values before calculations.#' 
+#' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
