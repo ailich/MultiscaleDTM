@@ -41,7 +41,7 @@
 
 SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slope", "aspect", "eastness", "northness"), na.rm=FALSE, include_scale=FALSE, mask_aspect=TRUE, filename=NULL, overwrite=FALSE, wopt=list()){ 
   og_class<- class(r)[1]
-
+  
   if(og_class=="RasterLayer"){
     r<- terra::rast(r) #Convert to SpatRaster
   }
@@ -76,8 +76,8 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   if(method==4){method<- "rook"}
   if(method==8){method<- "queen"}
   
-  if(!(method %in% c("queen", "rook"))){
-    stop("method must be 'queen', 'rook', '8', or '4'")
+  if(!(method %in% c("queen", "rook", "boundary"))){
+    stop("method must be 'queen', 'rook', 'boundary', '8', or '4'")
   }
   metrics<- tolower(metrics) #Make all lowercase
   if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
@@ -93,99 +93,65 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   }
   if(method=="rook" & na.rm){
     warning("na.rm=TRUE is only relevant if `method` is 'queen' or '8'")
-    }
-  
-  Non_NA_rast<- !is.na(r)
-  
-  #k is size of window in a given direction
-  kx<- w[2]
-  ky<- w[1]
+  }
   
   #j is the number of cells on either side of the focal cell; l is used to generate the focal matrix
-  jx <- (kx/2)-0.5
-  jy <- (ky/2)-0.5
-  
-  lx <- jx-1
-  ly <- jy-1
+  jx <- floor((w[2]/2))
+  jy <- floor(w[1]/2)
   
   if(method=="queen"){
+    mat.l<- matrix(data = NA, nrow=w[1], ncol=w[2]) # left
+    mat.l[1,1]<- 1
+    mat.l[jy+1,1]<- 2
+    mat.l[w[1],1]<- 1
+    mat.l<- mat.l/sum(mat.l, na.rm=TRUE)
     
-    #create matrix weights for x-component
-    xl.end <- matrix(c(1, rep(NA_real_, times=kx-1)), ncol=kx, nrow=1)
-    xr.end <- matrix(c(rep(NA_real_, times=kx-1), 1), ncol=kx, nrow=1)
+    mat.t<- matrix(data = NA, nrow=w[1], ncol=w[2]) # top
+    mat.t[1,1]<- 1
+    mat.t[1, jx+1]<- 2
+    mat.t[1, w[2]]<- 1
+    mat.t<- mat.t/sum(mat.t, na.rm=TRUE)
+    mat.t
+  } else if(method=="rook"){
+    mat.l<- matrix(data = NA, nrow=w[1], ncol=w[2]) # left
+    mat.l[jy+1,1]<- 1
     
-    x.mids <- matrix(NA_real_, ncol=kx, nrow=ly)
+    mat.t<- matrix(data = NA, nrow=w[1], ncol=w[2]) # top
+    mat.t[1, jx+1]<- 1
+  } else {
+    mat.l<- matrix(data = NA, nrow=w[1], ncol=w[2]) # left
+    mat.l[,1]<- 1
+    mat.l[jy+1,1]<- 2
+    mat.l<- mat.l/sum(mat.l, na.rm=TRUE)
+    mat.l
     
-    xl.mid <- matrix(c(2, rep(NA_real_, times=kx-1)), ncol=kx, nrow=1)
-    xr.mid <- matrix(c(rep(NA_real_, times=kx-1), 2), ncol=kx, nrow=1)
-    
-    xl.mat <- rbind(xl.end, x.mids, xl.mid, x.mids, xl.end)
-    xr.mat <- rbind(xr.end, x.mids, xr.mid, x.mids, xr.end)
-    
-    #create matrix weights for y-component
-    yt.end <- matrix(c(1, rep(NA_real_, times=ky-1)), ncol=1, nrow=ky)
-    yb.end <- matrix(c(rep(NA_real_, times=ky-1), 1), ncol=1, nrow=ky)
-    
-    y.mids <- matrix(NA_real_, ncol=lx, nrow=ky)
-    
-    yt.mid <- matrix(c(2, rep(NA_real_, times=ky-1)), ncol=1, nrow=ky)
-    yb.mid <- matrix(c(rep(NA_real_, times=ky-1), 2), ncol=1, nrow=ky)
-    
-    yt.mat <- cbind(yt.end, y.mids, yt.mid, y.mids, yt.end)
-    yb.mat <- cbind(yb.end, y.mids, yb.mid, y.mids, yb.end)
-    
-    #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=na.rm, wopt=wopt)
-    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=na.rm, wopt=wopt)
-    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=na.rm, wopt=wopt)
-    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=na.rm, wopt=wopt)
-    
-    if(!na.rm){
-      #calculate dz/dx and dz/dy using the components. 8*j is the weighted run, or distance between ends: 4*j*2, or (4 values in each row)*(length of the side)*(2 sides)
-      dz.dx <- (dz.dx.r-dz.dx.l)/(8*jx*terra::res(r)[1])
-      dz.dy <- (dz.dy.t-dz.dy.b)/(8*jy*terra::res(r)[2])
-    } else{
-      weights.l<-terra::focal(Non_NA_rast, w=xl.mat, fun=sum, na.rm=TRUE)
-      weights.r<-terra::focal(Non_NA_rast, w=xr.mat, fun=sum, na.rm=TRUE)
-      weights.t<-terra::focal(Non_NA_rast, w=yt.mat, fun=sum, na.rm=TRUE)
-      weights.b<-terra::focal(Non_NA_rast, w=yb.mat, fun=sum, na.rm=TRUE)
-      dz.dx <- ((dz.dx.r/weights.r) - (dz.dx.l/weights.l))/(2*jx*terra::xres(r))
-      dz.dy <- ((dz.dy.t/weights.t) - (dz.dy.b/weights.b))/(2*jy*terra::yres(r))
-    }
+    mat.t<- matrix(data = NA, nrow=w[1], ncol=w[2]) # top
+    mat.t[1,]<- 1
+    mat.t[1, jx+1]<- 2
+    mat.t<- mat.t/sum(mat.t, na.rm=TRUE)
+    mat.t
   }
   
+  mat.r<-  mat.l[, ncol(mat.l):1] # right, flip matrix
+  mat.b<-  mat.t[nrow(mat.t):1, ] # bottom, flip matrix
   
-  if(method=="rook"){
-    
-    #create matrix weights for x-component
-    x.ends <- matrix(NA_real_, ncol=kx, nrow=jy)
-    
-    xl.mid <- matrix(c(1, rep(NA_real_, times=kx-1)), ncol=kx, nrow=1)
-    xr.mid <- matrix(c(rep(NA_real_, times=kx-1), 1), ncol=kx, nrow=1)
-    
-    xl.mat <- rbind(x.ends, xl.mid, x.ends)
-    xr.mat <- rbind(x.ends, xr.mid, x.ends)
-    
-    #create matrix weights for y-component
-    y.ends <- matrix(NA_real_, ncol=jx, nrow=ky)
-    
-    yt.mid <- matrix(c(1, rep(NA_real_, times=ky-1)), ncol=1, nrow=ky)
-    yb.mid <- matrix(c(rep(NA_real_, times=ky-1), 1), ncol=1, nrow=ky)
-    
-    yt.mat <- cbind(y.ends, yt.mid, y.ends)
-    yb.mat <- cbind(y.ends, yb.mid, y.ends)
-    
-    #use focal statistics for e, w, n, s components of the k-neighbourhood
-    dz.dx.l <- terra::focal(r, xl.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    dz.dx.r <- terra::focal(r, xr.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    
-    dz.dy.t <- terra::focal(r, yt.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    dz.dy.b <- terra::focal(r, yb.mat, fun=sum, na.rm=FALSE, wopt=wopt)
-    
-    #calculate dz/dx and dz/dy using the components. 2*j is the run: (2 sides)*(length of each side)
-    dz.dx <- (dz.dx.r-dz.dx.l)/(2*jx*terra::xres(r))
-    dz.dy <- (dz.dy.t-dz.dy.b)/(2*jy*terra::yres(r))
+  if(!na.rm){
+    mean.r<- focal(r, w=mat.r, fun=sum, na.rm=FALSE)
+    mean.l<- focal(r, w=mat.l, fun=sum, na.rm=FALSE)
+    mean.t<- focal(r, w=mat.t, fun=sum, na.rm=FALSE)
+    mean.b<- focal(r, w=mat.b, fun=sum, na.rm=FALSE)
+  } else{
+    mean.r<- focal(r, w=mat.r, fun=mean, na.rm=TRUE)
+    mean.l<- focal(r, w=mat.l, fun=mean, na.rm=TRUE)
+    mean.t<- focal(r, w=mat.t, fun=mean, na.rm=TRUE)
+    mean.b<- focal(r, w=mat.b, fun=mean, na.rm=TRUE)
   }
+  
+  dx<- xres(r) * jx * 2
+  dy<- yres(r) * jy * 2
+  
+  dz.dx<- (mean.r-mean.l)/dx
+  dz.dy<- (mean.t-mean.b)/dy
   
   out<- terra::rast() #initialize output
   
@@ -193,7 +159,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     slope.k<- terra::math(terra::math(dz.dx^2 + dz.dy^2, fun= "sqrt", wopt=wopt), fun= "atan", wopt=wopt)
     if(unit=="degrees" & ("slope" %in% metrics)){
       slope.k<- slope.k * (180/pi)
-      }
+    }
     names(slope.k)<- "slope"
     out<- c(out, slope.k, warn=FALSE)
   }
@@ -206,7 +172,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
       eastness.k<- terra::math(aspect.k, fun="sin", wopt=wopt)
       if(mask_aspect){
         eastness.k<- terra::mask(eastness.k, mask= slope.k, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set eastness to 0 where slope is zero
-        }
+      }
       names(eastness.k)<- "eastness"
       out<- c(out, eastness.k, warn=FALSE)
     }
@@ -215,20 +181,20 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
       northness.k<- terra::math(aspect.k, fun="cos", wopt=wopt)
       if(mask_aspect){
         northness.k<- terra::mask(northness.k, mask= slope.k, maskvalues = 0, updatevalue = 0, wopt=wopt) #Set northenss to 0 where slope is zero
-        }
+      }
       names(northness.k)<- "northness"
       out<- c(out, northness.k, warn=FALSE)
     }
     
     if(mask_aspect){
       aspect.k<- terra::mask(aspect.k, mask= slope.k, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero
-      }
+    }
     if(unit=="degrees"){
       aspect.k<- aspect.k * (180/pi)
-      }
+    }
     names(aspect.k)<- "aspect"
     out<- c(out, aspect.k, warn=FALSE)
-    }
+  }
   
   if(!is.null(metrics)){out<- terra::subset(out, metrics, wopt=wopt)} #Subset needed metrics to requested metrics in proper order
   if(include_scale){names(out)<- paste0(names(out), "_", w[1], "x", w[2])}
@@ -256,3 +222,6 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   }
   return(out)
 }
+
+  
+  

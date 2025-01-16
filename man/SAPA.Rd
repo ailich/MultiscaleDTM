@@ -12,6 +12,8 @@ SAPA(
   include_scale = FALSE,
   slope_layer = NULL,
   sa_layer = NULL,
+  check = TRUE,
+  tol = 1e-04,
   filename = NULL,
   overwrite = FALSE,
   wopt = list()
@@ -28,9 +30,13 @@ SAPA(
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
-\item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
+\item{slope_layer}{Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function using the "boundary" method. The slope layer should have a window size that is 2 larger than the w specified for SAPA.}
 
 \item{sa_layer}{Optionally specify a surface area raster that contains the surface area on a per cell level. This can be calculated with the SurfaceArea function. If calculating SAPA at multiple scales it will be more efficient to supply this so that it does not need to be calculated every time.}
+
+\item{check}{logical indicating whether to check if any values go below the theoretical value of 1 (default is TRUE). If any are found a warning will be displayed and values less than 1 will be replaced with 1. This is ignored if slope_correction is FALSE.}
+
+\item{tol}{Tolerance related to 'check' when comparing to see if values are less than 1. Values will still be replaced if check is TRUE, but a warning will not be displayed if the amount below 1 is less than or equal to the tolerance (default = 0.0001).}
 
 \item{filename}{character Output filename.}
 

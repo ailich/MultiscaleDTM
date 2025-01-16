@@ -6,8 +6,10 @@
 #' @param slope_correction Whether to use the arc-chord ratio to correct planar area for slope (default is TRUE)
 #' @param na.rm logical indicating whether to remove/account for NAs in calculations. If FALSE any calculations involving NA will be NA. If TRUE, NA values will be removed and accounted for.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
-#' @param slope_layer Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.
+#' @param slope_layer Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function using the "boundary" method. The slope layer should have a window size that is 2 larger than the w specified for SAPA.
 #' @param sa_layer Optionally specify a surface area raster that contains the surface area on a per cell level. This can be calculated with the SurfaceArea function. If calculating SAPA at multiple scales it will be more efficient to supply this so that it does not need to be calculated every time.
+#' @param check logical indicating whether to check if any values go below the theoretical value of 1 (default is TRUE). If any are found a warning will be displayed and values less than 1 will be replaced with 1. This is ignored if slope_correction is FALSE.
+#' @param tol Tolerance related to 'check' when comparing to see if values are less than 1. Values will still be replaced if check is TRUE, but a warning will not be displayed if the amount below 1 is less than or equal to the tolerance (default = 0.0001).
 #' @param filename character Output filename.
 #' @param overwrite logical. If TRUE, filename is overwritten (default is FALSE).
 #' @param wopt list with named options for writing files as in writeRaster
@@ -34,9 +36,14 @@
 #' Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the Suitability of Multi-Scale Terrain Attribute Calculation Approaches for Seabed Mapping Applications. Marine Geodesy 44, 327-385. https://doi.org/10.1080/01490419.2021.1925789
 #' @export
 
-SAPA<- function(r=NULL, w = 1, slope_correction=TRUE, na.rm=FALSE, include_scale=FALSE, slope_layer= NULL, sa_layer = NULL, filename=NULL, overwrite=FALSE, wopt=list()){
-  if(is.null(r) & (is.null(slope_layer) | is.null(sa_layer))){
-    stop("Error: If r is NULL then 'slope_layer' and 'sa_layer' must be specified")
+SAPA<- function(r=NULL, w = 1, slope_correction=TRUE, na.rm=FALSE, include_scale=FALSE, slope_layer= NULL, sa_layer = NULL, check = TRUE, tol = 0.0001, filename=NULL, overwrite=FALSE, wopt=list()){
+  if(is.null(r)){
+    if(is.null(sa_layer)){
+      stop("Error: If r is NULL then 'sa_layer' must be specified")
+    }
+    if(slope_correction & is.null(slope_layer)){
+      stop("Error: If r is and slope_correction is TRUE then 'slope_layer' must be specified")
+    }
   }
   
   og_class<- c(class(r)[1],class(slope_layer)[1], class(sa_layer)[1])
@@ -104,7 +111,8 @@ SAPA<- function(r=NULL, w = 1, slope_correction=TRUE, na.rm=FALSE, include_scale
   }
   if(all(w==c(1,1))){
     is_native<- TRUE} else{
-      is_native<- FALSE} #Indicate whether SAPA is calculated at native scale
+      is_native<- FALSE
+    }  #Indicate whether SAPA is calculated at native scale
 
   if(is.null(sa_layer)){
     sa_layer<- SurfaceArea(r, na.rm=na.rm, wopt=wopt)
@@ -122,18 +130,29 @@ SAPA<- function(r=NULL, w = 1, slope_correction=TRUE, na.rm=FALSE, include_scale
     if (all(w==1) & (!na.rm)){
       slope_layer<- terra::terrain(r, v="slope", unit="radians", neighbors=8, wopt=wopt)
       } else{
-        slope_layer<- SlpAsp(r, w=w+2, unit="radians", method="queen", metrics= "slope", na.rm=na.rm, include_scale=FALSE, wopt=wopt)
+        slope_layer<- SlpAsp(r, w=w+2, unit="radians", method="boundary", metrics= "slope", na.rm=na.rm, include_scale=FALSE, wopt=wopt)
       }
   }
   
-  x_res<- terra::xres(r)
-  y_res<- terra::yres(r)
+  x_res<- terra::xres(sa_layer)
+  y_res<- terra::yres(sa_layer)
   
   pa_layer<- (x_res*w[2]) * (y_res*w[1])
   if(slope_correction){pa_layer<- pa_layer/terra::math(slope_layer, fun="cos", wopt=wopt)}#Planar area corrected for slope
   
   sapa<- sa_layer/pa_layer
   names(sapa)<- "sapa"
+  
+  if(slope_correction & check){
+    minval<- global(sapa, min, na.rm=TRUE)$min
+    if(minval < 1){
+      if((1-minval) > tol){
+        warning(paste("SAPA < 1 detected. Minimum value of", minval))
+      }
+      LessThanOne<- sapa < 1
+      sapa<- terra::mask(sapa, LessThanOne, maskvalues = 1, updatevalue=1)
+    }
+  }
   
   if(include_scale){
     if(is_native){

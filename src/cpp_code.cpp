@@ -240,6 +240,35 @@ NumericVector C_AdjSD_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::ma
   return out;
 }
 
+//Planar fit with na.rm=FALSE
+// [[Rcpp::export]]
+NumericMatrix C_Pfit1_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, LogicalVector idx, size_t ni, size_t nw) {
+  
+  size_t nlyr = 3; //Number of layers
+  NumericMatrix out(ni, nlyr);
+  out.fill(NA_REAL);
+  colnames(out)= CharacterVector::create("d", "e", "f");
+  
+  for (size_t i=0; i<ni; i++) {
+    size_t start = i*nw;
+    size_t end = start+nw-1;
+    NumericVector z_curr = z[Rcpp::Range(start,end)]; //Current window of elevation values
+    z_curr = z_curr[idx]; //Current window of elevation values
+    arma::mat Z = z_curr[Rcpp::Range(0,z_curr.size()-1)];
+    // Rcout << Z.size() << std::endl;
+    if(Z.has_nan()) {} else {
+      arma::vec uni_Zvals = unique(Z);
+      if(uni_Zvals.size() == 1){
+        //If all Z values are the same, intercept should just be the value and all other parameters are 0.
+        out(i, _) = rep(0, 2); //all zeros
+        out(i, 2) = uni_Zvals(0); //f
+      } else {
+        out(i, _) =  C_OLS_params2(Xt, XtX_inv, Z);
+      }}
+  }
+  return out;
+}
+
 // Calculate area of triangle based on side lengths
 // [[Rcpp::export]]
 double C_TriArea (double a, double b, double c){

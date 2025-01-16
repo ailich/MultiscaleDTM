@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-December 30, 2023
+January 16, 2025
 
 # MultiscaleDTM
 
@@ -56,7 +56,8 @@ raster data.
   Ritter, 1987). This algorithm only considers a subset of cells within
   the focal window, specifically the four cells on the edge of the focal
   window directly up, down, left, and right of the focal cell for the
-  “rook” case and an additional four corner cells for the “queen” case.
+  “rook” method, an additional four corner cells for the “queen” method,
+  or all edge cells for the “boundary” method.
   <img src="man/figures/SlpAsp.png" width="70%">
 
 - `Qfit` calculates slope, aspect, curvature, and morphometric features
