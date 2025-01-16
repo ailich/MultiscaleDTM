@@ -2,7 +2,7 @@
 % Please edit documentation in R/Pfit.R
 \name{Pfit}
 \alias{Pfit}
-\title{Calculates multiscale slope using a local planar fit (IN DEVELOPMENT)}
+\title{Calculates multiscale slope and aspect using a local planar fit (IN DEVELOPMENT: DO NOT USE)}
 \usage{
 Pfit(
   r,
@@ -34,14 +34,8 @@ Pfit(
 a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 }
 \description{
-Calculates multiscale slope, aspect, using a local planar fit (IN DEVELOPMENT)
+Calculates multiscale slope and aspect using a local planar fit (IN DEVELOPMENT: DO NOT USE)
 }
 \references{
-Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
-
-Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
-
-Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
-
-Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
+Sharpnack, D. A. and Akin, G., 1969. An algorithm for computing slope and aspect from elevations. Photogrammetric Engineering 35(3), 247-248.
 }

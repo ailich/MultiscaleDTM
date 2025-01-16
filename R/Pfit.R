@@ -1,6 +1,6 @@
-#' Calculates multiscale slope using a local planar fit (IN DEVELOPMENT)
+#' Calculates multiscale slope and aspect using a local planar fit (IN DEVELOPMENT: DO NOT USE)
 #'
-#' Calculates multiscale slope, aspect, using a local planar fit (IN DEVELOPMENT)
+#' Calculates multiscale slope and aspect using a local planar fit (IN DEVELOPMENT: DO NOT USE)
 #' @param r DTM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
@@ -14,13 +14,7 @@
 #' @importFrom raster stack
 #' @importFrom raster writeRaster
 #' @references
-#' Evans, I.S., 1980. An integrated system of terrain analysis and slope mapping. Zeitschrift f¨ur Geomorphologic Suppl-Bd 36, 274–295.
-#' 
-#' Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. https://doi.org/10.1016/j.earscirev.2020.103414
-#' 
-#' Wilson, M.F., O’Connell, B., Brown, C., Guinan, J.C., Grehan, A.J., 2007. Multiscale Terrain Analysis of Multibeam Bathymetry Data for Habitat Mapping on the Continental Slope. Marine Geodesy 30, 3-35. https://doi.org/10.1080/01490410701295962
-#' 
-#' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
+#' Sharpnack, D. A. and Akin, G., 1969. An algorithm for computing slope and aspect from elevations. Photogrammetric Engineering 35(3), 247-248.
 
 Pfit<- function(r, w=c(3,3), unit= "degrees",na.rm=FALSE, include_scale=FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   
@@ -84,5 +78,6 @@ Pfit<- function(r, w=c(3,3), unit= "degrees",na.rm=FALSE, include_scale=FALSE, f
   if(unit=="degrees"){
     slp<- slp*(180/pi)
   }
+  # asp<- #code goes here
   return(slp)
 }
