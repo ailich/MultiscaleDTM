@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,8 @@
 <span>  include_scale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  slope_layer <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  sa_layer <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  check <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  tol <span class="op">=</span> <span class="fl">1e-04</span>,</span>
 <span>  filename <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  wopt <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -81,11 +83,19 @@
 
 
 <dt id="arg-slope-layer">slope_layer<a class="anchor" aria-label="anchor" href="#arg-slope-layer"></a></dt>
-<dd><p>Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function based on Misiuk et al (2021). The slope layer should have a window size that is 2 larger than the w specified for SAPA.</p></dd>
+<dd><p>Optionally specify an appropriate slope layer IN RADIANS to use. If not supplied, it will be calculated using the SlpAsp function using the "boundary" method. The slope layer should have a window size that is 2 larger than the w specified for SAPA.</p></dd>
 
 
 <dt id="arg-sa-layer">sa_layer<a class="anchor" aria-label="anchor" href="#arg-sa-layer"></a></dt>
 <dd><p>Optionally specify a surface area raster that contains the surface area on a per cell level. This can be calculated with the SurfaceArea function. If calculating SAPA at multiple scales it will be more efficient to supply this so that it does not need to be calculated every time.</p></dd>
+
+
+<dt id="arg-check">check<a class="anchor" aria-label="anchor" href="#arg-check"></a></dt>
+<dd><p>logical indicating whether to check if any values go below the theoretical value of 1 (default is TRUE). If any are found a warning will be displayed and values less than 1 will be replaced with 1. This is ignored if slope_correction is FALSE.</p></dd>
+
+
+<dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
+<dd><p>Tolerance related to 'check' when comparing to see if values are less than 1. Values will still be replaced if check is TRUE, but a warning will not be displayed if the amount below 1 is less than or equal to the tolerance (default = 0.0001).</p></dd>
 
 
 <dt id="arg-filename">filename<a class="anchor" aria-label="anchor" href="#arg-filename"></a></dt>
@@ -123,6 +133,7 @@
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span><span class="op">*</span><span class="fl">10</span>, <span class="fl">6478700</span>, <span class="fl">6478700</span> <span class="op">+</span> <span class="fu"><a href="https://rspatial.github.io/terra/reference/dimensions.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">volcano</span><span class="op">)</span><span class="op">*</span><span class="fl">10</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>crs <span class="op">=</span> <span class="st">"EPSG:27200"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sapa</span><span class="op">&lt;-</span> <span class="fu">SAPA</span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, slope_correction <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>SAPA &lt; 1 detected. Minimum value of 0.995622454198267</span>
 <span class="r-in"><span><span class="fu"><a href="https://rspatial.github.io/terra/reference/plot.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sapa</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="SAPA-1.png" alt="" width="700" height="433"></span>
 </code></pre></div>
