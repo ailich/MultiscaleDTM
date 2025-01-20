@@ -25,7 +25,7 @@ SlpAsp(
 
 \item{unit}{"degrees" or "radians"}
 
-\item{method}{"queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right). Alternatively, instead of "queen" or "rook", method can be specified as 8 and 4 respectively.}
+\item{method}{"queen", "rook", or "boundary". The method indicates how many cells to use to compute slope for any cell. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds the four corner cells; "boundary" uses all edge cells (see details for more information).}
 
 \item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").}
 
@@ -45,10 +45,13 @@ SlpAsp(
 a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
 }
 \description{
-Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows.
+Calculates multiscale slope and aspect based on a modified version of the algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales by using only cells on the edges of the focal window (see details for more information).
 }
 \details{
-When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
+Slope is calculated atan(sqrt(dz.dx^2 + dz.dy^2)) and aspect is calculated as (-pi/2)-atan_2(dz.dy, dz.dx) and then constrained from 0 to 2 pi/0 to 360 degrees.
+dz.dx is the difference in between the weighted mean of the right side of the focal window and weighted mean of the left side of the focal window divided by the x distance of the focal window in map units.
+dz.dy is the difference in between the weighted mean of the top side of the focal window and weighted mean of the bottom side of the focal window divided by the y distance of the focal window in map units.
+The cells used in these computations is dependent on the "method" chosen. For methods "queen" and "boundary", corner cells have half the weight of all other cells used in the computations.
 }
 \examples{
 r<- rast(volcano, extent= ext(2667400, 2667400 + 

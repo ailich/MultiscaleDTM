@@ -1,10 +1,10 @@
 #' Multiscale Slope and Aspect
 #'
-#' Calculates multiscale slope and aspect based on the slope.k/aspect.k algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales. The code from Misiuk et al (2021) was modified to allow for rectangular rather than only square windows.
+#' Calculates multiscale slope and aspect based on a modified version of the algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window to multiple scales by using only cells on the edges of the focal window (see details for more information).
 #' @param r DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
-#' @param method "queen" or "rook", indicating how many neighboring cells to use to compute slope for any cell. queen uses 8 neighbors (up, down, left, right, and diagonals) and rook uses 4 (up, down, left, right). Alternatively, instead of "queen" or "rook", method can be specified as 8 and 4 respectively. 
+#' @param method "queen", "rook", or "boundary". The method indicates how many cells to use to compute slope for any cell. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds the four corner cells; "boundary" uses all edge cells (see details for more information).
 #' @param metrics a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
@@ -25,7 +25,10 @@
 #' method = "queen", metrics = c("slope", "aspect", 
 #' "eastness", "northness"))
 #' plot(slp_asp)
-#' @details When method="rook", slope and aspect are computed according to Fleming and Hoffer (1979) and Ritter (1987). When method="queen", slope and aspect are computed according to Horn (1981). These are the standard slope algorithms found in many GIS packages but are traditionally restricted to a 3 x 3 window size. Misiuk et al (2021) extended these classical formulations  to multiple window sizes. This function modifies the code from Misiuk et al (2021) to allow for rectangular rather than only square windows and also added aspect.
+#' @details Slope is calculated atan(sqrt(dz.dx^2 + dz.dy^2)) and aspect is calculated as (-pi/2)-atan_2(dz.dy, dz.dx) and then constrained from 0 to 2 pi/0 to 360 degrees. 
+#' dz.dx is the difference in between the weighted mean of the right side of the focal window and weighted mean of the left side of the focal window divided by the x distance of the focal window in map units.
+#' dz.dy is the difference in between the weighted mean of the top side of the focal window and weighted mean of the bottom side of the focal window divided by the y distance of the focal window in map units.
+#' The cells used in these computations is dependent on the "method" chosen. For methods "queen" and "boundary", corner cells have half the weight of all other cells used in the computations.
 #' @references
 #' Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS data and DMA topographic data for forest cover type mapping (No. LARS Technical Report 062879). Laboratory for Applications of Remote Sensing, Purdue University, West Lafayette, Indiana.
 #' 
@@ -120,14 +123,16 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     mat.t[1, jx+1]<- 1
   } else {
     mat.l<- matrix(data = NA, nrow=w[1], ncol=w[2]) # left
-    mat.l[,1]<- 1
-    mat.l[jy+1,1]<- 2
+    mat.l[,1]<- 2
+    mat.l[1,1]<- 1
+    mat.l[w[1],1]<- 1
     mat.l<- mat.l/sum(mat.l, na.rm=TRUE)
     mat.l
     
     mat.t<- matrix(data = NA, nrow=w[1], ncol=w[2]) # top
-    mat.t[1,]<- 1
-    mat.t[1, jx+1]<- 2
+    mat.t[1,]<- 2
+    mat.t[1, 1]<- 1
+    mat.t[1, w[2]]<- 1
     mat.t<- mat.t/sum(mat.t, na.rm=TRUE)
     mat.t
   }
