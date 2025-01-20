@@ -4,7 +4,7 @@
 #' @param r DTM as a SpatRaster or RasterLayer in a projected coordinate system where map units match elevation/depth units
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
-#' @param method "queen", "rook", or "boundary". The method indicates how many cells to use to compute slope for any cell. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds the four corner cells; "boundary" uses all edge cells (see details for more information).
+#' @param method "rook", "queen" (default), or "boundary". The method indicates which cells to use to in computations. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds an additional four corner cells; "boundary" uses all edge cells (see details for more information).
 #' @param metrics a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)

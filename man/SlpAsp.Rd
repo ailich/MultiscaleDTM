@@ -25,7 +25,7 @@ SlpAsp(
 
 \item{unit}{"degrees" or "radians"}
 
-\item{method}{"queen", "rook", or "boundary". The method indicates how many cells to use to compute slope for any cell. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds the four corner cells; "boundary" uses all edge cells (see details for more information).}
+\item{method}{"rook", "queen" (default), or "boundary". The method indicates which cells to use to in computations. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds an additional four corner cells; "boundary" uses all edge cells (see details for more information).}
 
 \item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").}
 
