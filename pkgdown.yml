@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   README: README.html
-last_built: 2025-02-07T17:21Z
+last_built: 2025-02-07T17:29Z
 urls:
   reference: https://ailich.github.io/MultiscaleDTM/reference
   article: https://ailich.github.io/MultiscaleDTM/articles
