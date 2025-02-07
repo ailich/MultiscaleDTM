@@ -6,7 +6,7 @@
 #' @param unit "degrees" or "radians"
 #' @param method "rook", "queen" (default), or "boundary". The method indicates which cells to use to in computations. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds an additional four corner cells; "boundary" uses all edge cells (see details for more information).
 #' @param metrics a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").
-#' @param na.rm Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".
+#' @param na.rm Logical indicating whether or not to remove NA values before calculations. Not applicable for "rook" method.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
 #' @param filename character Output filename. Can be a single filename, or as many filenames as there are layers to write a file for each layer

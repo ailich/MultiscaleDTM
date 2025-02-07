@@ -29,7 +29,7 @@ SlpAsp(
 
 \item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").}
 
-\item{na.rm}{Logical indicating whether or not to remove NA values before calculations. Only applicable if method is "queen" or "8".}
+\item{na.rm}{Logical indicating whether or not to remove NA values before calculations. Not applicable for "rook" method.}
 
 \item{include_scale}{logical indicating whether to append window size to the layer names (default = FALSE)}
 
