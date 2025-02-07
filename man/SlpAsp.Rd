@@ -27,7 +27,7 @@ SlpAsp(
 
 \item{method}{"rook", "queen" (default), or "boundary". The method indicates which cells to use to in computations. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds an additional four corner cells; "boundary" uses all edge cells (see details for more information).}
 
-\item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").}
+\item{metrics}{a character string or vector of character strings of which terrain attributes to return. Default is to return c("slope", "aspect", "eastness", "northness"). Additional measures available include "dz.dx" and "dz.dy" which are the x and y components of slope respectively.}
 
 \item{na.rm}{Logical indicating whether or not to remove NA values before calculations. Not applicable for "rook" method.}
 

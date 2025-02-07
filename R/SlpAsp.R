@@ -5,7 +5,7 @@
 #' @param w A vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number.
 #' @param unit "degrees" or "radians"
 #' @param method "rook", "queen" (default), or "boundary". The method indicates which cells to use to in computations. "rook" uses only the 4 edge cells directly up, down, left, and right; "queen" adds an additional four corner cells; "boundary" uses all edge cells (see details for more information).
-#' @param metrics a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").
+#' @param metrics a character string or vector of character strings of which terrain attributes to return. Default is to return c("slope", "aspect", "eastness", "northness"). Additional measures available include "dz.dx" and "dz.dy" which are the x and y components of slope respectively. 
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations. Not applicable for "rook" method.
 #' @param include_scale logical indicating whether to append window size to the layer names (default = FALSE)
 #' @param mask_aspect A logical. When mask_aspect is TRUE (the default), if slope evaluates to 0, aspect will be set to NA and both eastness and northness will be set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be pi/2 radians or 90 degrees which is the behavior of raster::terrain, and northness and eastness will be calculated from that.
@@ -83,11 +83,20 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     stop("method must be 'queen', 'rook', 'boundary', '8', or '4'")
   }
   metrics<- tolower(metrics) #Make all lowercase
-  if(any(!(metrics %in% c("slope", "aspect","northness", "eastness")))){
-    stop("metrics must be 'slope', 'aspect', 'northness', and/or 'eastness'")
+  if(any(!(metrics %in% c("slope", "aspect","northness", "eastness", "dz.dx", "dz.dy")))){
+    stop("metrics must be 'slope', 'aspect', 'northness', 'eastness', 'dz.dx', and/or 'dz.dy'")
   }
   
   needed_metrics<- metrics
+  
+  if(any(c("slope", "aspect", "eastness", "northness") %in% needed_metrics) & !("dz.dx" %in% needed_metrics)){
+    needed_metrics<- c(needed_metrics, "dz.dx")
+  }
+  
+  if(any(c("slope", "aspect", "eastness", "northness") %in% needed_metrics) & !("dz.dy" %in% needed_metrics)){
+    needed_metrics<- c(needed_metrics, "dz.dy")
+  }
+  
   if(any(c("eastness", "northness") %in% needed_metrics) & !("aspect" %in% needed_metrics)){
     needed_metrics<- c(needed_metrics, "aspect")
   }
@@ -95,7 +104,7 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
     needed_metrics<- c(needed_metrics, "slope")
   }
   if(method=="rook" & na.rm){
-    warning("na.rm=TRUE is only relevant if `method` is 'queen' or '8'")
+    warning("na.rm=TRUE is not relevant if `method` is 'rook'")
   }
   
   #j is the number of cells on either side of the focal cell; l is used to generate the focal matrix
@@ -141,24 +150,40 @@ SlpAsp <- function(r, w=c(3,3), unit="degrees", method="queen", metrics= c("slop
   mat.b<-  mat.t[nrow(mat.t):1, ] # bottom, flip matrix
   
   if(!na.rm){
-    mean.r<- focal(r, w=mat.r, fun=sum, na.rm=FALSE)
-    mean.l<- focal(r, w=mat.l, fun=sum, na.rm=FALSE)
-    mean.t<- focal(r, w=mat.t, fun=sum, na.rm=FALSE)
-    mean.b<- focal(r, w=mat.b, fun=sum, na.rm=FALSE)
+    if("dz.dx" %in% needed_metrics){
+      mean.r<- focal(r, w=mat.r, fun=sum, na.rm=FALSE)
+      mean.l<- focal(r, w=mat.l, fun=sum, na.rm=FALSE)
+    }
+    if("dz.dy" %in% needed_metrics){
+      mean.t<- focal(r, w=mat.t, fun=sum, na.rm=FALSE)
+      mean.b<- focal(r, w=mat.b, fun=sum, na.rm=FALSE)
+    }
   } else{
-    mean.r<- focal(r, w=mat.r, fun=mean, na.rm=TRUE)
-    mean.l<- focal(r, w=mat.l, fun=mean, na.rm=TRUE)
-    mean.t<- focal(r, w=mat.t, fun=mean, na.rm=TRUE)
-    mean.b<- focal(r, w=mat.b, fun=mean, na.rm=TRUE)
+    if("dz.dx" %in% needed_metrics){
+      mean.r<- focal(r, w=mat.r, fun=mean, na.rm=TRUE)
+      mean.l<- focal(r, w=mat.l, fun=mean, na.rm=TRUE)
+    }
+    if("dz.dy" %in% needed_metrics){
+      mean.t<- focal(r, w=mat.t, fun=mean, na.rm=TRUE)
+      mean.b<- focal(r, w=mat.b, fun=mean, na.rm=TRUE)
+    }
   }
   
-  dx<- xres(r) * jx * 2
-  dy<- yres(r) * jy * 2
-  
-  dz.dx<- (mean.r-mean.l)/dx
-  dz.dy<- (mean.t-mean.b)/dy
-  
   out<- terra::rast() #initialize output
+  
+  if("dz.dx" %in% needed_metrics){
+    dx<- xres(r) * jx * 2
+    dz.dx<- (mean.r-mean.l)/dx
+    names(dz.dx)<- "dz.dx"
+    out<- c(out, dz.dx, warn=FALSE)
+  }
+  
+  if("dz.dy" %in% needed_metrics){
+    dy<- yres(r) * jy * 2
+    dz.dy<- (mean.t-mean.b)/dy
+    names(dz.dy)<- "dz.dy"
+    out<- c(out, dz.dy, warn=FALSE)
+  }
   
   if("slope" %in% needed_metrics){
     slope.k<- terra::math(terra::math(dz.dx^2 + dz.dy^2, fun= "sqrt", wopt=wopt), fun= "atan", wopt=wopt)
