@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-January 16, 2025
+March 06, 2025
 
 # MultiscaleDTM
 
@@ -50,15 +50,19 @@ raster data.
 
 ### Slope, Aspect and Curvature
 
-- `SlpAsp` calculates multi-scale slope and aspect according to Misiuk
-  et al (2021) which is a modification of the traditional 3 x 3 slope
-  and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981;
-  Ritter, 1987). This algorithm only considers a subset of cells within
-  the focal window, specifically the four cells on the edge of the focal
-  window directly up, down, left, and right of the focal cell for the
-  “rook” method, an additional four corner cells for the “queen” method,
-  or all edge cells for the “boundary” method.
-  <img src="man/figures/SlpAsp.png" width="70%">
+- `SlpAsp` calculates multi-scale slope and aspect using a modified
+  version of the algorithm from Misiuk et al (2021) which extends
+  classical formulations of slope restricted to a 3x3 window (Fleming
+  and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm
+  only considers a subset of cells within the focal window, specifically
+  the four cells on the edge of the focal window directly up, down,
+  left, and right of the focal cell for the “rook” method, an additional
+  four corner cells for the “queen” method, or all edge cells for the
+  “boundary” method.
+
+<img src="man/figures/SlpAsp.png" width="70%">
+
+- `DirSlp` Calculates multi-scale slope in a specified direction.
 
 - `Qfit` calculates slope, aspect, curvature, and morphometric features
   by fitting a quadratic surface to the focal window using ordinary
@@ -89,7 +93,7 @@ Figure adapted from Walbridge et al., (2018)
   of the head of the vector relative to its origin) and used in the
   following equation (note: N is the number of cells in the window). VRM
   ranges from zero to one, representing completely smooth to rough
-  surfaces, respectively. .
+  surfaces, respectively.
 
 <img src="man/figures/VRM_annotated.png" width="70%">
 
