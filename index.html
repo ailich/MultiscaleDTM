@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="readme">README<a class="anchor" aria-label="anchor" href="#readme"></a>
 </h1></div>
-<p>Alexander Ilich January 16, 2025</p>
+<p>Alexander Ilich March 06, 2025</p>
 </div>
 <div class="section level1">
 <h1 id="multiscaledtm">MultiscaleDTM<a class="anchor" aria-label="anchor" href="#multiscaledtm"></a>
@@ -83,7 +83,12 @@
 <h3 id="slope-aspect-and-curvature">Slope, Aspect and Curvature<a class="anchor" aria-label="anchor" href="#slope-aspect-and-curvature"></a>
 </h3>
 <ul>
-<li><p><code>SlpAsp</code> calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the “rook” method, an additional four corner cells for the “queen” method, or all edge cells for the “boundary” method. <img src="reference/figures/SlpAsp.png" width="70%"></p></li>
+<li>
+<code>SlpAsp</code> calculates multi-scale slope and aspect using a modified version of the algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the “rook” method, an additional four corner cells for the “queen” method, or all edge cells for the “boundary” method.</li>
+</ul>
+<p><img src="reference/figures/SlpAsp.png" width="70%"></p>
+<ul>
+<li><p><code>DirSlp</code> Calculates multi-scale slope in a specified direction.</p></li>
 <li><p><code>Qfit</code> calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).</p></li>
 </ul>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mi>a</mi><msup><mi>X</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><msup><mi>Y</mi><mn>2</mn></msup><mo>+</mo><mi>c</mi><mi>X</mi><mi>Y</mi><mo>+</mo><mi>d</mi><mi>X</mi><mo>+</mo><mi>e</mi><mi>Y</mi><mo>+</mo><mi>f</mi></mrow><annotation encoding="application/x-tex">
@@ -97,7 +102,7 @@ Z = aX^2 + bY^2 +cXY+ dX +eY +f
 </h3>
 <ul>
 <li>
-<code>VRM</code> - Vector ruggedness measure (Sappington et al. 2007) quantifies roughness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: N is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rough surfaces, respectively. .</li>
+<code>VRM</code> - Vector ruggedness measure (Sappington et al. 2007) quantifies roughness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: N is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rough surfaces, respectively.</li>
 </ul>
 <p><img src="reference/figures/VRM_annotated.png" width="70%"></p>
 <p>Figure adapted from Sappington et al. (2007)</p>

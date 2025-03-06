@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Multiscale Slope and Aspect</h1>
-      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/v0.9.1/R/SlpAsp.R" class="external-link"><code>R/SlpAsp.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/main/R/SlpAsp.R" class="external-link"><code>R/SlpAsp.R</code></a></small>
       <div class="d-none name"><code>SlpAsp.Rd</code></div>
     </div>
 
@@ -78,7 +78,7 @@
 
 
 <dt id="arg-metrics">metrics<a class="anchor" aria-label="anchor" href="#arg-metrics"></a></dt>
-<dd><p>a character string or vector of character strings of which terrain attributes to return. Default is to return all available attributes which are c("slope", "aspect", "eastness", "northness").</p></dd>
+<dd><p>a character string or vector of character strings of which terrain attributes to return. Default is to return c("slope", "aspect", "eastness", "northness"). Additional measures available include "dz.dx" and "dz.dy" which are the x and y components of slope respectively.</p></dd>
 
 
 <dt id="arg-na-rm">na.rm<a class="anchor" aria-label="anchor" href="#arg-na-rm"></a></dt>

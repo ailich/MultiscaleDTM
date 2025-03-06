@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
       <h1>README</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/v0.9.1/vignettes/README.Rmd" class="external-link"><code>vignettes/README.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/main/vignettes/README.Rmd" class="external-link"><code>vignettes/README.Rmd</code></a></small>
       <div class="d-none name"><code>README.Rmd</code></div>
     </div>
 
@@ -107,15 +107,21 @@ spatial raster data.</p>
 <h4 id="slope-aspect-and-curvature">Slope, Aspect and Curvature<a class="anchor" aria-label="anchor" href="#slope-aspect-and-curvature"></a>
 </h4>
 <ul>
-<li><p><code>SlpAsp</code> calculates multi-scale slope and aspect
-according to Misiuk et al (2021) which is a modification of the
-traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979;
-Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset
-of cells within the focal window, specifically the four cells on the
-edge of the focal window directly up, down, left, and right of the focal
-cell for the “rook” method, an additional four corner cells for the
-“queen” method, or all edge cells for the “boundary” method.
-<img src="../reference/figures/SlpAsp.png" width="70%"></p></li>
+<li>
+<code>SlpAsp</code> calculates multi-scale slope and aspect using a
+modified version of the algorithm from Misiuk et al (2021) which extends
+classical formulations of slope restricted to a 3x3 window (Fleming and
+Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only
+considers a subset of cells within the focal window, specifically the
+four cells on the edge of the focal window directly up, down, left, and
+right of the focal cell for the “rook” method, an additional four corner
+cells for the “queen” method, or all edge cells for the “boundary”
+method.</li>
+</ul>
+<p><img src="../reference/figures/SlpAsp.png" width="70%"></p>
+<ul>
+<li><p><code>DirSlp</code> Calculates multi-scale slope in a specified
+direction.</p></li>
 <li><p><code>Qfit</code> calculates slope, aspect, curvature, and
 morphometric features by fitting a quadratic surface to the focal window
 using ordinary least squares using the equation shown below where a-f
@@ -146,7 +152,7 @@ into their corresponding x, y, and z components (i.e. the x, y, and z
 coordinates of the head of the vector relative to its origin) and used
 in the following equation (note: N is the number of cells in the
 window). VRM ranges from zero to one, representing completely smooth to
-rough surfaces, respectively. .</li>
+rough surfaces, respectively.</li>
 </ul>
 <p><img src="../reference/figures/VRM_annotated.png" width="70%"></p>
 <p>Figure adapted from Sappington et al. (2007)</p>
