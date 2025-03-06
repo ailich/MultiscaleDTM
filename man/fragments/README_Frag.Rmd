@@ -27,8 +27,11 @@ This package relies on the `terra` package for handling of spatial raster data.
 
 ### Slope, Aspect and Curvature
 
--   `SlpAsp` calculates multi-scale slope and aspect according to Misiuk et al (2021) which is a modification of the traditional 3 x 3 slope and aspect algorithms (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the "rook" method, an additional four corner cells for the "queen" method, or all edge cells for the "boundary" method.
+-   `SlpAsp` calculates multi-scale slope and aspect using a modified version of the algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the "rook" method, an additional four corner cells for the "queen" method, or all edge cells for the "boundary" method.
+
 <img src="`r md_fig_dir`SlpAsp.png" width="70%">
+
+-   `DirSlp` Calculates multi-scale slope in a specified direction.
 
 -   `Qfit` calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).
 
@@ -43,7 +46,6 @@ Figure adapted from Walbridge et al., (2018)
 ### Roughness
 
 -   `VRM` - Vector ruggedness measure (Sappington et al. 2007) quantifies roughness by measuring the dispersion of vectors normal to the terrain surface. This is accomplished by calculating the local (3 x 3 cell) slope and aspect, and constructing unit vectors normal to each cell in the DTM. These unit vectors are then decomposed into their corresponding x, y, and z components (i.e. the x, y, and z coordinates of the head of the vector relative to its origin) and used in the following equation (note: N is the number of cells in the window). VRM ranges from zero to one, representing completely smooth to rough surfaces, respectively.
-.
 
 <img src="`r md_fig_dir`VRM_annotated.png" width="70%">
 
