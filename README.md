@@ -50,7 +50,7 @@ raster data.
 
 ### Slope, Aspect and Curvature
 
-- `SlpAsp` calculates multi-scale slope and aspect using a modified
+- `SlpAsp` - Calculates multi-scale slope and aspect using a modified
   version of the algorithm from Misiuk et al (2021) which extends
   classical formulations of slope restricted to a 3x3 window (Fleming
   and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm
@@ -62,15 +62,15 @@ raster data.
 
 <img src="man/figures/SlpAsp.png" width="70%">
 
-- `DirSlp` Calculates multi-scale slope in a specified direction.
+- `DirSlp` - Calculates multi-scale slope in a specified direction.
 
-- `Qfit` calculates slope, aspect, curvature, and morphometric features
-  by fitting a quadratic surface to the focal window using ordinary
-  least squares using the equation shown below where a-f are regression
-  parameters, Z is the elevation/depth, X is the east/west coordinates
-  in the focal window relative to the focal cell, and Y is the
-  north/south coordinates in the focal window relative to the focal cell
-  (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric
+- `Qfit` - Calculates slope, aspect, curvature, and morphometric
+  features by fitting a quadratic surface to the focal window using
+  ordinary least squares using the equation shown below where a-f are
+  regression parameters, Z is the elevation/depth, X is the east/west
+  coordinates in the focal window relative to the focal cell, and Y is
+  the north/south coordinates in the focal window relative to the focal
+  cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric
   features algorithm has been modified to use more robust measures of
   curvature based on the suggestions of Minár et al. (2020).
 
