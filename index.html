@@ -84,12 +84,12 @@
 </h3>
 <ul>
 <li>
-<code>SlpAsp</code> calculates multi-scale slope and aspect using a modified version of the algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the “rook” method, an additional four corner cells for the “queen” method, or all edge cells for the “boundary” method.</li>
+<code>SlpAsp</code> - Calculates multi-scale slope and aspect using a modified version of the algorithm from Misiuk et al (2021) which extends classical formulations of slope restricted to a 3x3 window (Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only considers a subset of cells within the focal window, specifically the four cells on the edge of the focal window directly up, down, left, and right of the focal cell for the “rook” method, an additional four corner cells for the “queen” method, or all edge cells for the “boundary” method.</li>
 </ul>
 <p><img src="reference/figures/SlpAsp.png" width="70%"></p>
 <ul>
-<li><p><code>DirSlp</code> Calculates multi-scale slope in a specified direction.</p></li>
-<li><p><code>Qfit</code> calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).</p></li>
+<li><p><code>DirSlp</code> - Calculates multi-scale slope in a specified direction.</p></li>
+<li><p><code>Qfit</code> - Calculates slope, aspect, curvature, and morphometric features by fitting a quadratic surface to the focal window using ordinary least squares using the equation shown below where a-f are regression parameters, Z is the elevation/depth, X is the east/west coordinates in the focal window relative to the focal cell, and Y is the north/south coordinates in the focal window relative to the focal cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric features algorithm has been modified to use more robust measures of curvature based on the suggestions of Minár et al. (2020).</p></li>
 </ul>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mi>a</mi><msup><mi>X</mi><mn>2</mn></msup><mo>+</mo><mi>b</mi><msup><mi>Y</mi><mn>2</mn></msup><mo>+</mo><mi>c</mi><mi>X</mi><mi>Y</mi><mo>+</mo><mi>d</mi><mi>X</mi><mo>+</mo><mi>e</mi><mi>Y</mi><mo>+</mo><mi>f</mi></mrow><annotation encoding="application/x-tex">
 Z = aX^2 + bY^2 +cXY+ dX +eY +f

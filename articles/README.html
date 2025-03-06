@@ -108,21 +108,21 @@ spatial raster data.</p>
 </h4>
 <ul>
 <li>
-<code>SlpAsp</code> calculates multi-scale slope and aspect using a
-modified version of the algorithm from Misiuk et al (2021) which extends
-classical formulations of slope restricted to a 3x3 window (Fleming and
-Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This algorithm only
-considers a subset of cells within the focal window, specifically the
-four cells on the edge of the focal window directly up, down, left, and
-right of the focal cell for the “rook” method, an additional four corner
-cells for the “queen” method, or all edge cells for the “boundary”
-method.</li>
+<code>SlpAsp</code> - Calculates multi-scale slope and aspect using
+a modified version of the algorithm from Misiuk et al (2021) which
+extends classical formulations of slope restricted to a 3x3 window
+(Fleming and Hoffer, 1979; Horn et al., 1981; Ritter, 1987). This
+algorithm only considers a subset of cells within the focal window,
+specifically the four cells on the edge of the focal window directly up,
+down, left, and right of the focal cell for the “rook” method, an
+additional four corner cells for the “queen” method, or all edge cells
+for the “boundary” method.</li>
 </ul>
 <p><img src="../reference/figures/SlpAsp.png" width="70%"></p>
 <ul>
-<li><p><code>DirSlp</code> Calculates multi-scale slope in a specified
+<li><p><code>DirSlp</code> - Calculates multi-scale slope in a specified
 direction.</p></li>
-<li><p><code>Qfit</code> calculates slope, aspect, curvature, and
+<li><p><code>Qfit</code> - Calculates slope, aspect, curvature, and
 morphometric features by fitting a quadratic surface to the focal window
 using ordinary least squares using the equation shown below where a-f
 are regression parameters, Z is the elevation/depth, X is the east/west
