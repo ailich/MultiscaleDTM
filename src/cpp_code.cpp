@@ -98,6 +98,42 @@ NumericMatrix C_Qfit1_narmT(NumericVector z, NumericMatrix X_full, size_t ni, si
   return out;
 }
 
+//na.rm=TRUE, force_center=FALSE (full armadillo implementation)
+// [[Rcpp::export]]
+arma::mat C_Qfit1_narmT_arma(const arma::vec& z,
+                             const arma::mat& X_full,
+                             int ni, int nw) {
+  
+  int nlyr = X_full.n_cols;
+  arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
+  
+  int thresh = 6;
+  
+  for (int i = 0; i < ni; ++i) {
+    int start = i * nw;
+    arma::vec zw = z.subvec(start, start + nw - 1);
+    arma::uvec valid_idx = arma::find_finite(zw);
+    
+    if (valid_idx.n_elem >= thresh) {
+      arma::vec zw_clean = zw.elem(valid_idx);
+      arma::mat X = X_full.rows(valid_idx);
+      
+      arma::vec unique_vals = arma::unique(zw_clean);
+      if (unique_vals.n_elem == 1) {
+        out.row(i).zeros();
+        out(i, nlyr - 1) = unique_vals[0];  // Last coefficient (e.g., intercept "f")
+        } else {
+        // Solve using least squares: B = solve(X, Z)
+        arma::vec coef = arma::solve(X, zw_clean);
+        out.row(i) = coef.t();  // Transpose to write as row
+      }
+    }
+  }
+  
+  return out;
+}
+
+
 //na.rm=FALSE, force_center=FALSE
 // [[Rcpp::export]]
 NumericMatrix C_Qfit1_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, size_t ni, size_t nw) {
@@ -123,6 +159,38 @@ NumericMatrix C_Qfit1_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::ma
     }
   return out;
 }
+
+//na.rm=FALSE, force_center=FALSE (full armadillo implementation)
+// [[Rcpp::export]]
+arma::mat C_Qfit1_narmF_arma(const arma::vec& z,
+                             const arma::mat& X,
+                             const arma::mat& Xt,
+                             const arma::mat& XtX_inv,
+                             int ni, int nw) {
+  
+  int nlyr = X.n_cols;
+  arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
+  
+  for (int i = 0; i < ni; ++i) {
+    int start = i * nw;
+    arma::vec zw = z.subvec(start, start + nw - 1);
+    
+    if (!zw.has_nan()) {
+      arma::vec unique_vals = arma::unique(zw);
+      
+      if (unique_vals.n_elem == 1) {
+        out.row(i).zeros();
+        out(i, nlyr - 1) = unique_vals(0); // Constant intercept
+        } else {
+        arma::vec coef = XtX_inv * (Xt * zw);
+        out.row(i) = coef.t(); // Row vector output
+      }
+    }
+  }
+  
+  return out;
+}
+
 
 //Fit Wood/Evans Quadratic Surface forced through center
 
@@ -158,6 +226,44 @@ NumericMatrix C_Qfit2_narmT(NumericVector z, NumericMatrix X_full, size_t ni, si
         // out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
       }
     }}
+  return out;
+}
+
+//na.rm=TRUE, force_center=TRUE (full armadillo implementation)
+// [[Rcpp::export]]
+arma::mat C_Qfit2_narmT_arma(const arma::vec& z,
+                   const arma::mat& X_full,
+                   int ni, int nw) {
+  
+  int nlyr = X_full.n_cols;
+  arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
+  
+  int thresh = 5;
+  
+  for (int i = 0; i < ni; ++i) {
+    int start = i * nw;
+    arma::vec zw = z.subvec(start, start + nw - 1);
+    
+    // Centering the window values
+    double center_val = zw(nw / 2);
+    zw -= center_val;
+    
+    arma::uvec valid_idx = arma::find_finite(zw);
+    if (valid_idx.n_elem >= thresh) {
+      arma::vec zw_clean = zw.elem(valid_idx);
+      arma::mat X = X_full.rows(valid_idx);
+      
+      arma::vec unique_vals = arma::unique(zw_clean);
+      if (unique_vals.n_elem == 1) {
+        out.row(i).zeros();
+        } else {
+        // Least squares solution
+        arma::vec coef = arma::solve(X, zw_clean);
+        out.row(i) = coef.t(); // row vector
+      }
+      }
+    }
+  
   return out;
 }
 
