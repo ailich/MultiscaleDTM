@@ -223,7 +223,7 @@ NumericMatrix C_Qfit2_narmT(NumericVector z, NumericMatrix X_full, size_t ni, si
         //If all Z values are the same, all parameters are 0.
         out(i, _) = rep(0,5);
       } else{
-        // out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
+        out(i, _) =  C_OLS_params(as<arma::mat>(X), as<arma::mat>(Z));
       }
     }}
   return out;
