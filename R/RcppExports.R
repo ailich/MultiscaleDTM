@@ -25,16 +25,32 @@ C_Qfit1_narmT <- function(z, X_full, ni, nw) {
     .Call(`_MultiscaleDTM_C_Qfit1_narmT`, z, X_full, ni, nw)
 }
 
+C_Qfit1_narmT_arma <- function(z, X_full, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit1_narmT_arma`, z, X_full, ni, nw)
+}
+
 C_Qfit1_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
     .Call(`_MultiscaleDTM_C_Qfit1_narmF`, z, X, Xt, XtX_inv, ni, nw)
+}
+
+C_Qfit1_narmF_arma <- function(z, X, Xt, XtX_inv, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit1_narmF_arma`, z, X, Xt, XtX_inv, ni, nw)
 }
 
 C_Qfit2_narmT <- function(z, X_full, ni, nw) {
     .Call(`_MultiscaleDTM_C_Qfit2_narmT`, z, X_full, ni, nw)
 }
 
+C_Qfit2_narmT_arma <- function(z, X_full, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit2_narmT_arma`, z, X_full, ni, nw)
+}
+
 C_Qfit2_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
     .Call(`_MultiscaleDTM_C_Qfit2_narmF`, z, X, Xt, XtX_inv, ni, nw)
+}
+
+C_Qfit2_narmF_arma <- function(z, X, Xt, XtX_inv, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit2_narmF_arma`, z, X, Xt, XtX_inv, ni, nw)
 }
 
 C_AdjSD_narmT <- function(z, X_full, ni, nw) {

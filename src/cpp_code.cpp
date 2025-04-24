@@ -74,7 +74,7 @@ NumericMatrix C_Qfit1_narmT(NumericVector z, NumericMatrix X_full, size_t ni, si
   out.fill(NA_REAL);
   colnames(out)= CharacterVector::create("a", "b", "c", "d", "e", "f");
   
-  int thresh = 6; //NEED AT LEAST 6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
+  unsigned int thresh = 6; //NEED AT LEAST 6 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
   
   for (size_t i=0; i<ni; i++) {
     size_t start = i*nw;
@@ -107,7 +107,7 @@ arma::mat C_Qfit1_narmT_arma(const arma::vec& z,
   int nlyr = X_full.n_cols;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
   
-  int thresh = 6;
+  unsigned int thresh = 6;
   
   for (int i = 0; i < ni; ++i) {
     int start = i * nw;
@@ -204,7 +204,7 @@ NumericMatrix C_Qfit2_narmT(NumericVector z, NumericMatrix X_full, size_t ni, si
   out.fill(NA_REAL);
   colnames(out)= CharacterVector::create("a", "b", "c", "d", "e");
   
-  int thresh = 5; //NEED AT LEAST 5 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
+  unsigned int thresh = 5; //NEED AT LEAST 5 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
   
   for (size_t i=0; i<ni; i++) {
     size_t start = i*nw;
@@ -238,7 +238,7 @@ arma::mat C_Qfit2_narmT_arma(const arma::vec& z,
   int nlyr = X_full.n_cols;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
   
-  int thresh = 5;
+  unsigned int thresh = 5;
   
   for (int i = 0; i < ni; ++i) {
     int start = i * nw;
@@ -293,6 +293,41 @@ NumericMatrix C_Qfit2_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::ma
   return out;
 }
 
+//na.rm=FALSE, force_center=TRUE
+// [[Rcpp::export]]
+arma::mat C_Qfit2_narmF_arma(const arma::vec& z,
+                             const arma::mat& X,
+                             const arma::mat& Xt,
+                             const arma::mat& XtX_inv,
+                             int ni, int nw) {
+  
+  int nlyr = X.n_cols;
+  arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
+  
+  for (int i = 0; i < ni; ++i) {
+    int start = i * nw;
+    arma::vec Z = z.subvec(start, start + nw - 1);
+    
+    // Center Z using middle value
+    double center_val = Z(Z.n_elem / 2);
+    Z -= center_val;
+    
+    if (!Z.has_nan()) {
+      arma::vec unique_vals = arma::unique(Z);
+      
+      if (unique_vals.n_elem == 1) {
+        out.row(i).zeros();  // All coefficients = 0
+      } else {
+        // OLS coefficients using precomputed XtX_inv and Xt
+        arma::vec coef = XtX_inv * (Xt * Z);
+        out.row(i) = coef.t();
+      }
+    }
+    }
+  
+  return out;
+}
+
 //SD of residuals from a planar fit
 // [[Rcpp::export]]
 NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, size_t ni, size_t nw){
@@ -302,7 +337,7 @@ NumericVector C_AdjSD_narmT(NumericVector z, NumericMatrix X_full, size_t ni, si
   //NEED AT LEAST 3 POINTS TO CALCULATE BECAUSE NEED AS MANY POINTS AS PARAMETERS
   //SET THRESH TO 4 B/C WITH 3 RESIDUALS WILL ALWAYS BE 0
   
-  int thresh = 4;
+  unsigned int thresh = 4;
   for (size_t i=0; i< ni; i++) {
     size_t start = i*nw;
     size_t end = start+nw-1;
