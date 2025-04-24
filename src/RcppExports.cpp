@@ -300,6 +300,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_SurfaceArea_optimized
+NumericVector C_SurfaceArea_optimized(const NumericVector& z, double x_res, double y_res, bool na_rm, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_SurfaceArea_optimized(SEXP zSEXP, SEXP x_resSEXP, SEXP y_resSEXP, SEXP na_rmSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const NumericVector& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type x_res(x_resSEXP);
+    Rcpp::traits::input_parameter< double >::type y_res(y_resSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_SurfaceArea_optimized(z, x_res, y_res, na_rm, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_CountVals
 NumericVector C_CountVals(NumericVector z, size_t ni, size_t nw);
 RcppExport SEXP _MultiscaleDTM_C_CountVals(SEXP zSEXP, SEXP niSEXP, SEXP nwSEXP) {
@@ -310,6 +326,19 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
     Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
     rcpp_result_gen = Rcpp::wrap(C_CountVals(z, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_CountVals_optimized
+NumericVector C_CountVals_optimized(NumericVector z, size_t ni, size_t nw);
+RcppExport SEXP _MultiscaleDTM_C_CountVals_optimized(SEXP zSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< size_t >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< size_t >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_CountVals_optimized(z, ni, nw));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -335,7 +364,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDTM_C_Pfit1_narmF", (DL_FUNC) &_MultiscaleDTM_C_Pfit1_narmF, 7},
     {"_MultiscaleDTM_C_TriArea", (DL_FUNC) &_MultiscaleDTM_C_TriArea, 3},
     {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 6},
+    {"_MultiscaleDTM_C_SurfaceArea_optimized", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea_optimized, 6},
     {"_MultiscaleDTM_C_CountVals", (DL_FUNC) &_MultiscaleDTM_C_CountVals, 3},
+    {"_MultiscaleDTM_C_CountVals_optimized", (DL_FUNC) &_MultiscaleDTM_C_CountVals_optimized, 3},
     {NULL, NULL, 0}
 };
 

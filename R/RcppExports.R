@@ -81,7 +81,15 @@ C_SurfaceArea <- function(z, x_res, y_res, na_rm, ni, nw) {
     .Call(`_MultiscaleDTM_C_SurfaceArea`, z, x_res, y_res, na_rm, ni, nw)
 }
 
+C_SurfaceArea_optimized <- function(z, x_res, y_res, na_rm, ni, nw) {
+    .Call(`_MultiscaleDTM_C_SurfaceArea_optimized`, z, x_res, y_res, na_rm, ni, nw)
+}
+
 C_CountVals <- function(z, ni, nw) {
     .Call(`_MultiscaleDTM_C_CountVals`, z, ni, nw)
+}
+
+C_CountVals_optimized <- function(z, ni, nw) {
+    .Call(`_MultiscaleDTM_C_CountVals_optimized`, z, ni, nw)
 }
 
