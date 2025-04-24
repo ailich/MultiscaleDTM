@@ -45,6 +45,14 @@ C_AdjSD_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
     .Call(`_MultiscaleDTM_C_AdjSD_narmF`, z, X, Xt, XtX_inv, ni, nw)
 }
 
+C_AdjSD_narmT_arma <- function(z, X_full, ni, nw) {
+    .Call(`_MultiscaleDTM_C_AdjSD_narmT_arma`, z, X_full, ni, nw)
+}
+
+C_AdjSD_narmF_arma <- function(z, X, Xt, XtX_inv, ni, nw) {
+    .Call(`_MultiscaleDTM_C_AdjSD_narmF_arma`, z, X, Xt, XtX_inv, ni, nw)
+}
+
 C_Pfit1_narmF <- function(z, X, Xt, XtX_inv, idx, ni, nw) {
     .Call(`_MultiscaleDTM_C_Pfit1_narmF`, z, X, Xt, XtX_inv, idx, ni, nw)
 }

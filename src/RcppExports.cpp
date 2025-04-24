@@ -164,6 +164,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// C_AdjSD_narmT_arma
+arma::vec C_AdjSD_narmT_arma(const arma::vec& z, const arma::mat& X_full, int ni, int nw);
+RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmT_arma(SEXP zSEXP, SEXP X_fullSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X_full(X_fullSEXP);
+    Rcpp::traits::input_parameter< int >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< int >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmT_arma(z, X_full, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
+// C_AdjSD_narmF_arma
+arma::vec C_AdjSD_narmF_arma(const arma::vec& z, const arma::mat& X, const arma::mat& Xt, const arma::mat& XtX_inv, int ni, int nw);
+RcppExport SEXP _MultiscaleDTM_C_AdjSD_narmF_arma(SEXP zSEXP, SEXP XSEXP, SEXP XtSEXP, SEXP XtX_invSEXP, SEXP niSEXP, SEXP nwSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const arma::vec& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type Xt(XtSEXP);
+    Rcpp::traits::input_parameter< const arma::mat& >::type XtX_inv(XtX_invSEXP);
+    Rcpp::traits::input_parameter< int >::type ni(niSEXP);
+    Rcpp::traits::input_parameter< int >::type nw(nwSEXP);
+    rcpp_result_gen = Rcpp::wrap(C_AdjSD_narmF_arma(z, X, Xt, XtX_inv, ni, nw));
+    return rcpp_result_gen;
+END_RCPP
+}
 // C_Pfit1_narmF
 NumericMatrix C_Pfit1_narmF(NumericVector z, arma::mat X, arma::mat Xt, arma::mat XtX_inv, LogicalVector idx, size_t ni, size_t nw);
 RcppExport SEXP _MultiscaleDTM_C_Pfit1_narmF(SEXP zSEXP, SEXP XSEXP, SEXP XtSEXP, SEXP XtX_invSEXP, SEXP idxSEXP, SEXP niSEXP, SEXP nwSEXP) {
@@ -236,6 +266,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_MultiscaleDTM_C_Qfit2_narmF", (DL_FUNC) &_MultiscaleDTM_C_Qfit2_narmF, 6},
     {"_MultiscaleDTM_C_AdjSD_narmT", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT, 4},
     {"_MultiscaleDTM_C_AdjSD_narmF", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmF, 6},
+    {"_MultiscaleDTM_C_AdjSD_narmT_arma", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmT_arma, 4},
+    {"_MultiscaleDTM_C_AdjSD_narmF_arma", (DL_FUNC) &_MultiscaleDTM_C_AdjSD_narmF_arma, 6},
     {"_MultiscaleDTM_C_Pfit1_narmF", (DL_FUNC) &_MultiscaleDTM_C_Pfit1_narmF, 7},
     {"_MultiscaleDTM_C_TriArea", (DL_FUNC) &_MultiscaleDTM_C_TriArea, 3},
     {"_MultiscaleDTM_C_SurfaceArea", (DL_FUNC) &_MultiscaleDTM_C_SurfaceArea, 6},
