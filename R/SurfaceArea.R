@@ -8,9 +8,7 @@
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster or RasterLayer
 #' @examples 
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
-#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-#' crs = "EPSG:27200")
+#' r<- erupt()
 #' sa<- SurfaceArea(r)
 #' plot(sa)
 #' @import terra

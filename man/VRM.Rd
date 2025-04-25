@@ -39,9 +39,7 @@ Implementation of the Sappington et al., (2007) vector ruggedness measure, modif
 If the crs is cartesian, when na.rm=TRUE, NA's will be removed from the slope/aspect calculations. When the crs is lat/lon, na.rm=TRUE will not affect the calculation of slope/aspect as terra::terrain will be used since it can calculate slope and aspect for spherical geometry but it does not support na.rm. In both cases when na.rm=TRUE, the x, y, and z components will be summed with na.rm=TRUE, and the N used in the denominator of the VRM equation will be the number of non-NA cells in the window rather than the total number of cells.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + 
-ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-crs = "EPSG:27200")
+r<- erupt()
 vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 plot(vrm)
 }

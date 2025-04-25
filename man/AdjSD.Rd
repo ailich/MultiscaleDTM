@@ -36,9 +36,7 @@ a SpatRaster or RasterLayer of adjusted rugosity
 Calculates standard deviation of bathymetry (a measure of rugosity). Using a sliding rectangular window a plane is fit to the data and the standard deviation of the residuals is calculated (Ilich et al., 2023)
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + 
-ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-crs = "EPSG:27200")
+r<- erupt()
 adjsd<- AdjSD(r, w=c(5,5), na.rm = TRUE)
 plot(adjsd)
 }

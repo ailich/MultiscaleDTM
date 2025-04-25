@@ -23,6 +23,12 @@ test_that("Test Qfit", {
   expect_equal(test, expect)
 })
 
+test_that("Test equivalence of Pfit and Qfit", {
+  test<- Pfit(r, w = c(5,7), unit = "degrees", metrics = c("pslope", "paspect", "peastness", "pnorthness"), na.rm = FALSE) |> values(mat=TRUE) |> `dimnames<-`(NULL)
+  expect<- Qfit(r, w = c(5,7), unit = "degrees", metrics = c("qslope", "qaspect", "qeastness", "qnorthness"), na.rm = FALSE, outlier_quantile = c(0,1)) |> values(mat=TRUE) |> `dimnames<-`(NULL)
+  expect_equal(test, expect)
+})
+
 test_that("Test VRM", {
   test<- VRM(r, w=c(5,7), na.rm = TRUE) |> values(mat=TRUE)
   expect<- readRDS(system.file("testdata", "vrm.RDS", package= "MultiscaleDTM"))

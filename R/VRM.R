@@ -10,9 +10,7 @@
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a RasterLayer
 #' @examples
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
-#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-#' crs = "EPSG:27200")
+#' r<- erupt()
 #' vrm<- VRM(r, w=c(5,5), na.rm = TRUE)
 #' plot(vrm)
 #' @import terra
@@ -62,23 +60,37 @@ VRM<- function(r, w=c(3,3), na.rm = FALSE, include_scale=FALSE, filename=NULL, o
     } #SlpAsp can use na.rm in slope calculations, terra::terrain cannot but can handle spherical geometry.
   
   #Decompose vectors into components 
-  sin.slp <- terra::math(sa$slope, fun="sin", wopt=wopt)
-  Xrast <- terra::math(sa$aspect, fun="sin", wopt=wopt) * sin.slp # xRaster
-  Yrast <- terra::math(sa$aspect, fun="cos", wopt=wopt) * sin.slp # yRaster
-  Zrast <- terra::math(sa$slope, fun="cos", wopt=wopt) # zRaster 
-  x.sum <- terra::focal(Xrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
-  y.sum <- terra::focal(Yrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt) 
-  z.sum <- terra::focal(Zrast, w = w, fun=sum, na.rm=na.rm, wopt=wopt)
-  vrm.fun <- function(x, y, z) { 
-    sqrt( (x^2) + (y^2) + (z^2) ) 
+  slope.sin.cos <- terra::lapp(sa$slope, fun = function(s) c(sin(s), cos(s)), wopt = wopt)
+  aspect.sin.cos <- terra::lapp(sa$aspect, fun = function(a) c(sin(a), cos(a)), wopt = wopt)
+  
+  # Decompose into X, Y, Z components
+  components <- terra::lapp(c(aspect.sin.cos, slope.sin.cos), fun = function(sin_a, cos_a, sin_s, cos_s) {
+    x <- sin_a * sin_s
+    y <- cos_a * sin_s
+    z <- cos_s
+    c(x, y, z)
+  }, wopt = wopt)
+  Xrast <- components[[1]]
+  Yrast <- components[[2]]
+  Zrast <- components[[3]]
+  
+  # Focal sum for each component
+  x.sum <- terra::focal(Xrast, w = w, fun = sum, na.rm = na.rm, wopt = wopt)
+  y.sum <- terra::focal(Yrast, w = w, fun = sum, na.rm = na.rm, wopt = wopt)
+  z.sum <- terra::focal(Zrast, w = w, fun = sum, na.rm = na.rm, wopt = wopt)
+  
+  # Resultant vector
+  res_vect <- terra::lapp(c(x.sum, y.sum, z.sum), fun = function(x, y, z) sqrt(x^2 + y^2 + z^2), wopt = wopt)
+  
+  # Adjust scale factor depending on na.rm
+  scale.factor <- if (!na.rm) {
+    round(w[1] * w[2], 0)
+  } else {
+    terra::focalCpp(Zrast, w = w, fun = C_CountVals, wopt = wopt)
   }
-  res_vect <- terra::lapp(c(x.sum, y.sum, z.sum), fun=vrm.fun, wopt=wopt) #resultant vector
-  if(!na.rm){
-    scale.factor <- round(w[1] * w[2], 0) #Constant scale factor
-    } else{
-      scale.factor<- terra::focalCpp(Zrast, w= w, fun = C_CountVals, wopt=wopt)
-      } #If include na.rm option, adjust scale.factor to be number of non-NA cells in focal window
-  out<- 1 - (res_vect / scale.factor) 
+  
+  # Final VRM output
+  out <- 1 - (res_vect / scale.factor)
   names(out)<- "vrm"
   if(include_scale){names(out)<- paste0(names(out), "_", w[1],"x", w[2])} #Add scale to layer names
   

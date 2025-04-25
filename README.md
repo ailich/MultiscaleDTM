@@ -1,7 +1,7 @@
 README
 ================
 Alexander Ilich
-March 06, 2025
+April 25, 2025
 
 # MultiscaleDTM
 
@@ -81,6 +81,11 @@ $$
 <img src="man/figures/Qfit_annotated.png" width="70%">
 
 Figure adapted from Walbridge et al., (2018)
+
+- `Pfit` - Calculates multiscale slope and aspect aspect by fitting a
+  planar surface to the focal window using ordinary least squares. This
+  will provide equivalent results to using a quadratic fit (Jones, 1998)
+  but is less computationally expensive.
 
 ### Roughness
 
@@ -406,6 +411,10 @@ analysis. Transactions in GIS, 27(4).
 Jenness, J.S., 2004. Calculating landscape surface area from digital
 elevation models. Wildlife Society Bulletin 32, 829–839.
 <https://doi.org/10.2193/0091-7648(2004)032%5B0829:CLSAFD%5D2.0.CO;2>
+
+Jones, K. H. (1998). A comparison of algorithms used to compute hill
+slope as a property of the DEM. Computers & Geosciences, 24(4), 315–323.
+<https://doi.org/10.1016/S0098-3004(98)00032-6>
 
 Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J.,
 2017. Towards a Framework for Terrain Attribute Selection in

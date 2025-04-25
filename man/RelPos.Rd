@@ -53,9 +53,7 @@ A SpatRaster or RasterLayer.
 Calculates the relative position of a focal cell, which represents whether an area is a local high or low. Relative position is the value of the focal cell minus the value of a reference elevation (often the mean of included values in the focal window but see "fun" argument). Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). Relative Position can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation values in the focal window.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + 
-ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-crs = "EPSG:27200")
+r<- erupt()
 rpos<- RelPos(r, w = c(5,5), shape= "rectangle", exclude_center = TRUE, na.rm = TRUE)
 plot(rpos)
 }
