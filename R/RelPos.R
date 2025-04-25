@@ -110,9 +110,7 @@ annulus_window<- function(radius, unit, resolution){
 #' @param wopt List with named options for writing files as in writeRaster.
 #' @return A SpatRaster or RasterLayer.
 #' @examples
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
-#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-#' crs = "EPSG:27200")
+#' r<- erupt()
 #' rpos<- RelPos(r, w = c(5,5), shape= "rectangle", exclude_center = TRUE, na.rm = TRUE)
 #' plot(rpos)
 #' @import terra

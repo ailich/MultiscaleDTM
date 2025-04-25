@@ -54,9 +54,7 @@ dz.dy is the difference in between the weighted mean of the top side of the foca
 The cells used in these computations is dependent on the "method" chosen. For methods "queen" and "boundary", corner cells have half the weight of all other cells used in the computations.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + 
-ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-crs = "EPSG:27200")
+r<- erupt()
 slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", 
 method = "queen", metrics = c("slope", "aspect", 
 "eastness", "northness"))

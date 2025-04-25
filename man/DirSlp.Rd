@@ -42,14 +42,16 @@ a SpatRaster or RasterStack of slope and/or aspect (and components of aspect)
 Calculates the slope along a specified direction. Upslope values are positive and downslope values are negative.
 }
 \details{
-dz.dx can be calculated at a specified scale via \code{SlpAsp}, \code{Qfit} (zx and zy), or from an existing layer calculated by another program.
+dz.dx and dz.dy can be calculated at a specified scale via \code{SlpAsp}, \code{Pfit}, \code{Qfit} (zx and zy), or from an existing layer calculated by another program.
 }
 \examples{
 r<- erupt()
 dz1<- SlpAsp(r, metrics = c("dz.dx", "dz.dy"))
 dz2<- Qfit(r, metrics = c(), return_params = TRUE, as_derivs=TRUE)
+dz3<- Pfit(r, metrics = c("dz.dx", "dz.dy"))
 dirslp1<- DirSlp(alpha = 45, dz.dx= dz1$dz.dx, dz.dy= dz1$dz.dy)
 dirslp2<- DirSlp(alpha = 45, dz.dx= dz2$zx, dz.dy= dz2$zy)
+dirslp3<- DirSlp(alpha = 45, dz.dx= dz3$dz.dx, dz.dy= dz3$dz.dy)
 }
 \references{
 Neteler, M., & Mitasova, H. (2008). Open source GIS: A GRASS GIS approach (3rd ed.). Springer.

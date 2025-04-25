@@ -12,9 +12,7 @@
 #' @param wopt List with named options for writing files as in writeRaster.
 #' @return A SpatRaster or RasterLayer.
 #' @examples
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
-#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-#' crs = "EPSG:27200")
+#' r<- erupt()
 #' bpi<- BPI(r, w = c(2,4), stand= "none", unit = "cell", na.rm = TRUE)
 #' plot(bpi)
 #' @import terra

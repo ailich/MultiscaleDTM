@@ -30,9 +30,7 @@ a SpatRaster or RasterLayer
 Calculates surface area on a per cell basis of a DTM based on Jenness, 2004.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + 
-ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-crs = "EPSG:27200")
+r<- erupt()
 sa<- SurfaceArea(r)
 plot(sa)
 }

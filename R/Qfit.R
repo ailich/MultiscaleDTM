@@ -67,8 +67,8 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
 #' @param outlier_quantile A numeric vector of length two or three. If two numbers are used it specifies the lower (Q1) and upper (Q2) quantiles used for determining the interquantile range (IQR). These values should be between 0 and 1 with Q2 > Q1. An optional third number can be used to specify a the size of a regular sample to be taken which can be useful if the full dataset is too large to fit in memory. Values are considered outliers and replaced with NA if they are less than Q1-(100*IQR) or greater than Q2+(100*IQR), where IQR=Q2-Q1. The outlier filter is performed on the results of the regression parameters ('a'-'e' and 'elev') prior to calculation of subsequent terrain attributes. Note that c(0,1) will skip the outlier filtering step and can speed up computations. The default is c(0.01,0.99).
 #' @param na.rm Logical indicating whether or not to remove NA values before calculations.
-#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
 #' @param force_center Logical specifying whether the constrain the model through the central cell of the focal window
+#' @param include_scale Logical indicating whether to append window size to the layer names (default = FALSE).
 #' @param mask_aspect Logical. If TRUE (default), aspect will be set to NA and northness and eastness will be set to 0 when slope = 0. If FALSE, aspect is set to 270 degrees or 3*pi/2 radians ((-pi/2)- atan2(0,0)+2*pi) and northness and eastness will be calculated from this.
 #' @param return_params Logical indicating whether to return Wood/Evans regression parameters (default = FALSE).
 #' @param as_derivs Logical indicating whether parameters should be formatted as partial derivatives instead of regression coefficients (default = FALSE) (Minár et al., 2020).
@@ -77,9 +77,7 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
 #' @param wopt list with named options for writing files as in writeRaster
 #' @return a SpatRaster (terra) or RasterStack/RasterLayer (raster)
 #' @examples
-#' r<- rast(volcano, extent= ext(2667400, 2667400 + 
-#' ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-#' crs = "EPSG:27200")
+#' r<- erupt()
 #' qmetrics<- Qfit(r, w = c(5,5), unit = "degrees", na.rm = TRUE)
 #' plot(qmetrics)
 #' 
@@ -155,7 +153,7 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   
   if(force_center & ("elev" %in% metrics)){
     metrics<- metrics[metrics!="elev"]
-    warning("Warning: dropping 'elev' from metrics since force_central is TRUE")
+    warning("Warning: dropping 'elev' from metrics since force_center is TRUE")
     }
   needed_metrics<- metrics
   
@@ -192,25 +190,29 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     }
   
   # Calculate Regression Parameters
+  return_intercept<- "elev" %in% needed_metrics
+  
   if((!na.rm) & (!force_center)){
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, fillvalue=NA, wopt=wopt)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, return_intercept = return_intercept, fillvalue=NA, wopt=wopt)
     } else if(na.rm & (!force_center)){
-      params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, fillvalue=NA, wopt=wopt)
+      params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, return_intercept = return_intercept, fillvalue=NA, wopt=wopt)
     } else if((!na.rm) & force_center){
       params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, fillvalue=NA, wopt=wopt)} else{
         params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmT, X_full= X, fillvalue=NA, wopt=wopt)
       }
   
+  if(return_intercept){
+    names(params)<- c("a","b","c","d","e","elev")
+    elev<- params$elev
+    params<- params[[-6]] #drop intercept
+  } else{
+    names(params)<- c("a","b","c","d","e")
+  }
+  
   # Filter outliers
   if(!all(outlier_quantile[c(1,2)]==c(0,1))){
     params <- outlier_filter(params, outlier_quantile, wopt=wopt)
     }
-  
-  if(!force_center){
-    elev<- params$f
-    names(elev)<- "elev"
-    params<- params[[-6]] #drop intercept
-  }
   
   mask_raster<- terra::app(terra::math(params, fun= "abs", wopt=wopt), fun= "sum", na.rm=FALSE, wopt=wopt) == 0 # Mask of when all params are 0
 
@@ -236,8 +238,8 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
     asp<- (-pi/2) - terra::atan_2(params$e,params$d, wopt=wopt) # aspect relative to North
     asp<- ifel(asp < 0, yes = asp+(2*pi), no= asp, wopt=wopt) # Constrain range so between 0 and 2pi
     
-    if (mask_aspect){
-      asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero
+    if (mask_aspect & ("qaspect" %in% metrics)){
+      asp<- terra::mask(asp, mask= slp, maskvalues = 0, updatevalue = NA, wopt=wopt) #Set aspect to undefined where slope is zero (doesn't need to be needed_metrics since also mask northness and eastness as 0).
     }
     
     if("qeastness" %in% needed_metrics){

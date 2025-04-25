@@ -47,9 +47,7 @@ SpatRaster or RasterLayer.
 Calculates Topographic Position Index (TPI). TPI is a measure of relative position that calculates the the difference between the value of the focal cell and the mean of mean of the surrounding cells (i.e. local mean but excluding the value of the focal cell).Positive values indicate local highs (i.e. peaks) and negative values indicate local lows (i.e. depressions). TPI can be expressed in units of the input DTM raster or can standardized relative to the local topography by dividing by the standard deviation or range of included elevation  values in the focal window.
 }
 \examples{
-r<- rast(volcano, extent= ext(2667400, 2667400 + 
-ncol(volcano)*10, 6478700, 6478700 + nrow(volcano)*10), 
-crs = "EPSG:27200")
+r<- erupt()
 tpi<- TPI(r, w=c(5,5), shape="rectangle", stand="none", na.rm = TRUE)
 plot(tpi)
 }
