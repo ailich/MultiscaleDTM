@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,7 +101,7 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>dz.dx can be calculated at a specified scale via <code>SlpAsp</code>, <code>Qfit</code> (zx and zy), or from an existing layer calculated by another program.</p>
+    <p>dz.dx and dz.dy can be calculated at a specified scale via <code>SlpAsp</code>, <code>Pfit</code>, <code>Qfit</code> (zx and zy), or from an existing layer calculated by another program.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -113,8 +113,10 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">r</span><span class="op">&lt;-</span> <span class="fu"><a href="erupt.html">erupt</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dz1</span><span class="op">&lt;-</span> <span class="fu"><a href="SlpAsp.html">SlpAsp</a></span><span class="op">(</span><span class="va">r</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dz.dx"</span>, <span class="st">"dz.dy"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dz2</span><span class="op">&lt;-</span> <span class="fu"><a href="Qfit.html">Qfit</a></span><span class="op">(</span><span class="va">r</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">)</span>, return_params <span class="op">=</span> <span class="cn">TRUE</span>, as_derivs<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dz3</span><span class="op">&lt;-</span> <span class="fu"><a href="Pfit.html">Pfit</a></span><span class="op">(</span><span class="va">r</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dz.dx"</span>, <span class="st">"dz.dy"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dirslp1</span><span class="op">&lt;-</span> <span class="fu">DirSlp</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">45</span>, dz.dx<span class="op">=</span> <span class="va">dz1</span><span class="op">$</span><span class="va">dz.dx</span>, dz.dy<span class="op">=</span> <span class="va">dz1</span><span class="op">$</span><span class="va">dz.dy</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">dirslp2</span><span class="op">&lt;-</span> <span class="fu">DirSlp</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">45</span>, dz.dx<span class="op">=</span> <span class="va">dz2</span><span class="op">$</span><span class="va">zx</span>, dz.dy<span class="op">=</span> <span class="va">dz2</span><span class="op">$</span><span class="va">zy</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dirslp3</span><span class="op">&lt;-</span> <span class="fu">DirSlp</span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">45</span>, dz.dx<span class="op">=</span> <span class="va">dz3</span><span class="op">$</span><span class="va">dz.dx</span>, dz.dy<span class="op">=</span> <span class="va">dz3</span><span class="op">$</span><span class="va">dz.dy</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

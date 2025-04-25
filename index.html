@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="readme">README<a class="anchor" aria-label="anchor" href="#readme"></a>
 </h1></div>
-<p>Alexander Ilich March 06, 2025</p>
+<p>Alexander Ilich April 25, 2025</p>
 </div>
 <div class="section level1">
 <h1 id="multiscaledtm">MultiscaleDTM<a class="anchor" aria-label="anchor" href="#multiscaledtm"></a>
@@ -96,6 +96,10 @@ Z = aX^2 + bY^2 +cXY+ dX +eY +f
 </annotation></semantics></math></p>
 <p><img src="reference/figures/Qfit_annotated.png" width="70%"></p>
 <p>Figure adapted from Walbridge et al., (2018)</p>
+<ul>
+<li>
+<code>Pfit</code> - Calculates multiscale slope and aspect aspect by fitting a planar surface to the focal window using ordinary least squares. This will provide equivalent results to using a quadratic fit (Jones, 1998) but is less computationally expensive.</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="roughness">Roughness<a class="anchor" aria-label="anchor" href="#roughness"></a>
@@ -257,6 +261,7 @@ z=cos(\text{slope})
 <p>Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of the IEEE 69, 14–47.</p>
 <p>Ilich, A. R., Misiuk, B., Lecours, V., &amp; Murawski, S. A. (2023). MultiscaleDTM: An open-source R package for multiscale geomorphometric analysis. Transactions in GIS, 27(4). <a href="https://doi.org/10.1111/tgis.13067" class="external-link uri">https://doi.org/10.1111/tgis.13067</a></p>
 <p>Jenness, J.S., 2004. Calculating landscape surface area from digital elevation models. Wildlife Society Bulletin 32, 829–839. <a href="https://doi.org/10.2193/0091-7648(2004)032%5B0829:CLSAFD%5D2.0.CO;2" class="external-link uri">https://doi.org/10.2193/0091-7648(2004)032%5B0829:CLSAFD%5D2.0.CO;2</a></p>
+<p>Jones, K. H. (1998). A comparison of algorithms used to compute hill slope as a property of the DEM. Computers &amp; Geosciences, 24(4), 315–323. <a href="https://doi.org/10.1016/S0098-3004(98)00032-6" class="external-link uri">https://doi.org/10.1016/S0098-3004(98)00032-6</a></p>
 <p>Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J., 2017. Towards a Framework for Terrain Attribute Selection in Environmental Studies. Environmental Modelling &amp; Software 89, 19–30. <a href="https://doi.org/10.1016/j.envsoft.2016.11.027" class="external-link uri">https://doi.org/10.1016/j.envsoft.2016.11.027</a></p>
 <p>Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R., Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic terrain classification scheme for American Samoa. Marine Geodesy 29, 89–111. <a href="https://doi.org/10.1080/01490410600738021" class="external-link uri">https://doi.org/10.1080/01490410600738021</a></p>
 <p>Minár, J., Evans, I.S., Jenčo, M., 2020. A comprehensive system of definitions of land surface (topographic) curvatures, with implications for their application in geoscience modelling and prediction. Earth-Science Reviews 211, 103414. <a href="https://doi.org/10.1016/j.earscirev.2020.103414" class="external-link uri">https://doi.org/10.1016/j.earscirev.2020.103414</a></p>

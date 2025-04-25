@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -137,6 +137,13 @@ Z = aX^2 + bY^2 +cXY+ dX +eY +f
 </annotation></semantics></math></p>
 <p><img src="../reference/figures/Qfit_annotated.png" width="70%"></p>
 <p>Figure adapted from Walbridge et al., (2018)</p>
+<ul>
+<li>
+<code>Pfit</code> - Calculates multiscale slope and aspect aspect by
+fitting a planar surface to the focal window using ordinary least
+squares. This will provide equivalent results to using a quadratic fit
+(Jones, 1998) but is less computationally expensive.</li>
+</ul>
 </div>
 <div class="section level4">
 <h4 id="roughness">Roughness<a class="anchor" aria-label="anchor" href="#roughness"></a>
@@ -405,6 +412,9 @@ MultiscaleDTM: An open-source R package for multiscale geomorphometric
 analysis. Transactions in GIS, 27(4). <a href="https://doi.org/10.1111/tgis.13067" class="external-link uri">https://doi.org/10.1111/tgis.13067</a></p>
 <p>Jenness, J.S., 2004. Calculating landscape surface area from digital
 elevation models. Wildlife Society Bulletin 32, 829–839. <a href="https://doi.org/10.2193/0091-7648(2004)032%5B0829:CLSAFD%5D2.0.CO;2" class="external-link uri">https://doi.org/10.2193/0091-7648(2004)032[0829:CLSAFD]2.0.CO;2</a></p>
+<p>Jones, K. H. (1998). A comparison of algorithms used to compute hill
+slope as a property of the DEM. Computers &amp; Geosciences, 24(4),
+315–323. <a href="https://doi.org/10.1016/S0098-3004(98)00032-6" class="external-link uri">https://doi.org/10.1016/S0098-3004(98)00032-6</a></p>
 <p>Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J.,
 2017. Towards a Framework for Terrain Attribute Selection in
 Environmental Studies. Environmental Modelling &amp; Software 89, 19–30.
