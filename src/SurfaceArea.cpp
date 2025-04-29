@@ -4,14 +4,20 @@ using namespace Rcpp;
 
 // Calculate area of triangle based on side lengths
 // [[Rcpp::export]]
-double C_TriArea (double a, double b, double c){
+double C_TriArea (const double a, 
+                  const double b, 
+                  const double c){
   double s = (a+b+c)/2;
   double out =sqrt(s*(s-a)*(s-b)*(s-c));
   return out;
 }
 
 // [[Rcpp::export]]
-NumericVector C_SurfaceArea(const NumericVector& z, double x_res, double y_res, bool na_rm, size_t ni, size_t nw) {
+NumericVector C_SurfaceArea(const NumericVector& z, 
+                            const double x_res, 
+                            const double y_res, 
+                            const bool na_rm, 
+                            size_t ni, size_t nw) {
   NumericVector out(ni, NA_REAL);
   
   double Lx2 = x_res * x_res;

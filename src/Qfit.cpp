@@ -11,8 +11,8 @@ using namespace arma;
 // [[Rcpp::export]]
 arma::mat C_Qfit1_narmT(const arma::vec& z,
                              const arma::mat& X_full,
-                             bool return_intercept,
-                             int ni, int nw) {
+                             const bool return_intercept,
+                             size_t ni, size_t nw) {
   
   unsigned int thresh = X_full.n_cols;
   
@@ -20,8 +20,8 @@ arma::mat C_Qfit1_narmT(const arma::vec& z,
   
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
   
-  for (int i = 0; i < ni; ++i) {
-    int start = i * nw;
+  for (size_t i = 0; i < ni; ++i) {
+    size_t start = i * nw;
     arma::vec zw = z.subvec(start, start + nw - 1);
     arma::uvec valid_idx = arma::find_finite(zw);
     
@@ -54,14 +54,14 @@ arma::mat C_Qfit1_narmF(const arma::vec& z,
                              const arma::mat& X,
                              const arma::mat& Xt,
                              const arma::mat& XtX_inv,
-                             bool return_intercept,
-                             int ni, int nw) {
+                             const bool return_intercept,
+                             size_t ni, size_t nw) {
   
   int nlyr = return_intercept ? X.n_cols : X.n_cols - 1;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
   
-  for (int i = 0; i < ni; ++i) {
-    int start = i * nw;
+  for (size_t i = 0; i < ni; ++i) {
+    size_t start = i * nw;
     arma::vec zw = z.subvec(start, start + nw - 1);
     
     if (!zw.has_nan()) {
@@ -92,15 +92,15 @@ arma::mat C_Qfit1_narmF(const arma::vec& z,
 // [[Rcpp::export]]
 arma::mat C_Qfit2_narmT(const arma::vec& z,
                    const arma::mat& X_full,
-                   int ni, int nw) {
+                   size_t ni, size_t nw) {
   
   int nlyr = X_full.n_cols;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
   
   unsigned int thresh = nlyr; //Setting to nlayer makes it work for planar fit too
   
-  for (int i = 0; i < ni; ++i) {
-    int start = i * nw;
+  for (size_t i = 0; i < ni; ++i) {
+    size_t start = i * nw;
     arma::vec zw = z.subvec(start, start + nw - 1);
     
     // Centering the window values
@@ -132,13 +132,13 @@ arma::mat C_Qfit2_narmF(const arma::vec& z,
                              const arma::mat& X,
                              const arma::mat& Xt,
                              const arma::mat& XtX_inv,
-                             int ni, int nw) {
+                             size_t ni, size_t nw) {
   
   int nlyr = X.n_cols;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
   
-  for (int i = 0; i < ni; ++i) {
-    int start = i * nw;
+  for (size_t i = 0; i < ni; ++i) {
+    size_t start = i * nw;
     arma::vec Z = z.subvec(start, start + nw - 1);
     
     // Center Z using middle value
@@ -167,15 +167,15 @@ arma::mat C_Qfit2_narmF(const arma::vec& z,
 //na.rm=TRUE, force_center=FALSE
 // arma::mat C_Pfit1_narmT(const arma::vec& z,
 //                         const arma::mat& X_full,
-//                         int ni, int nw) {
+//                         size_t ni, size_t nw) {
 //   
 //   int nlyr = X_full.n_cols-1;
 //   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
 //   
 //   unsigned int thresh = 3;
 //   
-//   for (int i = 0; i < ni; ++i) {
-//     int start = i * nw;
+//   for (size_t i = 0; i < ni; ++i) {
+//     size_t start = i * nw;
 //     arma::vec zw = z.subvec(start, start + nw - 1);
 //     arma::uvec valid_idx = arma::find_finite(zw);
 //     
@@ -202,13 +202,13 @@ arma::mat C_Qfit2_narmF(const arma::vec& z,
 //                         const arma::mat& X,
 //                         const arma::mat& Xt,
 //                         const arma::mat& XtX_inv,
-//                         int ni, int nw) {
+//                         size_t ni, size_t nw) {
 //   
 //   int nlyr = X.n_cols - 1;
 //   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
 //   
-//   for (int i = 0; i < ni; ++i) {
-//     int start = i * nw;
+//   for (size_t i = 0; i < ni; ++i) {
+//     size_t start = i * nw;
 //     arma::vec zw = z.subvec(start, start + nw - 1);
 //     
 //     if (!zw.has_nan()) {

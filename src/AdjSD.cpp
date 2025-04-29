@@ -6,12 +6,14 @@ using namespace arma;
 
 //SD from planar fit with na.rm=TRUE
 // [[Rcpp::export]]
-arma::vec C_AdjSD_narmT(const arma::vec& z, const arma::mat& X_full, int ni, int nw) {
+arma::vec C_AdjSD_narmT(const arma::vec& z, 
+                        const arma::mat& X_full, 
+                        size_t ni, size_t nw) {
   arma::vec out(ni, arma::fill::value(NA_REAL));
   unsigned int thresh = 4;
   
-  for (int i = 0; i < ni; ++i) {
-    int start = i * nw;
+  for (size_t i = 0; i < ni; ++i) {
+    size_t start = i * nw;
     arma::vec zw_full = z.subvec(start, start + nw - 1);
     arma::uvec non_na_idx = arma::find_finite(zw_full);
     
@@ -33,11 +35,15 @@ arma::vec C_AdjSD_narmT(const arma::vec& z, const arma::mat& X_full, int ni, int
 
 //SD from planar fit with na.rm=FALSE
 // [[Rcpp::export]]
-arma::vec C_AdjSD_narmF(const arma::vec& z, const arma::mat& X, const arma::mat& Xt, const arma::mat& XtX_inv, int ni, int nw) {
+arma::vec C_AdjSD_narmF(const arma::vec& z, 
+                        const arma::mat& X, 
+                        const arma::mat& Xt, 
+                        const arma::mat& XtX_inv, 
+                        size_t ni, size_t nw) {
   arma::vec out(ni, arma::fill::value(NA_REAL));
   
-  for (int i = 0; i < ni; ++i) {
-    int start = i * nw;
+  for (size_t i = 0; i < ni; ++i) {
+    size_t start = i * nw;
     arma::vec Z = z.subvec(start, start + nw - 1);
     
     if (!Z.has_nan()) {

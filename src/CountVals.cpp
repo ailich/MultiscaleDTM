@@ -2,7 +2,8 @@
 using namespace Rcpp;
 
 // [[Rcpp::export]]
-NumericVector C_CountVals(NumericVector z, size_t ni, size_t nw) {
+NumericVector C_CountVals(const NumericVector& z, 
+                          size_t ni, size_t nw) {
   NumericVector out(ni, NA_REAL);
   const double* z_ptr = z.begin(); // Direct pointer access to z
   
