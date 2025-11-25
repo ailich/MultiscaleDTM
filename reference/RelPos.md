@@ -1,0 +1,155 @@
+# Calculates Relative Position of a focal cell
+
+Calculates the relative position of a focal cell, which represents
+whether an area is a local high or low. Relative position is the value
+of the focal cell minus the value of a reference elevation (often the
+mean of included values in the focal window but see "fun" argument).
+Positive values indicate local highs (i.e. peaks) and negative values
+indicate local lows (i.e. depressions). Relative Position can be
+expressed in units of the input DTM raster or can standardized relative
+to the local topography by dividing by the standard deviation or range
+of included elevation values in the focal window.
+
+## Usage
+
+``` r
+RelPos(
+  r,
+  w = dplyr::case_when(tolower(shape) == "rectangle" ~ 3, tolower(shape) == "circle" &
+    isTRUE(tolower(unit) == "cell") ~ 1, tolower(shape) == "circle" &
+    isTRUE(tolower(unit) == "map") ~ max(terra::res(r))),
+  shape = "rectangle",
+  stand = "none",
+  exclude_center = FALSE,
+  unit = "cell",
+  fun = "mean",
+  na.rm = FALSE,
+  include_scale = FALSE,
+  filename = NULL,
+  overwrite = FALSE,
+  wopt = list()
+)
+```
+
+## Arguments
+
+- r:
+
+  DTM as a SpatRaster or RasterLayer.
+
+- w:
+
+  For a "rectangle" focal window, a vector of length 2 containing odd
+  numbers specifying dimensions where the first number is the number of
+  rows and the second is the number of columns (or a single number if
+  the number of rows and columns is equal). For a "circle" shaped focal
+  window, a single integer representing the radius in "cell" or "map"
+  units or a focal weights matrix created by
+  MultiscaleDTM::circle_window. The default radius is 1 cell if unit=
+  "cell" or the maximum of the x and y cell resolution if unit="map".
+  For an "annulus" shaped focal window, a vector of length 2 specifying
+  c(inner, outer) radii of the annulus in "cell" or "map" units or a
+  focal weights matrix created by MultiscaleDTM::annulus_window. Inner
+  radius must be less than or equal to outer radius. There is no default
+  size for an annulus window. If a "custom" focal window shape is used,
+  w must be a focal weights matrix with 1's for included values and NAs
+  for excluded values.
+
+- shape:
+
+  Character representing the shape of the focal window. Either
+  "rectangle" (default), "circle", or "annulus", or "custom". If a
+  "custom" shape is used, w must be a focal weights matrix.
+
+- stand:
+
+  Standardization method. Either "none" (the default), "range" or "sd"
+  indicating whether the relative position should be standardized by
+  dividing by the standard deviation or range of included values in the
+  focal window. If stand is 'none' the layer name will be "rpos",
+  otherwise it will be "srpos" to indicate that the layer has been
+  standardized.
+
+- exclude_center:
+
+  Logical indicating whether to exclude the central value from focal
+  calculations (Default=FALSE). Use FALSE for DMV and TRUE for TPI.
+  Note, if a focal weights matrix is supplied to w, setting
+  exclude_center=TRUE will overwrite the center value of w to NA, but
+  setting exclude_center=FALSE will not overwrite the central value to
+  be 1.
+
+- unit:
+
+  Unit for w if shape is 'circle' or 'annulus' and it is a vector
+  (default is unit="cell"). For circular and annulus shaped windows
+  specified with a matrix, unit is ignored and extracted directly
+  from w. For rectangular and custom focal windows set unit='cell' or
+  set unit to NA/NULL.
+
+- fun:
+
+  Function to apply to included values to determine the reference
+  elevation. Accepted values are "mean","median", "min", and "max". The
+  default is "mean"
+
+- na.rm:
+
+  Logical indicating whether or not to remove NA values before
+  calculations.
+
+- include_scale:
+
+  Logical indicating whether to append window size to the layer names
+  (default = FALSE) or a character vector specifying the name you would
+  like to append or a number specifying the number of significant
+  digits. If include_scale = TRUE the number of rows and number of
+  columns will be appended for rectangular or custom windows. For
+  circular windows it will be a single number representing the radius.
+  For annulus windows it will be the inner and outer radius. If
+  unit="map" then window size will have "MU" after the number indicating
+  that the number represents the scale in map units (note units can be
+  extracted from w created with MultiscaleDTM::circle_window and
+  MultiscaleDTM::annulus_window).
+
+- filename:
+
+  Character output filename.
+
+- overwrite:
+
+  Logical. If TRUE, filename is overwritten (default is FALSE).
+
+- wopt:
+
+  List with named options for writing files as in writeRaster.
+
+## Value
+
+A SpatRaster or RasterLayer.
+
+## References
+
+Lecours, V., Devillers, R., Simms, A.E., Lucieer, V.L., Brown, C.J.,
+2017. Towards a Framework for Terrain Attribute Selection in
+Environmental Studies. Environmental Modelling & Software 89, 19-30.
+https://doi.org/10.1016/j.envsoft.2016.11.027
+
+Lundblad, E.R., Wright, D.J., Miller, J., Larkin, E.M., Rinehart, R.,
+Naar, D.F., Donahue, B.T., Anderson, S.M., Battista, T., 2006. A benthic
+terrain classification scheme for American Samoa. Marine Geodesy 29,
+89–111. https://doi.org/10.1080/01490410600738021
+
+Weiss, A., 2001. Topographic Position and Landforms Analysis. Presented
+at the ESRI user conference, San Diego, CA.
+
+Wilson, J.P., Gallant, J.C. (Eds.), 2000. Terrain Analysis: Principles
+and Applications. John Wiley & Sons, Inc.
+
+## Examples
+
+``` r
+r<- erupt()
+rpos<- RelPos(r, w = c(5,5), shape= "rectangle", exclude_center = TRUE, na.rm = TRUE)
+plot(rpos)
+```

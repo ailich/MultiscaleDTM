@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">MultiscaleDTM</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@
       <h1>README</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/v1.0/vignettes/README.Rmd" class="external-link"><code>vignettes/README.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/ailich/MultiscaleDTM/blob/main/vignettes/README.Rmd" class="external-link"><code>vignettes/README.Rmd</code></a></small>
       <div class="d-none name"><code>README.Rmd</code></div>
     </div>
 
@@ -305,13 +305,13 @@ georeferenced version of R’s built in volcano data set using the
 <code>erupt</code> function.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">r</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/erupt.html">erupt</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/Topo-1.png" width="700"></p>
+<p><img src="README_files/figure-html/Topo-1.png" class="r-plt" width="700"></p>
 <div class="section level4">
 <h4 id="slope-aspect-and-curvature-1">Slope, Aspect, and Curvature<a class="anchor" aria-label="anchor" href="#slope-aspect-and-curvature-1"></a>
 </h4>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">slp_asp</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/SlpAsp.html">SlpAsp</a></span><span class="op">(</span>r <span class="op">=</span> <span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"degrees"</span>, method <span class="op">=</span> <span class="st">"queen"</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"slope"</span>, <span class="st">"aspect"</span>, <span class="st">"eastness"</span>, <span class="st">"northness"</span><span class="op">)</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/SlpAsp-1.png" width="700"></p>
+<p><img src="README_files/figure-html/SlpAsp-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">qmetrics</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/Qfit.html">Qfit</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"degrees"</span>, metrics <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"elev"</span>, <span class="st">"qslope"</span>, <span class="st">"qaspect"</span>, <span class="st">"qeastness"</span>, <span class="st">"qnorthness"</span>, <span class="st">"profc"</span>, <span class="st">"planc"</span>, <span class="st">"twistc"</span>, <span class="st">"meanc"</span>, <span class="st">"maxc"</span>, <span class="st">"minc"</span>, <span class="st">"features"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="../reference/figures/qmetrics.jpg" width="100%"></p>
@@ -323,16 +323,16 @@ georeferenced version of R’s built in volcano data set using the
 </h4>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">vrm</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/VRM.html">VRM</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/VRM-1.png" width="700"></p>
+<p><img src="README_files/figure-html/VRM-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sapa</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/SAPA.html">SAPA</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, slope_correction <span class="op">=</span> <span class="cn">TRUE</span>, na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/SAPA-1.png" width="700"></p>
+<p><img src="README_files/figure-html/SAPA-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">adj_SD</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/AdjSD.html">AdjSD</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/AdjSD-1.png" width="700"></p>
+<p><img src="README_files/figure-html/AdjSD-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rie</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/RIE.html">RIE</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/RIE-1.png" width="700"></p>
+<p><img src="README_files/figure-html/RIE-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="relative-position-1">Relative Position<a class="anchor" aria-label="anchor" href="#relative-position-1"></a>
@@ -341,16 +341,16 @@ georeferenced version of R’s built in volcano data set using the
 been standardized based on local topography.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">rp</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/RelPos.html">RelPos</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span>data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="cn">NA</span>,<span class="fl">1</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, ncol<span class="op">=</span><span class="fl">3</span><span class="op">)</span>, shape <span class="op">=</span> <span class="st">"custom"</span>, fun <span class="op">=</span> <span class="st">"median"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/RP-1.png" width="700"></p>
+<p><img src="README_files/figure-html/RP-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tpi</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/TPI.html">TPI</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">5</span><span class="op">)</span>, shape<span class="op">=</span> <span class="st">"rectangle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/TPI-1.png" width="700"></p>
+<p><img src="README_files/figure-html/TPI-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">dmv</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/DMV.html">DMV</a></span><span class="op">(</span><span class="va">r</span>, w<span class="op">=</span><span class="fl">2</span>, shape<span class="op">=</span> <span class="st">"circle"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span>, stand<span class="op">=</span><span class="st">"range"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/DMV-1.png" width="700"></p>
+<p><img src="README_files/figure-html/DMV-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bpi</span><span class="op">&lt;-</span> <span class="fu"><a href="../reference/BPI.html">BPI</a></span><span class="op">(</span><span class="va">r</span>, w <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>, unit <span class="op">=</span> <span class="st">"cell"</span>, stand<span class="op">=</span> <span class="st">"sd"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="README_files/figure-html/BPI-1.png" width="700"></p>
+<p><img src="README_files/figure-html/BPI-1.png" class="r-plt" width="700"></p>
 <p>Circle and annulus windows for can be specified in either cell units
 (number of raster cells) or in map units (e.g. meters) which can be
 useful if your x and y resolutions are not equal. Additionally, the
@@ -463,7 +463,7 @@ elevation models (Ph.D.). University of Leicester.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

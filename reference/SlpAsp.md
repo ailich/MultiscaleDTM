@@ -1,0 +1,137 @@
+# Multiscale Slope and Aspect
+
+Calculates multiscale slope and aspect based on a modified version of
+the algorithm from Misiuk et al (2021) which extends classical
+formulations of slope restricted to a 3x3 window to multiple scales by
+using only cells on the edges of the focal window (see details for more
+information).
+
+## Usage
+
+``` r
+SlpAsp(
+  r,
+  w = c(3, 3),
+  unit = "degrees",
+  method = "queen",
+  metrics = c("slope", "aspect", "eastness", "northness"),
+  na.rm = FALSE,
+  include_scale = FALSE,
+  mask_aspect = TRUE,
+  filename = NULL,
+  overwrite = FALSE,
+  wopt = list()
+)
+```
+
+## Arguments
+
+- r:
+
+  DTM as a SpatRaster or RasterLayer in a projected coordinate system
+  where map units match elevation/depth units
+
+- w:
+
+  A vector of length 2 specifying the dimensions of the rectangular
+  window to use where the first number is the number of rows and the
+  second number is the number of columns. Window size must be an odd
+  number.
+
+- unit:
+
+  "degrees" or "radians"
+
+- method:
+
+  "rook", "queen" (default), or "boundary". The method indicates which
+  cells to use to in computations. "rook" uses only the 4 edge cells
+  directly up, down, left, and right; "queen" adds an additional four
+  corner cells; "boundary" uses all edge cells (see details for more
+  information).
+
+- metrics:
+
+  a character string or vector of character strings of which terrain
+  attributes to return. Default is to return c("slope", "aspect",
+  "eastness", "northness"). Additional measures available include
+  "dz.dx" and "dz.dy" which are the x and y components of slope
+  respectively.
+
+- na.rm:
+
+  Logical indicating whether or not to remove NA values before
+  calculations. Not applicable for "rook" method.
+
+- include_scale:
+
+  logical indicating whether to append window size to the layer names
+  (default = FALSE)
+
+- mask_aspect:
+
+  A logical. When mask_aspect is TRUE (the default), if slope evaluates
+  to 0, aspect will be set to NA and both eastness and northness will be
+  set to 0. When mask_aspect is FALSE, when slope is 0 aspect will be
+  pi/2 radians or 90 degrees which is the behavior of raster::terrain,
+  and northness and eastness will be calculated from that.
+
+- filename:
+
+  character Output filename. Can be a single filename, or as many
+  filenames as there are layers to write a file for each layer
+
+- overwrite:
+
+  logical. If TRUE, filename is overwritten (default is FALSE).
+
+- wopt:
+
+  list with named options for writing files as in writeRaster
+
+## Value
+
+a SpatRaster or RasterStack of slope and/or aspect (and components of
+aspect)
+
+## Details
+
+Slope is calculated atan(sqrt(dz.dx^2 + dz.dy^2)) and aspect is
+calculated as (-pi/2)-atan_2(dz.dy, dz.dx) and then constrained from 0
+to 2 pi/0 to 360 degrees. dz.dx is the difference in between the
+weighted mean of the right side of the focal window and weighted mean of
+the left side of the focal window divided by the x distance of the focal
+window in map units. dz.dy is the difference in between the weighted
+mean of the top side of the focal window and weighted mean of the bottom
+side of the focal window divided by the y distance of the focal window
+in map units. The cells used in these computations is dependent on the
+"method" chosen. For methods "queen" and "boundary", corner cells have
+half the weight of all other cells used in the computations.
+
+## References
+
+Fleming, M.D., Hoffer, R.M., 1979. Machine processing of landsat MSS
+data and DMA topographic data for forest cover type mapping (No. LARS
+Technical Report 062879). Laboratory for Applications of Remote Sensing,
+Purdue University, West Lafayette, Indiana.
+
+Horn, B.K., 1981. Hill Shading and the Reflectance Map. Proceedings of
+the IEEE 69, 14-47.
+
+Misiuk, B., Lecours, V., Dolan, M.F.J., Robert, K., 2021. Evaluating the
+Suitability of Multi-Scale Terrain Attribute Calculation Approaches for
+Seabed Mapping Applications. Marine Geodesy 44, 327-385.
+https://doi.org/10.1080/01490419.2021.1925789
+
+Ritter, P., 1987. A vector-based slope and aspect generation algorithm.
+Photogrammetric Engineering and Remote Sensing 53, 1109-1111.
+
+## Examples
+
+``` r
+r<- erupt()
+slp_asp<- SlpAsp(r = r, w = c(5,5), unit = "degrees", 
+method = "queen", metrics = c("slope", "aspect", 
+"eastness", "northness"))
+plot(slp_asp)
+```
