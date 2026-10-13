@@ -11,18 +11,25 @@ using namespace arma;
 // [[Rcpp::export]]
 arma::mat C_Qfit1_narmT(const arma::vec& z,
                              const arma::mat& X_full,
+                             const arma::uvec& idx,
                              const bool return_intercept,
                              size_t ni, size_t nw) {
-  
+
   unsigned int thresh = X_full.n_cols;
-  
+
   int nlyr = return_intercept ? X_full.n_cols : X_full.n_cols - 1;
-  
+
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
-  
+
+  if (idx.n_elem == 0 || idx.max() >= nw) {
+    Rcpp::stop("idx out of range for window");
+  }
+  const arma::uword nk = idx.n_elem;
+  arma::vec zw(nk); //reused each window
+
   for (size_t i = 0; i < ni; ++i) {
     size_t start = i * nw;
-    arma::vec zw = z.subvec(start, start + nw - 1);
+    for (arma::uword k = 0; k < nk; ++k) { zw(k) = z(start + idx(k)); } //Only the cells selected by idx
     arma::uvec valid_idx = arma::find_finite(zw);
     
     if (valid_idx.n_elem >= thresh) {
@@ -54,16 +61,23 @@ arma::mat C_Qfit1_narmF(const arma::vec& z,
                              const arma::mat& X,
                              const arma::mat& Xt,
                              const arma::mat& XtX_inv,
+                             const arma::uvec& idx,
                              const bool return_intercept,
                              size_t ni, size_t nw) {
-  
+
   int nlyr = return_intercept ? X.n_cols : X.n_cols - 1;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
-  
+
+  if (idx.n_elem == 0 || idx.max() >= nw) {
+    Rcpp::stop("idx out of range for window");
+  }
+  const arma::uword nk = idx.n_elem;
+  arma::vec zw(nk); //reused each window
+
   for (size_t i = 0; i < ni; ++i) {
     size_t start = i * nw;
-    arma::vec zw = z.subvec(start, start + nw - 1);
-    
+    for (arma::uword k = 0; k < nk; ++k) { zw(k) = z(start + idx(k)); } //Only the cells selected by idx
+
     if (!zw.has_nan()) {
       arma::vec unique_vals = arma::unique(zw);
       
@@ -92,21 +106,28 @@ arma::mat C_Qfit1_narmF(const arma::vec& z,
 // [[Rcpp::export]]
 arma::mat C_Qfit2_narmT(const arma::vec& z,
                    const arma::mat& X_full,
+                   const arma::uvec& idx,
                    size_t ni, size_t nw) {
-  
+
   int nlyr = X_full.n_cols;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
-  
+
   unsigned int thresh = nlyr; //Setting to nlayer makes it work for planar fit too
-  
+
+  if (idx.n_elem == 0 || idx.max() >= nw) {
+    Rcpp::stop("idx out of range for window");
+  }
+  const arma::uword nk = idx.n_elem;
+  arma::vec zw(nk); //reused each window
+
   for (size_t i = 0; i < ni; ++i) {
     size_t start = i * nw;
-    arma::vec zw = z.subvec(start, start + nw - 1);
-    
-    // Centering the window values
-    double center_val = zw(nw / 2);
-    zw -= center_val;
-    
+
+    // Centering value always comes from the central cell of the full window,
+    // whether or not that cell is among those selected by idx
+    double center_val = z(start + nw / 2);
+    for (arma::uword k = 0; k < nk; ++k) { zw(k) = z(start + idx(k)) - center_val; }
+
     arma::uvec valid_idx = arma::find_finite(zw);
     if (valid_idx.n_elem >= thresh) {
       arma::vec zw_clean = zw.elem(valid_idx);
@@ -132,19 +153,26 @@ arma::mat C_Qfit2_narmF(const arma::vec& z,
                              const arma::mat& X,
                              const arma::mat& Xt,
                              const arma::mat& XtX_inv,
+                             const arma::uvec& idx,
                              size_t ni, size_t nw) {
-  
+
   int nlyr = X.n_cols;
   arma::mat out(ni, nlyr, arma::fill::value(NA_REAL));
-  
+
+  if (idx.n_elem == 0 || idx.max() >= nw) {
+    Rcpp::stop("idx out of range for window");
+  }
+  const arma::uword nk = idx.n_elem;
+  arma::vec Z(nk); //reused each window
+
   for (size_t i = 0; i < ni; ++i) {
     size_t start = i * nw;
-    arma::vec Z = z.subvec(start, start + nw - 1);
-    
-    // Center Z using middle value
-    double center_val = Z(Z.n_elem / 2);
-    Z -= center_val;
-    
+
+    // Center Z using the central cell of the full window, then keep only
+    // the cells selected by idx
+    double center_val = z(start + nw / 2);
+    for (arma::uword k = 0; k < nk; ++k) { Z(k) = z(start + idx(k)) - center_val; }
+
     if (!Z.has_nan()) {
       arma::vec unique_vals = arma::unique(Z);
       

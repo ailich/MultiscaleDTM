@@ -13,20 +13,20 @@ C_CountVals <- function(z, ni, nw) {
     .Call(`_MultiscaleDTM_C_CountVals`, z, ni, nw)
 }
 
-C_Qfit1_narmT <- function(z, X_full, return_intercept, ni, nw) {
-    .Call(`_MultiscaleDTM_C_Qfit1_narmT`, z, X_full, return_intercept, ni, nw)
+C_Qfit1_narmT <- function(z, X_full, idx, return_intercept, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit1_narmT`, z, X_full, idx, return_intercept, ni, nw)
 }
 
-C_Qfit1_narmF <- function(z, X, Xt, XtX_inv, return_intercept, ni, nw) {
-    .Call(`_MultiscaleDTM_C_Qfit1_narmF`, z, X, Xt, XtX_inv, return_intercept, ni, nw)
+C_Qfit1_narmF <- function(z, X, Xt, XtX_inv, idx, return_intercept, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit1_narmF`, z, X, Xt, XtX_inv, idx, return_intercept, ni, nw)
 }
 
-C_Qfit2_narmT <- function(z, X_full, ni, nw) {
-    .Call(`_MultiscaleDTM_C_Qfit2_narmT`, z, X_full, ni, nw)
+C_Qfit2_narmT <- function(z, X_full, idx, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit2_narmT`, z, X_full, idx, ni, nw)
 }
 
-C_Qfit2_narmF <- function(z, X, Xt, XtX_inv, ni, nw) {
-    .Call(`_MultiscaleDTM_C_Qfit2_narmF`, z, X, Xt, XtX_inv, ni, nw)
+C_Qfit2_narmF <- function(z, X, Xt, XtX_inv, idx, ni, nw) {
+    .Call(`_MultiscaleDTM_C_Qfit2_narmF`, z, X, Xt, XtX_inv, idx, ni, nw)
 }
 
 C_TriArea <- function(a, b, c) {

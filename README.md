@@ -72,7 +72,12 @@ raster data.
   the north/south coordinates in the focal window relative to the focal
   cell (Evans, 1980; Wilson et al., 2007; Wood, 1996). The morphometric
   features algorithm has been modified to use more robust measures of
-  curvature based on the suggestions of Minár et al. (2020).
+  curvature based on the suggestions of Minár et al. (2020). By default
+  the surface is fit to all cells in the focal window, but the `method`
+  argument can instead restrict the fit to the cells on the outer edge
+  of the window plus the central cell (“queen” or “boundary”), which
+  reduces the correlation between results calculated at successive
+  spatial scales.
 
 $$
 Z = aX^2 + bY^2 +cXY+ dX +eY +f

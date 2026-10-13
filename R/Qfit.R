@@ -56,12 +56,45 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
   return(params)
 }
 
+#' Helper function to determine which cells of the focal window are used to fit the surface
+#'
+#' Returns the positions of the selected cells within the flattened focal window. Window values are supplied by focalCpp in row-major order (as in `as.vector(t(m))`), so the cell in row i and column j is at position `(i-1)*w[2]+j`.
+#' @param w Vector of length 2 specifying the dimensions of the rectangular window where the first number is the number of rows and the second number is the number of columns.
+#' @param method "full", "queen", or "boundary". See Qfit.
+#' @return An integer vector of 1-based positions within the flattened focal window. The central cell is always included.
+
+qfit_window_idx<- function(w, method){
+  nr<- w[1]
+  nc<- w[2]
+  if(method=="full"){
+    return(seq_len(nr*nc))
+  }
+  mr<- floor(nr/2)+1L #middle row
+  mc<- floor(nc/2)+1L #middle column
+  lin<- function(i,j){as.vector(outer(i, j, function(a,b){(a-1L)*nc + b}))} #row-major position
+
+  if(method=="queen"){
+    sel<- lin(unique(c(1L, mr, nr)), unique(c(1L, mc, nc))) #corners, edge midpoints, and center
+  } else{
+    grd<- expand.grid(i=seq_len(nr), j=seq_len(nc))
+    ring<- grd[(grd$i %in% c(1L, nr)) | (grd$j %in% c(1L, nc)),] #all cells on the outer edge
+    sel<- (ring$i-1L)*nc + ring$j
+  }
+
+  # The central cell is always included. With force_center=TRUE its row of X is
+  # all zeros and its centered value is 0, so it does not affect the fit, but it
+  # must be present for the flat window shortcut in the C++ kernels to be valid.
+  sel<- c(sel, lin(mr, mc))
+  return(as.integer(sort(unique(sel))))
+}
+
 #' Calculates multiscale slope, aspect, curvature, and morphometric features using a local quadratic fit
 #'
 #' Calculates multiscale slope, aspect, curvature, and morphometric features of a DTM over a sliding rectangular window using a local quadratic fit to the surface (Evans, 1980; Wood, 1996).
 #' @param r DTM as a SpatRaster (terra) or RasterLayer (raster) in a projected coordinate system where map units match elevation/depth units (up is assumed to be north for calculations of aspect, northness, and eastness).
 #' @param w Vector of length 2 specifying the dimensions of the rectangular window to use where the first number is the number of rows and the second number is the number of columns. Window size must be an odd number. Default is 3x3.
 #' @param unit "degrees" or "radians".
+#' @param method "full" (default), "queen", or "boundary". The method indicates which cells within the focal window are used to fit the quadratic surface. "full" uses all cells in the window; "queen" uses the four corner cells, the four cells at the midpoints of the window edges, and the central cell; "boundary" uses all cells on the outer edge of the window plus the central cell. Restricting the fit to the outer edge of the window reduces the correlation between results at successive spatial scales. Note that unlike SlpAsp(), "rook" is not available because those cells cannot determine a quadratic surface (see details).
 #' @param metrics Character vector specifying which terrain attributes to return. The default is to return all available metrics, c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"). Slope, aspect, eastness, and northness are preceded with a 'q' to differentiate them from the measures calculated by SlpAsp() where the 'q' indicates that a quadratic surface was used for the calculation. 'elev' is the predicted elevation at the central cell (i.e. the intercept term of the regression) and is only relevant when force_center=FALSE. 'profc' is the profile curvature, 'planc' is the plan curvature, 'meanc' is the mean curvature, 'minc' is minimum curvature, and 'features' are morphometric features. See details.
 #' @param slope_tolerance Slope tolerance that defines a 'flat' surface (degrees; default = 1.0). Relevant for the features layer.
 #' @param curvature_tolerance Curvature tolerance that defines 'planar' surface (default = 0.0001). Relevant for the features layer.
@@ -85,6 +118,8 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
 #' reg_coefs<- Qfit(r, w = c(5,5), metrics=c(), unit = "degrees", na.rm = TRUE, return_params=TRUE)
 #' plot(reg_coefs)
 #' @details This function calculates slope, aspect, eastness, northness, profile curvature, plan curvature, mean curvature, twisting curvature, maximum curvature, minimum curvature, morphometric features, and a smoothed version of the elevation surface using a quadratic surface fit from Z = aX^2+bY^2+cXY+dX+eY+f, where Z is the elevation or depth values, X and Y are the xy coordinates relative to the central cell in the focal window, and a-f are parameters to be estimated (Evans, 1980; Minár et al. 2020; Wood, 1996). For aspect, 0 degrees represents north (or if rotated, the direction that increases as you go up rows in your data) and increases clockwise. For calculations of northness (cos(asp)) and eastness (sin(asp)), up in the y direction is assumed to be north, and if this is not true for your data (e.g. you are using a rotated coordinate system), you must adjust accordingly. All curvature formulas are adapted from Minár et al 2020. Therefore  all curvatures are measured in units of 1/length (e.g. m^-1) except twisting curvature which is measured in radians/length (i.e. change in angle per unit distance), and we adopt a geographic sign convention where convex is positive and concave is negative (i.e., hills are considered convex with positive. Naming convention for curvatures is not consistent across the literature, however Minár et al (2020) has suggested a framework in which the reported measures of curvature translate to profile curvature = (kn)s, plan curvature = (kn)c, twisting curvature (Tg)c, mean curvature = kmean, maximum curvature = kmax, minimum curvature = kmin. For morphometric features cross-sectional curvature (zcc) was replaced by planc (kn)c, z''min was replaced by kmax, and z''max was replaced by kmin as these are more robust ways to measures the same types of curvature (Minár et al., 2020). Additionally, the planar feature from Wood (1996) was split into planar flat and slope depending on whether the slope threshold is exceeded or not.
+#'
+#' The 'method' argument controls which cells of the focal window the surface is fit to. By default ("full") every cell is used, which means that windows at successive scales share most of their cells and the resulting terrain attributes are highly correlated across scales. Fitting only to the outer edge of the window and the central cell ("queen" or "boundary") reduces that overlap and therefore the correlation between scales. The three methods are identical when w = c(3,3) since every cell of a 3x3 window is on its outer edge. "queen" always uses exactly nine cells regardless of window size, while the number used by "boundary" grows with the perimeter of the window. Because "queen" and "boundary" draw on fewer cells than "full", using them with na.rm=TRUE will generally produce more NA values in the output; conversely, with na.rm=FALSE an NA in the interior of the window no longer propagates to the output since interior cells are not used. Note also that 'elev' (the intercept) is then a smoothed elevation driven entirely by the window edge and the central cell, so it will differ noticeably from the "full" result. The "rook" method offered by SlpAsp() is not available here: its cells all lie on the axes of the focal window, so the XY term of the quadratic is not identifiable.
 #' @import terra
 #' @importFrom raster raster
 #' @importFrom raster stack
@@ -99,7 +134,7 @@ outlier_filter<- function(params, outlier_quantile, wopt=list()){
 #' Wood, J., 1996. The geomorphological characterisation of digital elevation models (Ph.D.). University of Leicester.
 #' @export
 
-Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, outlier_quantile=c(0.01, 0.99), na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
+Qfit<- function(r, w=c(3,3), unit= "degrees", method= "full", metrics= c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features"), slope_tolerance=1, curvature_tolerance=0.0001, outlier_quantile=c(0.01, 0.99), na.rm=FALSE, force_center=FALSE, include_scale=FALSE, mask_aspect=TRUE, return_params= FALSE, as_derivs= FALSE, filename=NULL, overwrite=FALSE, wopt=list()){
   
   all_metrics<- c("elev", "qslope", "qaspect", "qeastness", "qnorthness", "profc", "planc", "twistc", "meanc", "maxc", "minc", "features")
   og_class<- class(r)[1]
@@ -129,17 +164,22 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   if(all(w<3)){
     stop("Error: w must be greater or equal to 3 in at least one dimension")
   }
-  if((prod(w) < 6) & (!force_center)){
-    stop("Error: Window size must have at least 6 cells to fit surface")
-  }
-  if((prod(w) < 5) & (force_center)){
-    stop("Error: Window size must have at least 5 cells to fit surface")
-  }
   unit<- tolower(unit) #make lowercase
   if (!any(unit==c("degrees", "radians"))){
     stop("unit must be 'degrees' or 'radians'")
   }
-  
+
+  method<- tolower(as.character(method)) #make lowercase
+  if(length(method)!=1){
+    stop("Error: method must be a single value")
+  }
+  if(method=="rook"){
+    stop("Error: method 'rook' is not available for Qfit. Its cells all lie on the axes of the focal window, so the XY term of the quadratic cannot be estimated. Use 'queen', 'boundary', or 'full'.")
+  }
+  if(!(method %in% c("full", "queen", "boundary"))){
+    stop("Error: method must be 'full', 'queen', or 'boundary'")
+  }
+
   # Increase tolerance of inputs to metrics
   metrics<- tolower(metrics) #Make all lowercase
   metrics[metrics=="slope"]<- "qslope" #replace slope with qslope
@@ -183,22 +223,36 @@ Qfit<- function(r, w=c(3,3), unit= "degrees", metrics= c("elev", "qslope", "qasp
   if(!force_center){
     X<- cbind(X,1)
     } # Z = ax^2+by^2+cxy+dx+ey+f (with intercept)
-  
+
+  # Restrict the fit to the cells selected by method
+  idx<- qfit_window_idx(w, method)
+  X<- X[idx, , drop=FALSE]
+
+  if(nrow(X) < ncol(X)){
+    stop(paste0("Error: method '", method, "' selects only ", nrow(X), " cells from a ", w[1], "x", w[2], " window, but ", ncol(X), " are needed to fit the surface."))
+  }
+  # Scale columns before checking rank since they span 1 to x^2 in map units
+  col_norms<- sqrt(colSums(X^2))
+  if(any(col_norms==0) || (qr(sweep(X, 2, col_norms, "/"))$rank < ncol(X))){
+    stop(paste0("Error: the cells selected by method '", method, "' in a ", w[1], "x", w[2], " window cannot determine a quadratic surface."))
+  }
+
   if(!na.rm){
     Xt<- t(X)
     XtX_inv<- solve(Xt %*% X)
     }
+  idx<- as.integer(idx - 1L) #zero based for C++
   
   # Calculate Regression Parameters
   return_intercept<- "elev" %in% needed_metrics
   
   if((!na.rm) & (!force_center)){
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, return_intercept = return_intercept, fillvalue=NA, wopt=wopt)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, idx= idx, return_intercept = return_intercept, fillvalue=NA, wopt=wopt)
     } else if(na.rm & (!force_center)){
-      params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, return_intercept = return_intercept, fillvalue=NA, wopt=wopt)
+      params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, idx= idx, return_intercept = return_intercept, fillvalue=NA, wopt=wopt)
     } else if((!na.rm) & force_center){
-      params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, fillvalue=NA, wopt=wopt)} else{
-        params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmT, X_full= X, fillvalue=NA, wopt=wopt)
+      params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, idx= idx, fillvalue=NA, wopt=wopt)} else{
+        params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmT, X_full= X, idx= idx, fillvalue=NA, wopt=wopt)
       }
   
   if(return_intercept){

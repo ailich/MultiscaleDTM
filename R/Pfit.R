@@ -113,12 +113,14 @@ Pfit<- function(r, w=c(3,3), unit= "degrees", metrics = c("pslope", "paspect", "
     Xt<- t(X)
     XtX_inv<- solve(Xt %*% X)
   }
-  
+
+  idx<- as.integer(seq_len(prod(w)) - 1L) #all cells of the window, zero based for C++
+
   # Calculate Regression Parameters
   if(na.rm){
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, return_intercept = FALSE, fillvalue=NA, wopt=wopt)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit1_narmT, X_full= X, idx= idx, return_intercept = FALSE, fillvalue=NA, wopt=wopt)
   } else{
-    params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, fillvalue=NA, wopt=wopt)
+    params<- terra::focalCpp(r, w=w, fun = C_Qfit2_narmF, X= X, Xt= Xt, XtX_inv= XtX_inv, idx= idx, fillvalue=NA, wopt=wopt)
   }
   names(params)<- c("dz.dx", "dz.dy")
   
